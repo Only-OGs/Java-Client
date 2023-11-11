@@ -4,6 +4,7 @@ package OGRacerGame;
 import Connection.Client;
 import Screens.GameScreen;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 
 public class OGRacerGame extends Game {
 
@@ -24,6 +25,7 @@ public class OGRacerGame extends Game {
 	@Override
 	public void render() {
 		super.render();
+		//ÄNDERUNG ZUM TESTEN
 	}
 
 	@Override
