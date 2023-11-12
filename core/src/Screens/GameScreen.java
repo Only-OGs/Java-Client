@@ -1,6 +1,9 @@
 package Screens;
 
 import Connection.Client;
+import OGRacerGame.OGRacerGame;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.json.JSONException;
 
-public class GameScreen extends ScreenAdapter {
+public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     private static Camera camera;
     private static Viewport viewport;
@@ -46,6 +49,7 @@ public class GameScreen extends ScreenAdapter {
                 throw new RuntimeException(e);
             }
         }
+
     }
 
     @Override
@@ -56,5 +60,34 @@ public class GameScreen extends ScreenAdapter {
     public void dispose () {
         batch.dispose();
         background.dispose();
+    }
+
+    /** [GameScreen] Fragt ab ob eine Taste gedruckt wurde/ist */
+    @Override
+    public void checkInput(OGRacerGame game) {
+        // Pausieren/Fortfahren des Spiels
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.isRunning = !game.isRunning;
+            //Menü anzeigen
+        }
+        // Wenn das Spiel pausiert ist, sollen keine Eingaben zum steuern des Autos abgefragt werden
+        if(!game.isRunning) return;
+
+
+		/*	Durch die Struktur ist es unmöglich
+			gleichzeitig zu bremsen und zu beschleunigen bzw.
+			gleichzeitig nach Links und nach Rechts zu fahren
+		*/
+        if(Gdx.input.isKeyPressed(Input.Keys.W)) {
+            //Beschleunigen
+        } else if(Gdx.input.isKeyPressed(Input.Keys.S)) {
+            //Bremsen
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.A)) {
+            //Nach links fahren
+        } else if(Gdx.input.isKeyPressed(Input.Keys.D)) {
+            //Nach Rechts fahren
+        }
     }
 }
