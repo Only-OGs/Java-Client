@@ -42,9 +42,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         batch.draw(background, 0,0,backgroundWitdh,backgroundHeight);
         batch.end();
 
-        if(Client.socket.connected()){
+
+        if(Client.socket.connected() && Gdx.input.isKeyJustPressed(Input.Keys.ENTER)){
             try {
-                Client.emitCoordinate(1,1,1);
+                Client.emitCoordinate();
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }

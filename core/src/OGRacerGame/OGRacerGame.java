@@ -18,6 +18,7 @@ public class OGRacerGame extends Game {
 		gameScreen = new GameScreen();
 		setScreen(gameScreen);
 		isRunning = true;
+
 	}
 
 	@Override

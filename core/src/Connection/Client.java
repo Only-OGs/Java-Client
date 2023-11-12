@@ -7,20 +7,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
-import java.util.Scanner;
 
 
 public class Client {
-
-    static int x;
-    static int y;
-    static int z;
 
     public static Socket socket = null;
 
     public Client() {
     }
 
+    /**
+     * Stellt die Verbindung zum Server her und sorgt dafür, das wir dauerhaft Daten empfangen können.
+     * Checkt gleichzeititg ob der Server Online oder Offline ist.
+     */
     public static void connect() {
 
         try {
@@ -28,7 +27,7 @@ public class Client {
             // Erstellt eine Socket.IO-Verbindung
             socket = IO.socket("http://localhost:8080");
 
-            // Überprüft ob wir verbunden sind
+            // Überprüft ob wir Verbunden sind
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
@@ -44,17 +43,18 @@ public class Client {
                 }
             });
 
-            socket.on("data", new Emitter.Listener() {
+            // Bekommt man Nachrichten vom Server übermittelt
+            socket.on("response", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    JSONObject obj = (JSONObject)args[0];
+                    JSONObject obj = (JSONObject) args[0];
                     try {
-                        x = (int) obj.get("x");
-                        y = (int) obj.get("y");
-                        z = (int) obj.get("z");
+                        System.out.println(obj.get("message"));
+
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+
                 }
             });
 
@@ -68,17 +68,18 @@ public class Client {
 
     }
 
-    public static void emitCoordinate(int x, int y, int z) throws JSONException {
+    /**
+     * Übermittelt Daten an den Server mithilfe des JSON Formats
+     */
+    public static void emitCoordinate() throws JSONException {
 
         if (socket.connected()) {
 
-            // Sending an object
+
             JSONObject obj = new JSONObject();
-            obj.put("x", x);
-            obj.put("y", y);
-            obj.put("Z", z);
-            socket.emit("data", obj);
+            obj.put("message1", "Hallo");
+            obj.put("message2", "Pascal");
+            socket.emit("message", obj);
         }
     }
-
 }
