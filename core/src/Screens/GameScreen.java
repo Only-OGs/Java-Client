@@ -68,6 +68,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         // Pausieren/Fortfahren des Spiels
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.isRunning = !game.isRunning;
+            System.out.println("DDD");
             //Menü anzeigen
         }
         // Wenn das Spiel pausiert ist, sollen keine Eingaben zum steuern des Autos abgefragt werden

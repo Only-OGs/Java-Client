@@ -38,10 +38,10 @@ public class OGRacerGame extends Game {
 	}
 
 	public void handleInput() {
-		if(getScreen() instanceof GameScreen) {
-			((GameScreen) getScreen()).checkInput(this);
-		} else if(getScreen() instanceof StartScreen) {
-            ((GameScreen) getScreen()).checkInput(this);
+		if(getScreen() instanceof GameScreen gs) {
+			gs.checkInput(this);
+		} else if(getScreen() instanceof StartScreen sc) {
+            sc.checkInput(this);
 		}
 	}
 
