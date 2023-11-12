@@ -13,7 +13,6 @@ public class OGRacerGame extends Game {
 		Client.connect();
 		gameScreen = new GameScreen();
 		setScreen(gameScreen);
-
 	}
 
 	@Override

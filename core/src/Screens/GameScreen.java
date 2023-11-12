@@ -1,6 +1,8 @@
 package Screens;
 
 import Connection.Client;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -39,9 +41,10 @@ public class GameScreen extends ScreenAdapter {
         batch.draw(background, 0,0,backgroundWitdh,backgroundHeight);
         batch.end();
 
-        if(Client.socket.connected()){
+
+        if(Client.socket.connected() && Gdx.input.isKeyJustPressed(Input.Keys.ENTER)){
             try {
-                Client.emitCoordinate(1,1,1);
+                Client.emitCoordinate();
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
