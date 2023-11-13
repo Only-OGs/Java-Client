@@ -5,26 +5,29 @@ import Connection.Client;
 import Screens.GameScreen;
 import Screens.StartScreen;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 
 public class OGRacerGame extends Game {
+	private static OGRacerGame instance;
+
 
 	public boolean isRunning = false;
-	private GameScreen gameScreen;
+
+
+	private OGRacerGame(){
+
+	}
+
+	public static OGRacerGame getInstance() {
+		if (instance == null) {
+			instance = new OGRacerGame();
+		}
+		return instance;
+	}
 	@Override
 	public void create () {
-		Client.connect();
-		gameScreen = new GameScreen();
-		setScreen(gameScreen);
-		isRunning = true;
-
+		setup();
 	}
 
-	@Override
-	public void dispose() {
-		getScreen().dispose();
-	}
 
 	@Override
 	public void render() {
@@ -35,7 +38,7 @@ public class OGRacerGame extends Game {
 
 	@Override
 	public void resize(int width, int height) {
-		gameScreen.resize(width,height);
+		super.resize(width, height);
 	}
 
 	public void handleInput() {
@@ -44,6 +47,11 @@ public class OGRacerGame extends Game {
 		} else if(getScreen() instanceof StartScreen sc) {
             sc.checkInput(this);
 		}
+	}
+
+	public void setup(){
+		setScreen(new StartScreen());
+		isRunning = true;
 	}
 
 }

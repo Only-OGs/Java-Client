@@ -1,6 +1,5 @@
 package Screens;
 
-import Connection.Client;
 import OGRacerGame.OGRacerGame;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import org.json.JSONException;
 
 public class GameScreen extends ScreenAdapter implements IInputHandler{
 
@@ -35,21 +33,13 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     }
 
 
+
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         batch.begin();
         batch.draw(background, 0,0,backgroundWitdh,backgroundHeight);
         batch.end();
-
-
-        if(Client.socket.connected() && Gdx.input.isKeyJustPressed(Input.Keys.ENTER)){
-            try {
-                Client.emitCoordinate();
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        }
 
     }
 
@@ -61,6 +51,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     public void dispose () {
         batch.dispose();
         background.dispose();
+
     }
 
     /** [GameScreen] Fragt ab ob eine Taste gedruckt wurde/ist */
