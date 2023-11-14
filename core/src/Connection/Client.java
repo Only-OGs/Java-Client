@@ -79,4 +79,30 @@ public class Client {
             socket.emit("message", obj);
         }
     }
+
+    public static void sendRegisterData(String user, String password) throws JSONException {
+
+        if (socket.connected()) {
+
+            JSONObject obj = new JSONObject();
+            obj.put("user", user);
+            obj.put("password", password);
+            socket.emit("register", obj);
+        }
+
+    }
+
+    public static void sendLoginData(String user, String password) throws JSONException {
+
+        if (socket.connected()) {
+
+            JSONObject obj = new JSONObject();
+            obj.put("user", user);
+            obj.put("password", password);
+            socket.emit("login", obj);
+        }
+
+    }
+
+
 }

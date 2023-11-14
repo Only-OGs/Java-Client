@@ -26,6 +26,18 @@ com.badlogic.gdx.graphics.Color: {
 		b: 1
 		a: 1
 	}
+	color1: {
+		r: 0
+		g: 1
+		b: 0
+		a: 1
+	}
+	color2: {
+		r: 1
+		g: 0
+		b: 0
+		a: 1
+	}
 	pressed: {
 		r: 0.985234
 		g: 0.5
@@ -313,13 +325,22 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
 		font: font
-		fontColor: color
+		fontColor: white
 	}
 	title: {
 		font: title
 		fontColor: color
 	}
-}
+	status1: {
+		font: font
+		fontColor: color1
+	},
+	status2: {
+		font: font
+		fontColor: color2
+	}
+
+},
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
 		font: font
