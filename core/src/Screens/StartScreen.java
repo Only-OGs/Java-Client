@@ -341,7 +341,7 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
                 user = userField.getText();
                 password = passwordField.getText();
 
-                if (user.length() > 3 && password.length() > 5) {
+                if (user.length() > 3 && password.length() > 5 && Client.connect) {
 
                     System.out.println("Benutzer: \n" + user);
                     System.out.println("Passwort: \n" + password);
@@ -355,7 +355,6 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-
 
                 }
             }
