@@ -341,7 +341,7 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
             }
         });
 
-    }git
+    }
 
     private void loginMenu() {
 
