@@ -19,19 +19,29 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.json.JSONException;
 
+import java.util.Objects;
+
 public class StartScreen extends ScreenAdapter implements IInputHandler {
 
-
+    private boolean loginSucess = false;
     private boolean connectionCheck = false;
+    private boolean updateStatusMessage = false;
     private Viewport viewport;
-    private Stage stage;
+    private static Stage stage;
     private SpriteBatch batch;
     private Texture backgroundTexture;
     private Slider slider;
     private TextButton buttonLeft, buttonMiddle, buttonRight;
-    private Label title, userLabel, passwordLabel, status, statusTitle, idLabel;
-    private String user, password;
-    private Skin buttonSkin;
+    private Label title;
+    private Label userLabel;
+    private Label passwordLabel;
+    private Label status;
+    private Label statusTitle;
+    private Label idLabel;
+    private Label serverMessage;
+    private static String user;
+    private String password;
+    private static Skin buttonSkin;
     private Sound clickSound;
     static Music music;
     TextField userField, passwordField;
@@ -72,15 +82,12 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
         statusTitle.setSize(190, 40);
         statusTitle.setPosition(stage.getWidth() / 30f, stage.getHeight() - 65);
 
-
-
         status = new Label("OFFLINE", buttonSkin,"status2");
         status.setSize(190, 40);
         status.setPosition(stage.getWidth() /30f, stage.getHeight() - 85);
 
         stage.addActor(statusTitle);
         stage.addActor(status);
-
     }
 
     private void addLabel() {
@@ -91,17 +98,27 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
         stage.addActor(title);
     }
 
-    private void addIdLabel(){
+    private void addServerMessage(){
+        if(serverMessage != null) serverMessage.remove();
+        serverMessage = new Label(Client.statusMessage,buttonSkin);
+        serverMessage.setSize(190, 40);
+        serverMessage.setPosition(stage.getWidth() /30f, 10);
+
+        stage.addActor(serverMessage);
+    }
+
+    public  void addIdLabel(){
         idLabel = new Label("ID: "+ user, buttonSkin);
         idLabel.setSize(190, 40);
         idLabel.setPosition(stage.getWidth() /1.3f, stage.getHeight() - 65);
         stage.addActor(idLabel);
 
     }
+
     private void addSlider() {
         slider = new Slider(0.0f, 0.7f, 0.01f, false, buttonSkin);
         slider.setValue(music.getVolume());
-        slider.setPosition(10, 20);
+        slider.setPosition(stage.getWidth() /1.3f, 20);
         slider.setSize(200, 10);
 
         slider.addListener(new ChangeListener() {
@@ -227,7 +244,6 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
 
         connectionCheck = true;
 
-
         title.setText("Mehrspieler");
         stage.addActor(buttonLeft);
         stage.addActor(buttonRight);
@@ -266,7 +282,6 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
                 buttonMiddle.remove();
                 statusTitle.remove();
                 status.remove();
-                if(idLabel != null) idLabel.remove();
                 connectionCheck = false;
                 addButton("Einzelspieler", "Einstellungen", "Mehrspieler");
                 mainMenu();
@@ -290,22 +305,20 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
                 user = userField.getText();
                 password = passwordField.getText();
 
-
-                if (user.length() > 3 && password.length() > 5) {
-
-                    System.out.println("Benutzer: \n" + user);
-                    System.out.println("Passwort: \n" + password);
+                if (user.length() > 3 && password.length() > 5 && Client.connect) {
                     userField.setText("");
                     passwordField.setText("");
+                    Client.status = "";
 
                     try {
                         Client.sendRegisterData(user, password);
+
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-
-
                 }
+                updateStatusMessage = true;
+                addServerMessage();
             }
         });
 
@@ -319,12 +332,16 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
                 passwordField.remove();
                 userLabel.remove();
                 passwordLabel.remove();
+                if(serverMessage != null) serverMessage.remove();
+                updateStatusMessage = false;
+                Client.status = "";
+
                 addButton("Login", "Zurueck", "Registrieren");
                 multiplayerMenu();
             }
         });
 
-    }
+    }git
 
     private void loginMenu() {
 
@@ -343,19 +360,18 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
 
                 if (user.length() > 3 && password.length() > 5 && Client.connect) {
 
-                    System.out.println("Benutzer: \n" + user);
-                    System.out.println("Passwort: \n" + password);
                     userField.setText("");
                     passwordField.setText("");
+                    Client.status = "";
 
-                    addIdLabel();
 
                     try {
                         Client.sendLoginData(user, password);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-
+                    updateStatusMessage = true;
+                    addServerMessage();
                 }
             }
         });
@@ -370,6 +386,11 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
                 passwordField.remove();
                 userLabel.remove();
                 passwordLabel.remove();
+                if(serverMessage != null) serverMessage.remove();
+                if(idLabel != null) idLabel.remove();
+                updateStatusMessage = false;
+
+                Client.status = "";
 
                 addButton("Login", "Zurueck", "Registrieren");
                 multiplayerMenu();
@@ -377,6 +398,51 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
         });
     }
 
+    private void lobbyMenu(){
+        title.setText("Lobby");
+        buttonLeft.remove();
+        buttonMiddle.remove();
+        userField.remove();
+        passwordField.remove();
+        userLabel.remove();
+        passwordLabel.remove();
+        addButton("Bereit", "Abmelden", "Bereit");
+        stage.addActor(buttonLeft);
+        stage.addActor(buttonRight);
+        stage.addActor(buttonMiddle);
+
+        buttonLeft.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clickSound.play(0.2f);
+
+            }
+        });
+        buttonMiddle.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clickSound.play(0.2f);
+                buttonLeft.remove();
+                buttonMiddle.remove();
+                buttonRight.remove();
+                idLabel.remove();
+                serverMessage.remove();
+                updateStatusMessage = false;
+                loginSucess = false;
+                Client.status = "";
+                addButton("Anmelden", "Zurueck", "Registrieren");
+                multiplayerMenu();
+            }
+        });
+
+        buttonRight.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clickSound.play(0.2f);
+            }
+        });
+
+    }
     /**
      * [StartScreen] Fragt ab ob eine Taste gedruckt wurde/ist
      */
@@ -409,6 +475,20 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
             stage.addActor(status);
         }
 
+        if(updateStatusMessage && serverMessage != null){
+            addServerMessage();
+        }
+
+        // Wenn anmleden erfolgreich war geht es hier rein
+        if(!loginSucess){
+            if(Objects.equals(Client.status, "login_success")){
+                addIdLabel();
+                loginSucess = true;
+                Client.status = "";
+                lobbyMenu();
+            }
+        }
+
     }
 
     @Override
@@ -417,6 +497,5 @@ public class StartScreen extends ScreenAdapter implements IInputHandler {
         stage.dispose();
         music.dispose();
         clickSound.dispose();
-
     }
 }

@@ -1,5 +1,6 @@
 package Connection;
 
+import Screens.StartScreen;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -8,12 +9,14 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 public class Client {
 
     public static Socket socket;
-
+    public static String status;
+    public static String statusMessage;
 
     public static boolean connect = false;
 
@@ -32,7 +35,6 @@ public class Client {
             throw new RuntimeException(e);
         }
 
-
         // Überprüft ob wir Verbunden sind
         socket.on(Socket.EVENT_CONNECT, args -> {
             connect = true;
@@ -49,8 +51,10 @@ public class Client {
         socket.on("response", args -> {
             JSONObject obj = (JSONObject) args[0];
             try {
-                System.out.println(obj.get("message"));
+               status = (String) obj.get("status");
+               statusMessage = (String) obj.get("message");
 
+                System.out.println(status);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -59,10 +63,8 @@ public class Client {
 
         socket.on("connection_success", args -> System.out.println(Arrays.toString(args)));
 
-
         // Verbindung herstellen
         socket.connect();
-
     }
 
     /**
