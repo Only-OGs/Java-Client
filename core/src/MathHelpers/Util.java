@@ -92,9 +92,9 @@ public class Util {
         p.getCamera().setY(((p.getWorld() != null) ? p.getWorld().getY() : 0) - cameraY);
         p.getCamera().setZ(((p.getWorld() != null) ? p.getWorld().getZ() : 0) - cameraZ);
         p.getScreen().setScale(cameraDepth / p.getCamera().getZ());
-        p.getScreen().setX((int) Math.round(((double) width / 2) + (p.getScreen().getScale() * p.getCamera().getX() * width / 2)));
-        p.getScreen().setY((int) Math.round(((double) height / 2) - (p.getScreen().getScale() * p.getCamera().getY() * height / 2)));
-        p.getScreen().setW((int) Math.round((p.getScreen().getScale() * roadWidth * width / 2)));
+        p.getScreen().setX((int) Math.round(((double) width / 2) + (p.getScreen().getScale() * p.getCamera().getX() * (width / 2))));
+        p.getScreen().setY((int) Math.round(((double) height / 2) - (p.getScreen().getScale() * p.getCamera().getY() * (height / 2))));
+        p.getScreen().setW((int) Math.round((p.getScreen().getScale() * roadWidth * (width / 2))));
     }
 
     public boolean overlap(int x1, int w1, int x2, int w2, double percent) {

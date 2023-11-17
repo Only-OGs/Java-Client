@@ -1,9 +1,9 @@
 package OGRacerGame;
 
 
-import Connection.Client;
-import Screens.GameScreen;
 import Screens.StartScreen;
+import Screens.GameScreen;
+import Screens.StartScreenFirst;
 import com.badlogic.gdx.Game;
 
 public class OGRacerGame extends Game {
@@ -44,13 +44,13 @@ public class OGRacerGame extends Game {
 	public void handleInput() {
 		if(getScreen() instanceof GameScreen gs) {
 			gs.checkInput(this);
-		} else if(getScreen() instanceof StartScreen sc) {
+		} else if(getScreen() instanceof StartScreenFirst sc) {
             sc.checkInput(this);
 		}
 	}
 
 	public void setup(){
-		setScreen(new StartScreen());
+		new StartScreen();
 		isRunning = true;
 	}
 
