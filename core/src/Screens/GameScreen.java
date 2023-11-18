@@ -40,7 +40,7 @@ public class GameScreen extends ScreenAdapter {
     private int FOV = 100;
     private int cameraHeight = 500;
     private float cameraDepth;
-    private int drawDistance = 200;
+    private int drawDistance = 50;
     private float playerX = 0;
     private float playerZ;
     private double cameraPosition = 0;
@@ -63,7 +63,12 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         renderSegments(renderer);
-        cameraPosition+=100;
+        double result = cameraPosition + 100;
+        while (result >= trackLenght)
+            result -= trackLenght;
+        while (result < 0)
+            result += trackLenght;
+        cameraPosition=result;
 
         if(Client.socket.connected()){
             try {
@@ -103,27 +108,26 @@ public class GameScreen extends ScreenAdapter {
             Util.project(segment.getP1(),(int)(playerX*roadWidth),cameraHeight,(int)cameraPosition-segmentLoopedValue,cameraDepth,Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),roadWidth);
             Util.project(segment.getP2(),(int)(playerX*roadWidth),cameraHeight,(int)cameraPosition-segmentLoopedValue,cameraDepth,Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),roadWidth);
 
-            if((segment.getP1().getCamera().getZ()<=cameraDepth)||(segment.getP2().getScreen().getY()>=maxy)){
-                System.out.println(segment.getIndex());
+            System.out.println(segment.getIndex());
+            if((segment.getP1().getCamera().getZ() <= cameraDepth) || (segment.getP2().getScreen().getY()>=maxy)){
                 continue;
-            }else{
-                System.out.println("Drawn");
-                RenderSegment.render(r,Gdx.graphics.getWidth(),lanes,
-                        segment.getP1().getScreen().getX(),
-                        segment.getP1().getScreen().getY(),
-                        segment.getP1().getScreen().getW(),
-                        segment.getP2().getScreen().getX(),
-                        segment.getP2().getScreen().getY(),
-                        segment.getP2().getScreen().getW(),
-                        0,
-                        segment.getColor()
-                        );
             }
+            System.out.println("Drawn");
+            RenderSegment.render(r,Gdx.graphics.getWidth(),lanes,
+                    segment.getP1().getScreen().getX(),
+                    segment.getP1().getScreen().getY(),
+                    segment.getP1().getScreen().getW(),
+                    segment.getP2().getScreen().getX(),
+                    segment.getP2().getScreen().getY(),
+                    segment.getP2().getScreen().getW(),
+                    0,
+                    segment.getColor()
+            );
             maxy=segment.getP2().getScreen().getY();
         }
     }
 
     private Segment findSegment(double p){
-        return segments[(int) ((Math.floor(p/segmentLenght))%segments.length)];
+        return segments[(int) (Math.floor(p/segmentLenght) % segments.length)];
     }
 }

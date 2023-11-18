@@ -87,10 +87,10 @@ public class Util {
         return result;
     }
 
-    public static void project(P p, int cameraX, int cameraY, int cameraZ, double cameraDepth, int width, int height, double roadWidth) {
+    public static void project(P p, int cameraX, int cameraY, float cameraZ, double cameraDepth, int width, int height, double roadWidth) {
         p.getCamera().setX(((p.getWorld() != null) ? p.getWorld().getX() : 0) - cameraX);
         p.getCamera().setY(((p.getWorld() != null) ? p.getWorld().getY() : 0) - cameraY);
-        p.getCamera().setZ(((p.getWorld() != null) ? p.getWorld().getZ() : 0) - cameraZ);
+        p.getCamera().setZ((int) (((p.getWorld() != null) ? p.getWorld().getZ() : 0) - cameraZ));
         p.getScreen().setScale(cameraDepth / p.getCamera().getZ());
         p.getScreen().setX((int) Math.round(((double) width / 2) + (p.getScreen().getScale() * p.getCamera().getX() * width / 2)));
         p.getScreen().setY((int) Math.round(((double) height / 2) - (p.getScreen().getScale() * p.getCamera().getY() * height / 2)));
