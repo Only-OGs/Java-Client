@@ -87,7 +87,7 @@ public class Util {
         return result;
     }
 
-    public void project(P p,int cameraX, int cameraY, int cameraZ, double cameraDepth, int width, int height, double roadWidth) {
+    public static void project(P p, int cameraX, int cameraY, int cameraZ, double cameraDepth, int width, int height, double roadWidth) {
         p.getCamera().setX(((p.getWorld() != null) ? p.getWorld().getX() : 0) - cameraX);
         p.getCamera().setY(((p.getWorld() != null) ? p.getWorld().getY() : 0) - cameraY);
         p.getCamera().setZ(((p.getWorld() != null) ? p.getWorld().getZ() : 0) - cameraZ);
@@ -97,7 +97,7 @@ public class Util {
         p.getScreen().setW((int) Math.round((p.getScreen().getScale() * roadWidth * width / 2)));
     }
 
-    public boolean overlap(int x1, int w1, int x2, int w2, double percent) {
+    public static boolean overlap(int x1, int w1, int x2, int w2, double percent) {
         double half;
         if (percent > 1) {
             half = percent / 2;
