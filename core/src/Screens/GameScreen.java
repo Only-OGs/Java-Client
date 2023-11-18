@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -16,6 +17,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     private static Camera camera;
     private static Viewport viewport;
+
+    private ShapeRenderer shapeRenderer;
 
     private SpriteBatch batch;
     private Texture background;
@@ -32,15 +35,15 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     }
 
-
-
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         batch.begin();
         batch.draw(background, 0,0,backgroundWitdh,backgroundHeight);
         batch.end();
-
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.polygon(new float[]{1f,2f,3f,2f});
+        shapeRenderer.end();
     }
 
     @Override

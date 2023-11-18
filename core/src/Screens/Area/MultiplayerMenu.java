@@ -77,8 +77,6 @@ public class MultiplayerMenu extends MenuArea {
         });
 
     }
-
-
     private void addStatusLabel() {
         statusTitle = new Label("Server Status", buttonSkin);
         statusTitle.setSize(190, 40);
