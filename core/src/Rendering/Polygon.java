@@ -14,15 +14,15 @@ public class Polygon {
     static TextureRegion textureRegion;
 
     public static void renderPolygon(PolygonSpriteBatch polyBatch,float[]cords, Color c){
-        Pixmap pixrumble = new Pixmap(1,1, Pixmap.Format.RGBA8888);
+        /*Pixmap pixrumble = new Pixmap(1,1, Pixmap.Format.RGBA8888);
         pixrumble.setColor(c);
         pixrumble.fill();
 
         texture = new Texture(pixrumble);
-        textureRegion = new TextureRegion(texture);
+        textureRegion = new TextureRegion(texture);*/
 
         short[]shawty= new short[]{0,1,2,0,2,3};
-        PolygonRegion polyReg = new PolygonRegion(textureRegion,cords,shawty);
+        PolygonRegion polyReg = new PolygonRegion(TextureRegionBuilder.getTexture(c),cords,shawty);
 
         poly= new PolygonSprite(polyReg);
 

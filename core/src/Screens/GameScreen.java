@@ -3,6 +3,7 @@ package Screens;
 import Connection.Client;
 import MathHelpers.Util;
 import Rendering.RenderSegment;
+import Rendering.TextureRegionBuilder;
 import Road.RoadBuilder;
 import Road.Segment;
 import com.badlogic.gdx.Gdx;
@@ -22,6 +23,8 @@ public class GameScreen extends ScreenAdapter {
     private static Camera camera;
     private static Viewport viewport;
 
+    public static TextureRegionBuilder builder = new TextureRegionBuilder();
+
     private SpriteBatch batch;
     private Texture background;
     ShapeRenderer renderer;
@@ -35,12 +38,12 @@ public class GameScreen extends ScreenAdapter {
     private int roadWidth = 2000;
     private int segmentLenght = 200;
     private int lanes = 3;
-    private int segmentsCount=500;
+    private int segmentsCount=200;
     private int trackLenght;
     private int FOV = 100;
     private int cameraHeight = 500;
     private float cameraDepth;
-    private int drawDistance = 50;
+    private int drawDistance = 100;
     private float playerX = 0;
     private float playerZ;
     private double cameraPosition = 0;
