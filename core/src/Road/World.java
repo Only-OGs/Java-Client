@@ -5,8 +5,8 @@ public class World {
     private int y;
     private int z;
 
-    public World(){
-
+    public World(int z){
+        this.z=z;
     }
 
     public int getX() {

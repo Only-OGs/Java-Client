@@ -1,8 +1,10 @@
 package Road;
 
 
+import Rendering.ColorThemes;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+
 
 public class Segment {
 
@@ -11,17 +13,14 @@ public class Segment {
     private P p2;
     private boolean looped;
     private int fog;
-    private Color color;
+    private Color[] color;
     private float clip;
 
-    public Segment(int index, P p1, P p2, boolean looped, float clip, int fog, Color color) {
+    public Segment(int index, P p1, P p2, Color[] c ) {
         this.index = index;
         this.p1 = p1;
         this.p2 = p2;
-        this.looped = looped;
-        this.clip = clip;
-        this.fog = fog;
-        this.color = color;
+        this.color=c;
     }
 
     public int getIndex() {
@@ -64,11 +63,11 @@ public class Segment {
         this.fog = fog;
     }
 
-    public Color getColor() {
+    public Color[] getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(Color[] color) {
         this.color = color;
     }
 
