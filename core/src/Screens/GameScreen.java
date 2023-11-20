@@ -130,8 +130,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         }
     }
 
-    private Segment findSegment(double p){
-        return segments[(int) (Math.floor(p/segmentLenght) % segments.length)];
+    private Segment findSegment(double p) {
+        return segments[(int) (Math.floor(p / segmentLenght) % segments.length)];
+    }
 
     /** [GameScreen] Fragt ab ob eine Taste gedruckt wurde/ist */
     @Override
