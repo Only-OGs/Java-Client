@@ -1,12 +1,11 @@
 package Screens;
 
 import OGRacerGame.OGRacerGame;
+import Screens.Area.MainMenu;
 
-public class StartScreen implements IInputHandler {
+public class StartScreen {
 
-    /** [StartScreen] Fragt ab ob eine Taste gedruckt wurde/ist */
-    @Override
-    public void checkInput(OGRacerGame game) {
-        //Tastenabfragen für den StartScreen
+    public StartScreen() {
+        OGRacerGame.getInstance().setScreen(new MainMenu());
     }
 }

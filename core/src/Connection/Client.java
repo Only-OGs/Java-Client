@@ -2,16 +2,20 @@ package Connection;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 
 public class Client {
 
-    public static Socket socket = null;
+    public static Socket socket;
+    public static String status;
+    public static String statusMessage;
+
+    public static boolean connect = false;
 
     public Client() {
     }
@@ -23,49 +27,41 @@ public class Client {
     public static void connect() {
 
         try {
-
-            // Erstellt eine Socket.IO-Verbindung
             socket = IO.socket("http://localhost:8080");
-
-            // Überprüft ob wir Verbunden sind
-            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    System.out.println("Verbunden mit dem Server\n");
-                }
-            });
-
-            // Überprüft ob wir nicht mehr verbunden sind
-            socket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    System.out.println("Verbindung zum Server verloren\n");
-                }
-            });
-
-            // Bekommt man Nachrichten vom Server übermittelt
-            socket.on("response", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    JSONObject obj = (JSONObject) args[0];
-                    try {
-                        System.out.println(obj.get("message"));
-
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }
-            });
-
-
-            // Verbindung herstellen
-            socket.connect();
-
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
+        // Überprüft ob wir Verbunden sind
+        socket.on(Socket.EVENT_CONNECT, args -> {
+            connect = true;
+            System.out.println("Verbindung zum Server");
+        });
+
+        // Überprüft ob wir nicht mehr verbunden sind
+        socket.on(Socket.EVENT_DISCONNECT, args ->{
+            connect = false;
+            System.out.println("Verbindung zum Server verloren");
+        });
+
+        // Bekommt man Nachrichten vom Server übermittelt
+        socket.on("response", args -> {
+            JSONObject obj = (JSONObject) args[0];
+            try {
+               status = (String) obj.get("status");
+               statusMessage = (String) obj.get("message");
+
+                System.out.println(status);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+
+        });
+
+        socket.on("connection_success", args -> System.out.println(Arrays.toString(args)));
+
+        // Verbindung herstellen
+        socket.connect();
     }
 
     /**
@@ -81,5 +77,29 @@ public class Client {
             obj.put("message2", "Pascal");
             socket.emit("message", obj);
         }
+    }
+
+    public static void sendRegisterData(String user, String password) throws JSONException {
+
+        if (socket.connected()) {
+
+            JSONObject obj = new JSONObject();
+            obj.put("user", user);
+            obj.put("password", password);
+            socket.emit("register", obj);
+        }
+
+    }
+
+    public static void sendLoginData(String user, String password) throws JSONException {
+
+        if (socket.connected()) {
+
+            JSONObject obj = new JSONObject();
+            obj.put("user", user);
+            obj.put("password", password);
+            socket.emit("login", obj);
+        }
+
     }
 }
