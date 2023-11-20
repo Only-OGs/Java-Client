@@ -50,7 +50,7 @@ public class Util {
         return v + (accel * dt);
     }
 
-    public static double percentRemaining(int n, int total) {
+    public static double percentRemaining(float n, float total) {
         return (double) (n % total) / total;
     }
 
@@ -62,16 +62,16 @@ public class Util {
         return (int) Math.round(interpolate(min, max, Math.random()));
     }
 
-    public static double easeIn(int a, int b, double percent) {
-        return a + (b - a) * Math.pow(percent, 2);
+    public static float easeIn(float a, float b, double percent) {
+        return (float)(a + (b - a) * Math.pow(percent, 2));
     }
 
-    public static double easeOut(int a, int b, double percent) {
-        return a + (b - a) * (1 - Math.pow(1 - percent, 2));
+    public static float easeOut(float a, float b, double percent) {
+        return (float) (a + (b - a) * (1 - Math.pow(1 - percent, 2)));
     }
 
-    public static double easeInOut(int a, int b, double percent) {
-        return a + (b - a) * ((-Math.cos(percent * Math.PI) / 2) + 0.5);
+    public static float easeInOut(float a, float b, double percent) {
+        return (float) (a + (b - a) * ((-Math.cos(percent * Math.PI) / 2) + 0.5));
     }
 
     public static double exponentialFog(double distance, double density) {
