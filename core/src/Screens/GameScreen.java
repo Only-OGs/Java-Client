@@ -3,7 +3,6 @@ package Screens;
 import Connection.Client;
 import MathHelpers.Util;
 import Rendering.RenderSegment;
-import Rendering.TextureRegionBuilder;
 import Road.RoadBuilder;
 import Road.Segment;
 import com.badlogic.gdx.Gdx;
@@ -22,9 +21,6 @@ public class GameScreen extends ScreenAdapter {
 
     private static Camera camera;
     private static Viewport viewport;
-
-    public static TextureRegionBuilder builder = new TextureRegionBuilder();
-
     private SpriteBatch batch;
     private Texture background;
     ShapeRenderer renderer;

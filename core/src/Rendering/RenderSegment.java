@@ -34,23 +34,23 @@ public class RenderSegment {
         //Rendert die Straße und den Rand
         float[]cords1 = {x1-w1-r1,libgdxY1,x1-w1,libgdxY1,x2-w2,libgdxY2,x2-w2-r2,libgdxY2};
 
-        float[]cords2 = new float[]{x1+w1+r1,libgdxY1,x1+w1,libgdxY1,x2+w2,libgdxY2,x2+w2+r2,libgdxY2};
+        float[]cords2 = {x1+w1+r1,libgdxY1,x1+w1,libgdxY1,x2+w2,libgdxY2,x2+w2+r2,libgdxY2};
 
-        float[] cords3 = new float[]{x1-w1,libgdxY1,x1+w1,libgdxY1,x2+w2,libgdxY2,x2-w2,libgdxY2};
+        float[] cords3 = {x1-w1,libgdxY1,x1+w1,libgdxY1,x2+w2,libgdxY2,x2-w2,libgdxY2};
 
 
         //Rendert die Straße
         polyBatch.begin();
-        Polygon.renderPolygon(polyBatch,cords1,color[1]);
-        Polygon.renderPolygon(polyBatch,cords2,color[1]);
-        Polygon.renderPolygon(polyBatch,cords3,color[0]);
+        RenderHelpers.renderPolygon(shape,cords1,color[1]);
+        RenderHelpers.renderPolygon(shape,cords2,color[1]);
+        RenderHelpers.renderPolygon(shape,cords3,color[0]);
         if(true){
             float lanew1 = w1*2/lanes;
             float lanew2 = w2*2/lanes;
             float lanex1 = x1-w1+lanew1;
             float lanex2 = x2-w2+lanew2;
             for(int lane=1;lane<lanes;lane++){
-                Polygon.renderPolygon(polyBatch,new float[]{lanex1-l1/2,libgdxY1,lanex1+l1/2,libgdxY1,lanex2+l2/2,libgdxY2,lanex2-l2/2,libgdxY2},color[3]);
+                RenderHelpers.renderPolygon(shape,new float[]{lanex1-l1/2,libgdxY1,lanex1+l1/2,libgdxY1,lanex2+l2/2,libgdxY2,lanex2-l2/2,libgdxY2},color[3]);
                 lanex1+=lanew1;
                 lanex2+=lanew2;
             }
