@@ -2,17 +2,20 @@ package Road;
 
 public enum Curve {
     NONE(0),
-    EASY(2),
-    MEDIUM(4),
-    HARD(6);
+    EASYRIGHT(2),
+    MEDIUMRIGHT(4),
+    HARDRIGHT(6),
+    EASYLEFT(-2),
+    MEDIUMLEFT(-4),
+    HARDLeft(-6);
 
-    private final int value;
+    private final float value;
 
-    Curve(int i) {
+    Curve(float i) {
         value = i;
     }
 
-    public int getValue() {
+    public float getValue() {
         return value;
     }
 }

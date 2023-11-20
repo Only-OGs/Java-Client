@@ -36,14 +36,14 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private int roadWidth = 2000;
     private int segmentLenght = 200;
     private int lanes = 3;
-    private int segmentsCount=200;
+    private int segmentsCount=600;
     private int trackLenght;
     private int FOV = 100;
     private int cameraHeight = 500;
-    private float cameraDepth;
+    private float cameraDepth  = (float) (1/Math.tan((FOV/2)*Math.PI/180));
     private int drawDistance = 100;
     private float playerX = 0;
-    private float playerZ;
+    private float playerZ = cameraHeight*cameraDepth;
     private double cameraPosition = 0;
 
 
@@ -55,8 +55,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         renderer = new ShapeRenderer();
         segments = RoadBuilder.resetRoad(segmentsCount,segmentLenght);
         trackLenght = segments.length*segmentLenght;
-        cameraDepth = (float) (1/Math.tan((FOV/2)*Math.PI/180));
-
     }
 
 
@@ -94,10 +92,17 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     public void renderSegments(ShapeRenderer r){
         Segment baseSegment = findSegment(cameraPosition);
+        Segment playerSegment = findSegment(cameraPosition+playerZ);
         int maxy = Gdx.graphics.getHeight();
+        float basePercent = (float) Util.percentRemaining((float) cameraPosition,segmentLenght);
+        float playerPercent = (float) Util.percentRemaining((float) cameraPosition+playerZ,segmentLenght);
+        int playerY = (int) Util.interpolate(playerSegment.getP1().getWorld().getY(),playerSegment.getP2().getWorld().getY(),playerPercent);
+        float x = 0;   //Akkumulierter seitlicher versatz der Segmente
+        float dx = 0- (baseSegment.getCurve()*basePercent);  // hilft die Versätzung zu speichern und berechnen
 
         Segment segment;
         int segmentLoopedValue;
+
         for (int i=0;i<drawDistance;i++){
             segment = segments[(baseSegment.getIndex()+i)%segments.length];
             segment.setLooped(segment.getIndex()<baseSegment.getIndex());
@@ -108,14 +113,15 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
                 segmentLoopedValue=0;
             }
 
-            Util.project(segment.getP1(),(int)(playerX*roadWidth),cameraHeight,(int)cameraPosition-segmentLoopedValue,cameraDepth,Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),roadWidth);
-            Util.project(segment.getP2(),(int)(playerX*roadWidth),cameraHeight,(int)cameraPosition-segmentLoopedValue,cameraDepth,Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),roadWidth);
+            Util.project(segment.getP1(), (int) (((int)(playerX*roadWidth))-x),playerY+cameraHeight,(int)cameraPosition-segmentLoopedValue,cameraDepth,Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),roadWidth);
+            Util.project(segment.getP2(), (int) (((int)(playerX*roadWidth))-x-dx),playerY+cameraHeight,(int)cameraPosition-segmentLoopedValue,cameraDepth,Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),roadWidth);
 
-            System.out.println(segment.getIndex());
+            x += dx;   //nach jeden segment steigt oder singt die Versätzung der Segmente abhängig von der Stärke der Kurve
+            dx += segment.getCurve();
+
             if((segment.getP1().getCamera().getZ() <= cameraDepth) || (segment.getP2().getScreen().getY()>=maxy)){
                 continue;
             }
-            System.out.println("Drawn");
             RenderSegment.render(r,Gdx.graphics.getWidth(),lanes,
                     segment.getP1().getScreen().getX(),
                     segment.getP1().getScreen().getY(),

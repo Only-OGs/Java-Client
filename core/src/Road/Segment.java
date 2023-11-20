@@ -14,13 +14,14 @@ public class Segment {
     private boolean looped;
     private int fog;
     private Color[] color;
-    private float clip;
+    private float curve;
 
-    public Segment(int index, P p1, P p2, Color[] c ) {
+    public Segment(int index, P p1, P p2, Color[] c, float Curve ) {
         this.index = index;
         this.p1 = p1;
         this.p2 = p2;
         this.color=c;
+        this.curve=curve;
     }
 
     public int getIndex() {
@@ -71,12 +72,12 @@ public class Segment {
         this.color = color;
     }
 
-    public float getClip() {
-        return clip;
+    public float getCurve() {
+        return curve;
     }
 
-    public void setClip(float clip) {
-        this.clip = clip;
+    public void setCurve(float curve) {
+        this.curve = curve;
     }
 }
 
