@@ -39,9 +39,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private int segmentsCount=600;
     private int trackLenght;
     private int FOV = 100;
-    private int cameraHeight = 500;
+    private int cameraHeight = 1000;
     private float cameraDepth  = (float) (1/Math.tan((FOV/2)*Math.PI/180));
-    private int drawDistance = 100;
+    private int drawDistance = 200;
     private float playerX = 0;
     private float playerZ = cameraHeight*cameraDepth;
     private double cameraPosition = 0;
