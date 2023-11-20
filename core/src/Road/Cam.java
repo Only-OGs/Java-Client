@@ -6,10 +6,7 @@ public class Cam {
     private int z;
 
 
-    public Cam(int x, int y, int z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public Cam() {
     }
 
     public float getX() {
