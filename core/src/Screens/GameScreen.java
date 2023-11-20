@@ -1,6 +1,6 @@
 package Screens;
 
-import Connection.Client;
+import OGRacerGame.OGRacerGame;
 import MathHelpers.Util;
 import Rendering.RenderSegment;
 import Road.RoadBuilder;
@@ -17,7 +17,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import org.json.JSONException;
 
 public class GameScreen extends ScreenAdapter implements IInputHandler{
 
@@ -25,13 +24,11 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private static Viewport viewport;
     private SpriteBatch batch;
     private Texture background;
-    ShapeRenderer renderer;
+    private ShapeRenderer renderer;
     private int backgroundWitdh = 500;
-
     private int backgroundHeight = 500;
 
     //TEST Variables
-
     private Segment[] segments;
     private int roadWidth = 2000;
     private int segmentLenght = 200;
@@ -46,7 +43,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private float playerZ = cameraHeight*cameraDepth;
     private double cameraPosition = 0;
 
-
     public GameScreen() {
         camera = new OrthographicCamera();
         viewport = new ScreenViewport();
@@ -56,7 +52,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         segments = RoadBuilder.resetRoad(segmentsCount,segmentLenght);
         trackLenght = segments.length*segmentLenght;
     }
-
 
     @Override
     public void render(float delta) {
@@ -68,16 +63,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         while (result < 0)
             result += trackLenght;
         cameraPosition=result;
-
-
-        if(Client.socket.connected() && Gdx.input.isKeyJustPressed(Input.Keys.ENTER)){
-            try {
-                Client.emitCoordinate();
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
     }
 
     @Override
@@ -88,6 +73,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     public void dispose () {
         batch.dispose();
         background.dispose();
+
     }
 
     public void renderSegments(ShapeRenderer r){
