@@ -1,6 +1,7 @@
 package Screens.Area;
 
 import OGRacerGame.OGRacerGame;
+import Screens.GameScreen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
@@ -24,7 +25,7 @@ public class MainMenu extends MenuArea {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 clickSound.play(0.2f);
-
+                OGRacerGame.getInstance().setScreen(new GameScreen());
             }
         });
 

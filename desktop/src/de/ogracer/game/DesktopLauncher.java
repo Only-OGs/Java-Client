@@ -14,6 +14,6 @@ public class DesktopLauncher {
 		config.setTitle("OG Racer");
 		config.setWindowedMode(1024,780);
 		config.setResizable(false);
-		new Lwjgl3Application(new OGRacerGame(), config);
+		new Lwjgl3Application(OGRacerGame.getInstance(), config);
 	}
 }
