@@ -26,6 +26,7 @@ public class MainMenu extends MenuArea {
             public void clicked(InputEvent event, float x, float y) {
                 clickSound.play(0.2f);
                 OGRacerGame.getInstance().setScreen(new GameScreen());
+                music.stop();
             }
         });
 
