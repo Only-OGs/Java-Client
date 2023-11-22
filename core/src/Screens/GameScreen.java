@@ -83,8 +83,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         float basePercent = (float) Util.percentRemaining((float) cameraPosition,segmentLenght);
         float playerPercent = (float) Util.percentRemaining((float) cameraPosition+playerZ,segmentLenght);
         int playerY = (int) Util.interpolate(playerSegment.getP1().getWorld().getY(),playerSegment.getP2().getWorld().getY(),playerPercent);
-        float x = 0;   //Akkumulierter seitlicher versatz der Segmente
-        float dx = 0- (baseSegment.getCurve()*basePercent);  // hilft die Versätzung zu speichern und berechnen
+        float x = 0;                                                                                                    //Akkumulierter seitlicher versatz der Segmente
+        float dx = 0f- (baseSegment.getCurve()*basePercent);                                                            // hilft die Versätzung zu speichern und berechnen
 
         Segment segment;
         int segmentLoopedValue;

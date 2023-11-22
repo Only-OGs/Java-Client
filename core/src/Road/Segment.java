@@ -16,7 +16,7 @@ public class Segment {
     private Color[] color;
     private float curve;
 
-    public Segment(int index, P p1, P p2, Color[] c, float Curve ) {
+    public Segment(int index, P p1, P p2, Color[] c, float curve ) {
         this.index = index;
         this.p1 = p1;
         this.p2 = p2;
