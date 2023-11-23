@@ -1,9 +1,9 @@
-package Screens.Area;
+package Screens.MenuArea;
 
 import Connection.Client;
 import OGRacerGame.OGRacerGame;
+import Screens.Constants;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.json.JSONException;
 
@@ -11,9 +11,8 @@ import java.util.Objects;
 
 public class LoginMenu extends MultiplayerMenu {
 
-
     public LoginMenu() {
-        title.setText("Anmelden");
+        Constants.title.setText("Anmelden");
         removeButton();
         addButton("Anmelden", "Zurueck", "");
         buttonListener();
@@ -23,18 +22,23 @@ public class LoginMenu extends MultiplayerMenu {
     @Override
     public void render(float delta) {
 
-
-
         if (updateStatusMessage) addServerMessage();
 
         if (!loginSuccess) {
             if (Objects.equals(Client.status, "login_success")) {
                 loginSuccess = true;
                 Client.status = "";
+                statusOnOff = false;
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(user));
+
             }
         }
         super.render(delta);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
     }
 
     @Override
@@ -42,7 +46,7 @@ public class LoginMenu extends MultiplayerMenu {
         buttonLeft.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play(0.2f);
+                Constants.clickButton.play(0.2f);
 
                 user = userField.getText();
                 password = passwordField.getText();
@@ -51,13 +55,13 @@ public class LoginMenu extends MultiplayerMenu {
 
                     userField.setText("");
                     passwordField.setText("");
-                    Client.statusMessage = "";
 
                     try {
                         Client.sendLoginData(user, password);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    Client.statusMessage = "";
                     updateStatusMessage = true;
                 }
             }
@@ -66,7 +70,7 @@ public class LoginMenu extends MultiplayerMenu {
         buttonMiddle.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play(0.2f);
+                Constants.clickButton.play(0.2f);
                 Client.statusMessage = "";
                 OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
 
@@ -76,7 +80,7 @@ public class LoginMenu extends MultiplayerMenu {
 
     @Override
     public void dispose() {
-        stage.dispose();
+        Constants.stage.dispose();
     }
 }
 

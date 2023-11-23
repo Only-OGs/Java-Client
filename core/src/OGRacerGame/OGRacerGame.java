@@ -1,9 +1,10 @@
 package OGRacerGame;
 
 
-import Screens.StartScreen;
+import Screens.LobbyScreen;
+import Screens.MenuArea.MainMenu;
 import Screens.GameScreen;
-import Screens.StartScreenFirst;
+import Screens.TestScreen;
 import com.badlogic.gdx.Game;
 
 public class OGRacerGame extends Game {
@@ -44,14 +45,11 @@ public class OGRacerGame extends Game {
 	public void handleInput() {
 		if(getScreen() instanceof GameScreen gs) {
 			gs.checkInput(this);
-		} else if(getScreen() instanceof StartScreenFirst sc) {
-            sc.checkInput(this);
 		}
 	}
 
 	public void setup(){
-		new StartScreen();
+		setScreen(new MainMenu());
 		isRunning = true;
 	}
-
 }

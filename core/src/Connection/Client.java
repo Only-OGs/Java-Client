@@ -50,11 +50,10 @@ public class Client {
             try {
                status = (String) obj.get("status");
                statusMessage = (String) obj.get("message");
-
-                System.out.println(status);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
+            System.out.println(statusMessage);
 
         });
 
@@ -101,5 +100,19 @@ public class Client {
             socket.emit("login", obj);
         }
 
+    }
+
+    public static void sendLogOut() throws JSONException {
+
+        if (socket.connected()) {
+            socket.emit("logout");
+        }
+    }
+
+    public static void sendCreateLobby() {
+
+        if (socket.connected()) {
+            socket.emit("createLobby");
+        }
     }
 }

@@ -11,7 +11,7 @@ Quantum Horizon UI can be used under the CC BY license.
 http://creativecommons.org/licenses/by/4.0/
 ```
 
-Features styles of most of **Scene2D** widgets. Futuristic GUI, which can be easily recolored by manipulating the `Color` values in the skin's `.json` file.
+Features styles of most of **Scene2D** widgets. Futuristic GUI, which can be easily recolored by manipulating the `Root.Color` values in the skin's `.json` file.
 
 ![Quantum Horizon](preview.png)
 
