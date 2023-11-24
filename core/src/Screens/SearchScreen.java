@@ -75,8 +75,7 @@ public class SearchScreen extends ScreenAdapter {
 
         if("joined".equals(Client.joinLobby)){
             OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));
-            Client.status = "";
-            System.out.println("joined");
+            Client.joinLobby = "";
         }
     }
 
