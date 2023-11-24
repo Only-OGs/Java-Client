@@ -1,7 +1,9 @@
 package Rendering;
 
+import MathHelpers.Util;
 import Road.Segment;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,27 +17,28 @@ public class CarRenderer {
     static Texture tUpR = new Texture("sprites/player_uphill_right.png");
 
 
-    public static void renderPlayerCar(SpriteBatch batch, Segment curr){
+    public static void renderPlayerCar(SpriteBatch batch, Segment curr,float resolution, int roadwidth,float speedPercent,float scale,int destX, int destY){
         batch.begin();
-        int width = Gdx.graphics.getWidth();
-        int height = Gdx.graphics.getWidth();
+        Texture t;
+        float bounce = (float) ((1.5+Math.random()*speedPercent*resolution)* Util.randomChoice(new int[]{1, -1}));
         if(curr.getP1().getWorld().getY()<curr.getP2().getWorld().getY()){
-            if(curr.getCurve()<0){
-                batch.draw(tUpL,width/2-(width/4)/2,50,width/4,height/5);
-            } else if (curr.getCurve()>0) {
-                batch.draw(tUpR,width/2-(width/4)/2,50,width/4,height/5);
+            if(Gdx.input.isKeyPressed(Input.Keys.A)){
+                t=tUpL;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D)){
+                t=tUpR;
             }else {
-                batch.draw(tUpS,width/2-(width/4)/2,50,width/4,height/5);
+                t=tUpS;
             }
         }else{
-            if(curr.getCurve()<0){
-                batch.draw(tL,width/2-(width/4)/2,50,width/4,height/5);
-            } else if (curr.getCurve()>0) {
-                batch.draw(tR,width/2-(width/4)/2,50,width/4,height/5);
+            if(Gdx.input.isKeyPressed(Input.Keys.A)){
+                t=tL;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                t=tR;
             }else {
-                batch.draw(tS,width/2-(width/4)/2,50,width/4,height/5);
+                t=tS;
             }
         }
+        SpritesRenderer.render(batch,resolution,roadwidth,t,scale,destX,destY+bounce,-0.5f,-1f,0);
         batch.end();
     }
 }

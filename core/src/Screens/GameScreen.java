@@ -44,10 +44,18 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private float playerX = 0;
     private float playerZ = cameraHeight*cameraDepth;
     private double cameraPosition = 0;
+    private float maxSpeed = segmentLenght/60;
+    private float accel = maxSpeed/5;
+    private float breaking = -maxSpeed;
+    private float decel = - accel;
+    private float offRoadDecel = -maxSpeed/2;
+    private float offRoadLimit = maxSpeed/4;
+    private int speed=0;
     private float sunOffset=0;
     private Music music;
     private float resoultion = Gdx.graphics.getHeight()/2;
     private double fogDensity = drawDistance/20;
+    private float resolution = Gdx.graphics.getHeight()/480;
 
     public GameScreen() {
         camera = new OrthographicCamera();
@@ -141,7 +149,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             renderedCounter++;
         }
         SunShade.sunShade(r,sunOffset,maxy,renderedCounter);
-        CarRenderer.renderPlayerCar(batch,playerSegment);
+        CarRenderer.renderPlayerCar(batch,playerSegment,resolution,roadWidth,speed/maxSpeed,cameraDepth/playerZ,Gdx.graphics.getWidth()/2,
+                (int) ((Gdx.graphics.getHeight()/2)-(cameraDepth/playerZ*Util.interpolate((int) playerSegment.getP1().getCamera().getY(), (int) playerSegment.getP2().getCamera().getY(),playerPercent))));
     }
 
     private Segment findSegment(double p) {
