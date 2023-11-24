@@ -121,7 +121,6 @@ public class Client {
 
             // Gebe die getrennten Teile aus
             for (String teil : playerIDS) {
-                System.out.println("Spieler: " +teil + "\n");
                 tempID.add(teil);
             }
             LobbyScreen.idList = tempID;
@@ -187,7 +186,7 @@ public class Client {
 
     public static void getLobby(){
         if (socket.connected()) {
-            socket.emit("get_Lobby");
+            socket.emit("get_lobby");
         }
     }
 }
