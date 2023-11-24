@@ -59,7 +59,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         trackLenght = segments.length*segmentLenght;
         music = Gdx.audio.newMusic(Gdx.files.internal("Music/Initial D-Deja Vu.mp3"));
         music.setLooping(true);
-        music.setVolume(0.01f);
+        music.setVolume(0.1f);
         music.play();
     }
 
