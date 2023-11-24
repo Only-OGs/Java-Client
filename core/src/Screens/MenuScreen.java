@@ -19,7 +19,9 @@ import java.util.Objects;
 public abstract class MenuScreen extends ScreenAdapter {
 
     protected SpriteBatch batch;
+
     protected Texture backgroundTexture;
+
     protected TextButton buttonLeft, buttonMiddle, buttonRight;
 
     public MenuScreen() {
@@ -68,7 +70,6 @@ public abstract class MenuScreen extends ScreenAdapter {
         Constants.buttonSkin.dispose();
         Constants.music.dispose();
         Constants.clickButton.dispose();
-
     }
 
     protected void addButton(String btn1, String btn2, String btn3) {
@@ -104,7 +105,5 @@ public abstract class MenuScreen extends ScreenAdapter {
         if (buttonRight != null) buttonRight.remove();
     }
 
-    protected void buttonListener() {
-
-    }
+    protected void buttonListener() {}
 }

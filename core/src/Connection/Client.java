@@ -23,7 +23,6 @@ public class Client {
 
     public static String player;
 
-
     public static boolean connect = false;
 
     public Client() {
@@ -64,14 +63,12 @@ public class Client {
                 throw new RuntimeException(e);
             }
 
-
         });
 
         // Wird eine Chat Nachricht
         socket.on("new_message", args -> {
             lastMessage = ((String) args[0]).split(";");
         });
-
 
 
         socket.on("player_joined", args -> {
@@ -102,46 +99,35 @@ public class Client {
 
 
     public static void sendRegisterData(String user, String password) throws JSONException {
-
         if (socket.connected()) {
-
             JSONObject obj = new JSONObject();
             obj.put("user", user);
             obj.put("password", password);
             socket.emit("register", obj);
         }
-
     }
 
     public static void sendLoginData(String user, String password) throws JSONException {
-
         if (socket.connected()) {
-
             JSONObject obj = new JSONObject();
             obj.put("user", user);
             obj.put("password", password);
             socket.emit("login", obj);
         }
-
     }
 
     public static void sendLogOut() throws JSONException {
-
         if (socket.connected()) {
             socket.emit("logout");
         }
     }
 
     public static void sendCreateLobby() {
-
         if (socket.connected()) {
             socket.emit("create_lobby");
-
-
         }
     }
     public static void joinLobby(String lobbyCode) throws JSONException {
-
         if (socket.connected()) {
             JSONObject obj = new JSONObject();
             obj.put("lobby", lobbyCode);
@@ -150,9 +136,7 @@ public class Client {
     }
 
     public static void sendMessage(String message){
-
         if (socket.connected()) {
-
             socket.emit("sent_message", message);
         }
     }

@@ -23,27 +23,47 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     private Viewport viewport;
+
     protected Stage stage;
+
     private SpriteBatch batch;
+
     private Texture background;
+
     private ShapeRenderer renderer;
+
     private int backgroundWitdh = 500;
+
     private int backgroundHeight = 500;
+
 
     //TEST Variables
     private Segment[] segments;
+
     private int roadWidth = 2000;
+
     private int segmentLenght = 200;
+
     private int lanes = 3;
+
     private int segmentsCount=600;
+
     private int trackLenght;
+
     private int FOV = 100;
+
     private int cameraHeight = 1000;
+
     private float cameraDepth  = (float) (1/Math.tan((FOV/2)*Math.PI/180));
+
     private int drawDistance = 200;
+
     private float playerX = 0;
+
     private float playerZ = cameraHeight*cameraDepth;
+
     private double cameraPosition = 0;
+
 
     public GameScreen() {
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -65,8 +85,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         while (result < 0)
             result += trackLenght;
         cameraPosition=result;
-
-
     }
 
     @Override

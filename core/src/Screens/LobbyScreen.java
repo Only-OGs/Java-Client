@@ -127,7 +127,6 @@ public class LobbyScreen extends ScreenAdapter {
         ScreenUtils.clear(20 / 255f, 21 / 255f, 44 / 255f, 1.0f);
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
-
         updateField();
 
         if (isScrollBarAtBottom()) {
@@ -145,7 +144,6 @@ public class LobbyScreen extends ScreenAdapter {
             sendMessage.setText("");
         }
 
-
         stage1.act(Gdx.graphics.getDeltaTime());
         stage1.draw();
         Constants.stage.act(Gdx.graphics.getDeltaTime());
@@ -160,7 +158,6 @@ public class LobbyScreen extends ScreenAdapter {
                         playerColor.setText(ID);
                         playerColor.setColor(StyleGuide.colors[i]);
                     }
-
                 }
 
                 chatTable.add(playerColor).right().row();
@@ -169,8 +166,6 @@ public class LobbyScreen extends ScreenAdapter {
                 Client.lastMessage = null;
 
             }else{
-
-
 
                 chatTable.add(Client.lastMessage[0]).left().row();
                 chatTable.add(Client.lastMessage[1] +"\n").left().row();

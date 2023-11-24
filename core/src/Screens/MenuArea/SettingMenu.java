@@ -20,6 +20,7 @@ public class SettingMenu extends MenuScreen {
     private Label windowsSize;
 
     private Slider musicSlider;
+
     private Slider soundSlider;
 
     public SettingMenu() {

@@ -110,7 +110,6 @@ public class MultiplayerMenu extends MenuScreen {
         passwordField.setPasswordCharacter('*');
         passwordField.setPasswordMode(true);
 
-
         userLabel = new Label("Benutzername",Constants. buttonSkin);
         passwordLabel = new Label("Passwort", Constants.buttonSkin);
         userLabel.setSize(50, 30);

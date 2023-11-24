@@ -9,7 +9,6 @@ import org.json.JSONException;
 
 public class RegisterMenu extends MultiplayerMenu {
 
-
     protected boolean updateStatusMessage = false;
 
     public RegisterMenu() {

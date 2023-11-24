@@ -22,15 +22,19 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class TestScreen extends ScreenAdapter {
+
     private Stage stage;
 
     private TextButton down = new TextButton("\\/", Constants.buttonSkin);
+
     private TextButton top = new TextButton("/\\", Constants.buttonSkin);
 
     private TextButton sendButton = new TextButton("Senden", Constants.buttonSkin);
+
     private TextArea chatArea = new TextArea("Willkommen\n\n", Constants.buttonSkin);
 
     private TextArea sendMessage = new TextArea("", Constants.buttonSkin);
+
     private ScrollPane scrollPane = new ScrollPane(chatArea, Constants.buttonSkin);
 
     public TestScreen() {
@@ -66,12 +70,8 @@ public class TestScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-
-
-
     }
 
 
@@ -89,9 +89,7 @@ public class TestScreen extends ScreenAdapter {
         top.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
                 chatArea.setCursorPosition(0);
-
             }
         });
 
@@ -110,7 +108,6 @@ public class TestScreen extends ScreenAdapter {
                     chatArea.appendText(sendMessage.getText() + "\n\n");
                     sendMessage.setText("");
                 }
-
             }
         });
     }

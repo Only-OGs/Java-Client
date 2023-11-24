@@ -21,13 +21,12 @@ import org.json.JSONException;
 public class SearchScreen extends ScreenAdapter {
 
     private TextButton sendButton = new TextButton("Senden", Constants.buttonSkin);
-    private TextField messageField = new TextArea("", Constants.buttonSkin);
 
+    private TextField messageField = new TextArea("", Constants.buttonSkin);
 
     private Stage stage;
 
     private final String ID;
-
 
 
     public SearchScreen(String ID) {
@@ -79,7 +78,6 @@ public class SearchScreen extends ScreenAdapter {
             Client.status = "";
             System.out.println("joined");
         }
-
     }
 
     @Override

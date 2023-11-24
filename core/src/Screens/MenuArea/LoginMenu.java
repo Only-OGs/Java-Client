@@ -73,7 +73,6 @@ public class LoginMenu extends MultiplayerMenu {
                 Constants.clickButton.play(0.2f);
                 Client.statusMessage = "";
                 OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
-
             }
         });
     }

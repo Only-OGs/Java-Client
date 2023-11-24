@@ -48,7 +48,6 @@ public class LobbyMenu extends MultiplayerMenu {
         Constants.stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 
-
         if (200 == count) {
             updateStatusMessage = false;
             if (serverMessage != null) serverMessage.remove();
@@ -61,7 +60,6 @@ public class LobbyMenu extends MultiplayerMenu {
         if(!Client.connect){
             OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
         }
-
     }
 
     public void addIdLabel() {
@@ -119,7 +117,6 @@ public class LobbyMenu extends MultiplayerMenu {
                     throw new RuntimeException(e);
                 }
                 OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
-
 
             }
         });
