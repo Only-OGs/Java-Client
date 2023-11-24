@@ -167,8 +167,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             //Beschleunigen
             playerSpeed = playerSpeed + (accel * dt);
             //Centrifugal
-            Segment playerSegment = findSegment(cameraPosition+playerZ);
-            playerX = playerX - (dx * speedPercent * playerSegment.getCurve() * centrifugal);
+            playerX = playerX - (dx * speedPercent * findSegment(cameraPosition+playerZ).getCurve() * centrifugal);
             playerX = Util.limit(playerX, -2, 2);
 
             playerSpeed = Util.limit(playerSpeed, 0, playerMaxSpeed);
