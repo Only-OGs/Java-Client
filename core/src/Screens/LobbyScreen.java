@@ -1,9 +1,10 @@
 package Screens;
 
 import Connection.Client;
+import OGRacerGame.OGRacerGame;
 import Root.StyleGuide;
+import Screens.MenuArea.LobbyMenu;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -26,8 +27,8 @@ import java.util.ArrayList;
 
 public class LobbyScreen extends ScreenAdapter {
 
-
-    private Stage stage1;
+    FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    private Stage chatStage = new Stage(viewport);
     private int searchCounter = 0;
     public static ArrayList<String> idList = new ArrayList<>(8);
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -36,12 +37,15 @@ public class LobbyScreen extends ScreenAdapter {
     private final Label[] player = new Label[8];
     private Table chatTable = new Table(Constants.buttonSkin);
     private ScrollPane scrollChat = new ScrollPane(chatTable, Constants.buttonSkin);
-    private TextButton sendButton = new TextButton("Senden", Constants.buttonSkin);
-    private TextArea sendMessage = new TextArea("", Constants.buttonSkin);
+    private TextButton sendMessageButton = new TextButton("Senden", Constants.buttonSkin);
+
+    private TextButton lobbyLeaveButton = new TextButton("Verlassen", Constants.buttonSkin);
+    private TextArea messageField = new TextArea("", Constants.buttonSkin);
+
 
     public LobbyScreen(String ID) {
         this.ID = ID;
-
+        Gdx.input.setInputProcessor(chatStage);
         Constants.title.setText("Die Lobby");
         Constants.stage.clear();
         Constants.title.setSize(Gdx.graphics.getWidth(), 100);
@@ -50,13 +54,12 @@ public class LobbyScreen extends ScreenAdapter {
         Constants.stage.addActor(Constants.title);
         Constants.stage.addActor(Constants.title);
         addLabelPlayer();
+        adddPlayerID();
         addChatLable();
         addLabelLobbyID();
-        FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        stage1 = new Stage(viewport);
-        Gdx.input.setInputProcessor(stage1);
+        addLeaveButton();
         buildChat();
-        addSendListener();
+        buttonListener();
 
     }
 
@@ -83,20 +86,28 @@ public class LobbyScreen extends ScreenAdapter {
         scrollChat.setScrollingDisabled(true, false); // Horizontales Scrollen deaktivieren
         chatTable.add("").left().row();
 
-        sendMessage.setBounds(Gdx.graphics.getWidth() / 1.9f, 180, scrollChat.getWidth(), 100);
-        Constants.stage.addActor(sendButton);
-        sendButton.setBounds(sendMessage.getX() + sendMessage.getWidth() - 122, sendMessage.getY() - 60, 130, 50);
+        messageField.setBounds(Gdx.graphics.getWidth() / 1.9f, 180, scrollChat.getWidth(), 100);
+
+        sendMessageButton.setBounds(messageField.getX() + messageField.getWidth() - 122, messageField.getY() - 60, 130, 50);
+        Constants.stage.addActor(sendMessageButton);
 
         chatTable.add("                                                ").left().row();
-        stage1.addActor(scrollChat);
-        stage1.addActor(sendButton);
-        stage1.addActor(sendMessage);
+        chatStage.addActor(scrollChat);
+        chatStage.addActor(sendMessageButton);
+        chatStage.addActor(messageField);
     }
 
     private boolean isScrollBarAtBottom() {
         float scrollY = scrollChat.getScrollY();
         float maxY = scrollChat.getActor().getHeight() - scrollChat.getHeight();
         return MathUtils.isEqual(scrollY, maxY);
+    }
+
+    public void adddPlayerID() {
+        idLabel = new Label("ID: " + ID, Constants.buttonSkin);
+        idLabel.setSize(190, 40);
+        idLabel.setPosition(Constants.stage.getWidth() / 1.3f, Constants.stage.getHeight() - 65);
+        Constants.stage.addActor(idLabel);
     }
 
 
@@ -109,7 +120,7 @@ public class LobbyScreen extends ScreenAdapter {
 
         lobbyCode = new Label("Lobby ID: ", style);
         lobbyCode.setSize(190, 40);
-        lobbyCode.setPosition(Constants.stage.getWidth() / 1.3f, 25);
+        lobbyCode.setPosition(Constants.stage.getWidth() / 1.2f, 25);
         Constants.stage.addActor(lobbyCode);
     }
 
@@ -139,8 +150,8 @@ public class LobbyScreen extends ScreenAdapter {
         }
 
 
-        stage1.act(Gdx.graphics.getDeltaTime());
-        stage1.draw();
+        chatStage.act(Gdx.graphics.getDeltaTime());
+        chatStage.draw();
         Constants.stage.act(Gdx.graphics.getDeltaTime());
         Constants.stage.draw();
 
@@ -157,14 +168,14 @@ public class LobbyScreen extends ScreenAdapter {
 
                 chatTable.add(playerColor).right().row();
                 chatTable.add((Client.playerAndMessage[1]) + "\n").right().row();
-                sendMessage.setText("");
+                messageField.setText("");
                 Client.playerAndMessage = null;
 
             } else {
 
                 chatTable.add(Client.playerAndMessage[0]).left().row();
                 chatTable.add(Client.playerAndMessage[1] + "\n").left().row();
-                sendMessage.setText("");
+                messageField.setText("");
                 Client.playerAndMessage = null;
             }
 
@@ -174,24 +185,36 @@ public class LobbyScreen extends ScreenAdapter {
     }
 
 
-    private void addSendListener() {
+    private void buttonListener() {
 
-        sendButton.addListener(new ClickListener() {
+        sendMessageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
-                if (sendMessage.getText().length() > 0) {
-                    Client.sendMessage(sendMessage.getText());
+                if (messageField.getText().length() > 0) {
+                    Client.sendMessage(messageField.getText());
                 }
+            }
+        });
+
+        lobbyLeaveButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                idList =  new ArrayList<>(8);
+
+                Client.leaveLobby();
+
+                OGRacerGame.getInstance().setScreen(new LobbyMenu(ID));
             }
         });
 
     }
 
-    private void updateIdList() {
+   private void addLeaveButton(){
+       lobbyLeaveButton.setBounds(95, Constants.stage.getHeight() - 70, 170, 50);
+       chatStage.addActor(lobbyLeaveButton);
+   }
 
-
-    }
 
     @Override
     public void resize(int width, int height) {

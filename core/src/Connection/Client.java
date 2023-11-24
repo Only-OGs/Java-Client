@@ -74,7 +74,6 @@ public class Client {
             JSONObject obj = (JSONObject) args[0];
             try {
                 lobbyID= (String) obj.get("message");
-                System.out.println(lobbyID);
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -85,7 +84,6 @@ public class Client {
         socket.on("new_message", args -> {
             playerAndMessage = ((String) args[0]).split(";");
         });
-
 
 
 
@@ -178,6 +176,18 @@ public class Client {
     public static void sendMessage(String message){
         if (socket.connected()) {
             socket.emit("sent_message", message);
+        }
+    }
+
+    public static void leaveLobby(){
+        if (socket.connected()) {
+            socket.emit("leave_lobby");
+        }
+    }
+
+    public static void getLobby(){
+        if (socket.connected()) {
+            socket.emit("get_Lobby");
         }
     }
 }

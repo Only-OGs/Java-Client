@@ -78,6 +78,8 @@ public class LobbyMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
+                Client.statusMessage = "";
+
                 try {
                     createLobby();
                 } catch (JSONException e) {
@@ -90,7 +92,7 @@ public class LobbyMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-
+                Client.getLobby();
 
             }
         });
