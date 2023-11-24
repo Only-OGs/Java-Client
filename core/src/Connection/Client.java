@@ -110,6 +110,26 @@ public class Client {
 
         });
 
+        socket.on("player_leave", args -> {
+            JSONObject obj = (JSONObject) args[0];
+            try {
+                player = (String) obj.get("message");
+
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            String[] playerIDS = player.split(";");
+            ArrayList<String> tempID = new ArrayList<>(8);
+
+            // Gebe die getrennten Teile aus
+            for (String teil : playerIDS) {
+                System.out.println("Spieler: " +teil + "\n");
+                tempID.add(teil);
+            }
+            LobbyScreen.idList = tempID;
+
+        });
+
         socket.on("connection_success", args -> System.out.println(Arrays.toString(args)));
 
         // Verbindung herstellen

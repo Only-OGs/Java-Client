@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -98,16 +99,15 @@ public class LobbyScreen extends ScreenAdapter {
         return MathUtils.isEqual(scrollY, maxY);
     }
 
-    public void addLabelID() {
-        idLabel = new Label("ID: " + ID, Constants.buttonSkin);
-        idLabel.setSize(190, 40);
-        idLabel.setPosition(Constants.stage.getWidth() / 1.3f, Constants.stage.getHeight() - 65);
-        Constants.stage.addActor(idLabel);
-    }
-
 
     private void addLabelLobbyID() {
-        lobbyCode = new Label("Lobby ID: ", Constants.buttonSkin);
+
+        BitmapFont font = new BitmapFont();
+        Label.LabelStyle style = new Label.LabelStyle();
+        style.font = font;
+        font.setColor(Color.WHITE);
+
+        lobbyCode = new Label("Lobby ID: ", style);
         lobbyCode.setSize(190, 40);
         lobbyCode.setPosition(Constants.stage.getWidth() / 1.3f, 25);
         Constants.stage.addActor(lobbyCode);
