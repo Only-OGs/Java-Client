@@ -22,8 +22,10 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class LobbyScreen extends ScreenAdapter {
+
 
     private Stage stage1;
     private int searchCounter = 0;
@@ -133,18 +135,57 @@ public class LobbyScreen extends ScreenAdapter {
             scrollChat.scrollTo(0, 0, 0, 0); // Nach unten scrollen (0, 0)
         }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)){
-            chatTable.add("Anonym").left().row();
-            chatTable.add(sendMessage.getText()).left().row();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
+
+            Label redLabel1 = new Label("", Constants.buttonSkin);
+            redLabel1.setText("Olli");
+            redLabel1.setColor(StyleGuide.turquoiseDark);
+            chatTable.add(redLabel1).left().row();
+            chatTable.add("Du pisser").left().row();
             sendMessage.setText("");
         }
-
 
 
         stage1.act(Gdx.graphics.getDeltaTime());
         stage1.draw();
         Constants.stage.act(Gdx.graphics.getDeltaTime());
         Constants.stage.draw();
+
+
+        if(Client.lastMessage != null){
+            Label playerColor = new Label("", Constants.buttonSkin);
+            if (ID.equals(Client.lastMessage[0])) {
+                for (int i = 0; i < idList.size(); i++) {
+                    if(ID.equals(idList.get(i))) {
+                        playerColor.setText(ID);
+                        playerColor.setColor(StyleGuide.colors[i]);
+                    }
+
+                }
+
+                chatTable.add(playerColor).right().row();
+                chatTable.add((Client.lastMessage[1]) + "\n").right().row();
+                sendMessage.setText("");
+                Client.lastMessage = null;
+
+            }else{
+
+
+
+                chatTable.add(Client.lastMessage[0]).left().row();
+                chatTable.add(Client.lastMessage[1] +"\n").left().row();
+                sendMessage.setText("");
+                Client.lastMessage = null;
+            }
+
+        }
+
+
+
+
+
+
+
     }
 
 
@@ -154,22 +195,16 @@ public class LobbyScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
-                if (sendMessage.getText().length() > 1) {
-
-
-                    Label redLabel = new Label("",Constants.buttonSkin);
-                    redLabel.setText(ID);
-                    redLabel.setColor(StyleGuide.purpleLight);
-
-
-
-                    // Füge die Labels zur Tabelle hinzu
-                    chatTable.add(redLabel).right().row();
-                    chatTable.add((sendMessage.getText()) + "\n").right().row();
-                    sendMessage.setText("");
+                if (sendMessage.getText().length() > 0) {
+                    Client.sendMessage(sendMessage.getText());
                 }
             }
         });
+
+    }
+
+    private void updateIdList() {
+
 
     }
 

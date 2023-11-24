@@ -4,6 +4,7 @@ import Connection.Client;
 import OGRacerGame.OGRacerGame;
 import Screens.Constants;
 import Screens.LobbyScreen;
+import Screens.SearchScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -13,11 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.json.JSONException;
 
+import java.util.Scanner;
+
 public class LobbyMenu extends MultiplayerMenu {
-    
 
     private Button createButton, quickButton, searchButton, logOut;
-
 
     private Label idLabel;
 
@@ -102,6 +103,8 @@ public class LobbyMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
+                OGRacerGame.getInstance().setScreen(new SearchScreen(ID));
+
             }
         });
 
