@@ -19,6 +19,7 @@ public class Constants {
 
     public static final Sound clickButton = Gdx.audio.newSound((Gdx.files.internal("Music/clickInterface.mp3")));
 
+    public static final Sound messageReceived = Gdx.audio.newSound((Gdx.files.internal("Music/messageReceived.wav")));
     public static final Skin buttonSkin = new Skin(Gdx.files.internal("ButtonStyle/quantum-horizon/skin/quantum-horizon-ui.json"));
 
     public static final Skin buttonSkin2 = new Skin(Gdx.files.internal("ButtonStyle/lgdxs/skin/lgdxs-ui.json"));

@@ -42,6 +42,10 @@ public class LobbyScreen extends ScreenAdapter {
     private TextButton lobbyLeaveButton = new TextButton("Verlassen", Constants.buttonSkin);
     private TextArea messageField = new TextArea("", Constants.buttonSkin);
 
+    private Texture muteIcon = new Texture("Icon/muteIcon.png");
+    private Texture notMuteIcon =  new Texture("Icon/unMuteIcon.png");
+
+    private ImageButton muteButton;
 
     public LobbyScreen(String ID) {
         this.ID = ID;
@@ -59,11 +63,23 @@ public class LobbyScreen extends ScreenAdapter {
         addLabelLobbyID();
         addLeaveButton();
         buildChat();
+        addMuteButton();
         buttonListener();
+
 
     }
 
-    public void addChatLable() {
+    private void addMuteButton(){
+        ImageButton.ImageButtonStyle muteButtonStyle = new ImageButton.ImageButtonStyle();
+        muteButtonStyle.up = new TextureRegionDrawable(muteIcon);
+        muteButtonStyle.up = new TextureRegionDrawable(notMuteIcon);
+        muteButton = new ImageButton(muteButtonStyle);
+        muteButton.setBounds(Gdx.graphics.getWidth()-70, (float) Gdx.graphics.getHeight() /4,50,50);
+        chatStage.addActor(muteButton);
+
+    }
+
+    private void addChatLable() {
         chatLable = new Label("Chat: ", Constants.buttonSkin);
         chatLable.setSize(190, 40);
         chatLable.setPosition(Constants.stage.getWidth() / 1.9f, Constants.stage.getHeight() - 138);
@@ -71,6 +87,7 @@ public class LobbyScreen extends ScreenAdapter {
     }
 
     private void buildChat() {
+
         Pixmap backgroundPixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         backgroundPixmap.setColor(new Color(255, 255, 255, 0.08f)); // Hier setzt du die Hintergrundfarbe auf Rot
         backgroundPixmap.fill();
@@ -155,9 +172,7 @@ public class LobbyScreen extends ScreenAdapter {
         Constants.stage.act(Gdx.graphics.getDeltaTime());
         Constants.stage.draw();
 
-
         updateChat();
-
 
 
     }
@@ -180,11 +195,23 @@ public class LobbyScreen extends ScreenAdapter {
 
             } else {
 
-                chatTable.add(Client.playerAndMessage[0]).left().row();
+                for (int i = 0; i < idList.size(); i++) {
+
+                    if(Client.playerAndMessage[0].equals(idList.get(i))){
+                        playerColor.setText(idList.get(i));
+                        playerColor.setColor(StyleGuide.colors[i]);
+                    }
+
+                }
+
+
+                chatTable.add(playerColor).left().row();
                 chatTable.add(Client.playerAndMessage[1] + "\n").left().row();
                 messageField.setText("");
                 Client.playerAndMessage = null;
+                Constants.messageReceived.play(0.05f);
             }
+
 
         }
     }
@@ -196,7 +223,6 @@ public class LobbyScreen extends ScreenAdapter {
         sendMessageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Constants.clickButton.play(0.2f);
                 if (messageField.getText().length() > 0) {
                     Client.sendMessage(messageField.getText());
                 }
@@ -212,6 +238,13 @@ public class LobbyScreen extends ScreenAdapter {
                 Client.leaveLobby();
 
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(ID));
+            }
+        });
+
+        muteButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
             }
         });
 
