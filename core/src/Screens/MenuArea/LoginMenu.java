@@ -29,6 +29,7 @@ public class LoginMenu extends MultiplayerMenu {
                 loginSuccess = true;
                 Client.status = "";
                 statusOnOff = false;
+                updateStatusMessage = false;
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(user));
 
             }

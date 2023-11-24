@@ -2,14 +2,12 @@ package Screens;
 
 import Connection.Client;
 import OGRacerGame.OGRacerGame;
-import Root.StyleGuide;
+import Screens.MenuArea.LobbyMenu;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -21,6 +19,8 @@ import org.json.JSONException;
 public class SearchScreen extends ScreenAdapter {
 
     private TextButton sendButton = new TextButton("Senden", Constants.buttonSkin);
+
+    private TextButton backButton = new TextButton("Zurueck", Constants.buttonSkin);
 
     private TextField messageField = new TextArea("", Constants.buttonSkin);
 
@@ -35,22 +35,23 @@ public class SearchScreen extends ScreenAdapter {
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
 
-        messageField.setBounds((float) Gdx.graphics.getWidth() /2 -(75), (float) Gdx.graphics.getHeight() /2,150,50);
-        sendButton.setBounds((float) Gdx.graphics.getWidth() /2-(75), (float) Gdx.graphics.getHeight() /2-60,150,50);
+        messageField.setBounds((float) Gdx.graphics.getWidth() / 2 - (75), (float) Gdx.graphics.getHeight() / 2, 150, 50);
+        sendButton.setBounds((float) Gdx.graphics.getWidth() / 2 - (75), (float) Gdx.graphics.getHeight() / 2 - 60, 150, 50);
 
-        sendListener();
-
+        backButton.setBounds((float) Gdx.graphics.getWidth() / 1.3f, (float) Gdx.graphics.getHeight() / 2 - 60, 150, 50);
+        buttonListener();
         stage.addActor(messageField);
+        stage.addActor(backButton);
         stage.addActor(sendButton);
         Gdx.input.setInputProcessor(stage);
     }
 
 
-    private void sendListener(){
+    private void buttonListener() {
         sendButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
+                Constants.clickButton.play(0.2f);
                 if (messageField.getText().length() > 1) {
                     try {
 
@@ -59,7 +60,16 @@ public class SearchScreen extends ScreenAdapter {
                         throw new RuntimeException(e);
                     }
                     messageField.setText("");
+                    OGRacerGame.getInstance().setScreen(new WaitScreen(ID));
                 }
+            }
+        });
+
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Constants.clickButton.play(0.2f);
+                OGRacerGame.getInstance().setScreen(new LobbyMenu(ID));
             }
         });
     }
@@ -71,12 +81,6 @@ public class SearchScreen extends ScreenAdapter {
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-
-
-        if("joined".equals(Client.joinLobby)){
-            OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));
-            Client.joinLobby = "";
-        }
     }
 
     @Override

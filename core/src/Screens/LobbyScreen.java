@@ -156,6 +156,13 @@ public class LobbyScreen extends ScreenAdapter {
         Constants.stage.draw();
 
 
+        updateChat();
+
+
+
+    }
+
+    private void updateChat(){
         if (Client.playerAndMessage != null) {
             Label playerColor = new Label("", Constants.buttonSkin);
             if (ID.equals(Client.playerAndMessage[0])) {
@@ -180,9 +187,8 @@ public class LobbyScreen extends ScreenAdapter {
             }
 
         }
-
-
     }
+
 
 
     private void buttonListener() {
@@ -190,7 +196,7 @@ public class LobbyScreen extends ScreenAdapter {
         sendMessageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
+                Constants.clickButton.play(0.2f);
                 if (messageField.getText().length() > 0) {
                     Client.sendMessage(messageField.getText());
                 }
@@ -200,6 +206,7 @@ public class LobbyScreen extends ScreenAdapter {
         lobbyLeaveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                Constants.clickButton.play(0.2f);
                 idList =  new ArrayList<>(8);
 
                 Client.leaveLobby();

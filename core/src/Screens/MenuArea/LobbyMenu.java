@@ -5,6 +5,7 @@ import OGRacerGame.OGRacerGame;
 import Screens.Constants;
 import Screens.LobbyScreen;
 import Screens.SearchScreen;
+import Screens.WaitScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -47,12 +48,13 @@ public class LobbyMenu extends MultiplayerMenu {
 
 
         if (200 == count) {
-            updateStatusMessage = false;
             if (serverMessage != null) serverMessage.remove();
             Client.statusMessage = "";
+        }else if( count < 200){
+            addServerMessage();
+            count++;
         }
-        count++;
-        if (updateStatusMessage) addServerMessage();
+
 
 
         if(!Client.connect){
@@ -79,7 +81,6 @@ public class LobbyMenu extends MultiplayerMenu {
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
                 Client.statusMessage = "";
-
                 try {
                     createLobby();
                 } catch (JSONException e) {
@@ -92,7 +93,9 @@ public class LobbyMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
+                Client.statusMessage = "";
                 Client.getLobby();
+                OGRacerGame.getInstance().setScreen(new WaitScreen(ID));
 
             }
         });
@@ -101,6 +104,7 @@ public class LobbyMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
+                Client.statusMessage = "";
                 OGRacerGame.getInstance().setScreen(new SearchScreen(ID));
 
             }

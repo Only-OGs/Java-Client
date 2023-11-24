@@ -96,15 +96,10 @@ public class Client {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            String[] playerIDS = player.split(";");
-            ArrayList<String> tempID = new ArrayList<>(8);
 
-            // Gebe die getrennten Teile aus
-            for (String teil : playerIDS) {
-                System.out.println("Spieler: " +teil + "\n");
-                tempID.add(teil);
-            }
-            LobbyScreen.idList = tempID;
+            // Splittet den bekommenen String und setzt die idList mit den aktuellen Spieler Ids
+            LobbyScreen.idList= new ArrayList<>(Arrays.asList(player.split(";")));
+
 
         });
 
@@ -123,6 +118,7 @@ public class Client {
             for (String teil : playerIDS) {
                 tempID.add(teil);
             }
+
             LobbyScreen.idList = tempID;
 
         });
