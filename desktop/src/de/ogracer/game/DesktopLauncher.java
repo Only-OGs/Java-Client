@@ -1,5 +1,6 @@
 package de.ogracer.game;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import OGRacerGame.OGRacerGame;
@@ -13,7 +14,9 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("OG Racer");
 		config.setWindowedMode(1024,780);
+		config.setWindowIcon("sprites/Icon.png");
 		config.setResizable(false);
+
 		new Lwjgl3Application(OGRacerGame.getInstance(), config);
 	}
 }

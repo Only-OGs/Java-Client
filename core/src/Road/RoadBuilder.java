@@ -17,9 +17,9 @@ public class RoadBuilder {
         Segment[] segments= new Segment[l];
         segments[0]=buildStart(segmentLenght);
         int index=1;
-        index += addRoad(segments,segmentLenght,index,50,Curve.EASYLEFT,-40);
-        index += addRoad(segments,segmentLenght,index,50,Curve.NONE,60);
-        index += addRoad(segments,segmentLenght,index,50,Curve.MEDIUMLEFT,-20);
+        index += addRoad(segments,segmentLenght,index,50,Curve.EASYLEFT,-60);
+        index += addRoad(segments,segmentLenght,index,50,Curve.HARDRIGHT,120);
+        index += addRoad(segments,segmentLenght,index,50,Curve.MEDIUMLEFT,-60);
 
         for(int i=index;i<l-1;i++){
             addSegment(segments,segmentLenght,i,0,0);

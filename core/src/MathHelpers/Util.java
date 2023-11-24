@@ -75,7 +75,7 @@ public class Util {
     }
 
     public static double exponentialFog(double distance, double density) {
-        return 1 / (Math.pow(Math.E, (distance * distance * density)));
+        return 1f / (Math.pow(Math.E, (distance * distance * density)));
     }
 
     public static int increase(int start, int increment, int max) {

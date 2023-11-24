@@ -12,11 +12,11 @@ public class Segment {
     private P p1;
     private P p2;
     private boolean looped;
-    private int fog;
+    private double fog;
     private Color[] color;
     private float curve;
 
-    public Segment(int index, P p1, P p2, Color[] c, float curve ) {
+    public Segment(int index, P p1, P p2, Color[] c, float curve) {
         this.index = index;
         this.p1 = p1;
         this.p2 = p2;
@@ -56,11 +56,11 @@ public class Segment {
         this.looped = looped;
     }
 
-    public int getFog() {
+    public double getFog() {
         return fog;
     }
 
-    public void setFog(int fog) {
+    public void setFog(double fog) {
         this.fog = fog;
     }
 

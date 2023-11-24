@@ -2,16 +2,18 @@ package Screens;
 
 import OGRacerGame.OGRacerGame;
 import MathHelpers.Util;
+import Rendering.CarRenderer;
 import Rendering.RenderSegment;
+import Rendering.SunShade;
 import Road.RoadBuilder;
 import Road.Segment;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import OGRacerGame.OGRacerGame;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -42,6 +44,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private float playerX = 0;
     private float playerZ = cameraHeight*cameraDepth;
     private double cameraPosition = 0;
+    private float sunOffset=0;
+    private Music music;
+    private float resoultion = Gdx.graphics.getHeight()/2;
+    private double fogDensity = drawDistance/20;
 
     public GameScreen() {
         camera = new OrthographicCamera();
@@ -51,11 +57,19 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         renderer = new ShapeRenderer();
         segments = RoadBuilder.resetRoad(segmentsCount,segmentLenght);
         trackLenght = segments.length*segmentLenght;
+        music = Gdx.audio.newMusic(Gdx.files.internal("Music/Initial D-Deja Vu.mp3"));
+        music.setLooping(true);
+        music.setVolume(0.01f);
+        music.play();
     }
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT  );
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         renderSegments(renderer);
         double result = cameraPosition + 100;
         while (result >= trackLenght)
@@ -85,6 +99,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         int playerY = (int) Util.interpolate(playerSegment.getP1().getWorld().getY(),playerSegment.getP2().getWorld().getY(),playerPercent);
         float x = 0;                                                                                                    //Akkumulierter seitlicher versatz der Segmente
         float dx = 0f- (baseSegment.getCurve()*basePercent);                                                            // hilft die Versätzung zu speichern und berechnen
+        sunOffset += dx;
+        int renderedCounter=0;
+        SunShade.sun(r,sunOffset);
 
         Segment segment;
         int segmentLoopedValue;
@@ -92,6 +109,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         for (int i=0;i<drawDistance;i++){
             segment = segments[(baseSegment.getIndex()+i)%segments.length];
             segment.setLooped(segment.getIndex()<baseSegment.getIndex());
+            segment.setFog(1-Util.exponentialFog(Float.parseFloat(String.valueOf(i))/drawDistance,fogDensity));
 
             if(segment.isLooped()){
                 segmentLoopedValue=trackLenght;
@@ -115,11 +133,15 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
                     segment.getP2().getScreen().getX(),
                     segment.getP2().getScreen().getY(),
                     segment.getP2().getScreen().getW(),
-                    0,
-                    segment.getColor()
+                    segment.getFog(),
+                    segment.getColor(),
+                    segment
             );
             maxy=segment.getP2().getScreen().getY();
+            renderedCounter++;
         }
+        SunShade.sunShade(r,sunOffset,maxy,renderedCounter);
+        CarRenderer.renderPlayerCar(batch,playerSegment);
     }
 
     private Segment findSegment(double p) {
