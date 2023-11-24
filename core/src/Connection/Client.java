@@ -15,11 +15,13 @@ public class Client {
 
     public static Socket socket;
     public static String status;
-
-    public static String joinLobby;
     public static String statusMessage;
 
-    public static String[] lastMessage;
+    public static String joinLobby;
+    public static String lobbyID;
+
+
+    public static String[] playerAndMessage;
 
     public static String player;
 
@@ -36,7 +38,7 @@ public class Client {
 
 
         try {
-            socket = IO.socket("http://localhost:8080");
+            socket = IO.socket("http://89.58.1.158:8080");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -53,6 +55,9 @@ public class Client {
             System.out.println("Verbindung zum Server verloren");
         });
 
+
+
+
         // Bekommt man Nachrichten vom Server übermittelt
         socket.on("response", args -> {
             JSONObject obj = (JSONObject) args[0];
@@ -62,13 +67,26 @@ public class Client {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-
         });
 
-        // Wird eine Chat Nachricht
+        // Wenn eine Lobby erstellt wird bekommt man eine Lobby ID zurück
+        socket.on("lobby_created", args -> {
+            JSONObject obj = (JSONObject) args[0];
+            try {
+                lobbyID= (String) obj.get("message");
+                System.out.println(lobbyID);
+
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // Wird eine Chat Nachricht erhalten mit ID udn seine Nachricht
         socket.on("new_message", args -> {
-            lastMessage = ((String) args[0]).split(";");
+            playerAndMessage = ((String) args[0]).split(";");
         });
+
+
 
 
         socket.on("player_joined", args -> {
@@ -76,6 +94,7 @@ public class Client {
             try {
                 player = (String) obj.get("message");
                 joinLobby = (String) obj.get("status");
+                lobbyID = (String) obj.get("lobby");
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -127,6 +146,7 @@ public class Client {
             socket.emit("create_lobby");
         }
     }
+
     public static void joinLobby(String lobbyCode) throws JSONException {
         if (socket.connected()) {
             JSONObject obj = new JSONObject();

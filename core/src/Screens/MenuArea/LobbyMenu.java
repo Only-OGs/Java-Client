@@ -14,8 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.json.JSONException;
 
-import java.util.Scanner;
-
 public class LobbyMenu extends MultiplayerMenu {
 
     private Button createButton, quickButton, searchButton, logOut;
@@ -35,7 +33,7 @@ public class LobbyMenu extends MultiplayerMenu {
         lobbySelectionButton();
         lobbyButtonListener();
         updateStatusMessage = true;
-        addIdLabel();
+        addLabelID();
         Constants.music.stop();
     }
 
@@ -62,7 +60,7 @@ public class LobbyMenu extends MultiplayerMenu {
         }
     }
 
-    public void addIdLabel() {
+    public void addLabelID() {
         idLabel = new Label("ID: " + ID, Constants.buttonSkin);
         idLabel.setSize(190, 40);
         idLabel.setPosition( Constants.stage.getWidth() / 1.3f,  Constants.stage.getHeight() - 65);

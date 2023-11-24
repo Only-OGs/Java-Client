@@ -22,7 +22,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class LobbyScreen extends ScreenAdapter {
 
@@ -50,9 +49,8 @@ public class LobbyScreen extends ScreenAdapter {
         Constants.stage.addActor(Constants.title);
         Constants.stage.addActor(Constants.title);
         addLabelPlayer();
-        addLabelID();
-        addLobbyID();
         addChatLable();
+        addLabelLobbyID();
         FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage1 = new Stage(viewport);
         Gdx.input.setInputProcessor(stage1);
@@ -107,12 +105,17 @@ public class LobbyScreen extends ScreenAdapter {
         Constants.stage.addActor(idLabel);
     }
 
-    public void addLobbyID() {
-        lobbyCode = new Label("Lobby ID: " + Client.statusMessage, Constants.buttonSkin);
+
+    private void addLabelLobbyID() {
+        lobbyCode = new Label("Lobby ID: ", Constants.buttonSkin);
         lobbyCode.setSize(190, 40);
         lobbyCode.setPosition(Constants.stage.getWidth() / 1.3f, 25);
         Constants.stage.addActor(lobbyCode);
-        Client.statusMessage = "";
+    }
+
+    private void addLobbyID() {
+        lobbyCode.setText("Lobby ID: " + Client.lobbyID);
+
     }
 
     private void addLabelPlayer() {
@@ -128,21 +131,13 @@ public class LobbyScreen extends ScreenAdapter {
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
         updateField();
+        addLobbyID();
 
         if (isScrollBarAtBottom()) {
             scrollChat.layout(); // Das Layout aktualisieren, bevor wir scrollen
             scrollChat.scrollTo(0, 0, 0, 0); // Nach unten scrollen (0, 0)
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-
-            Label redLabel1 = new Label("", Constants.buttonSkin);
-            redLabel1.setText("Olli");
-            redLabel1.setColor(StyleGuide.turquoiseDark);
-            chatTable.add(redLabel1).left().row();
-            chatTable.add("Du pisser").left().row();
-            sendMessage.setText("");
-        }
 
         stage1.act(Gdx.graphics.getDeltaTime());
         stage1.draw();
@@ -150,35 +145,30 @@ public class LobbyScreen extends ScreenAdapter {
         Constants.stage.draw();
 
 
-        if(Client.lastMessage != null){
+        if (Client.playerAndMessage != null) {
             Label playerColor = new Label("", Constants.buttonSkin);
-            if (ID.equals(Client.lastMessage[0])) {
+            if (ID.equals(Client.playerAndMessage[0])) {
                 for (int i = 0; i < idList.size(); i++) {
-                    if(ID.equals(idList.get(i))) {
+                    if (ID.equals(idList.get(i))) {
                         playerColor.setText(ID);
                         playerColor.setColor(StyleGuide.colors[i]);
                     }
                 }
 
                 chatTable.add(playerColor).right().row();
-                chatTable.add((Client.lastMessage[1]) + "\n").right().row();
+                chatTable.add((Client.playerAndMessage[1]) + "\n").right().row();
                 sendMessage.setText("");
-                Client.lastMessage = null;
+                Client.playerAndMessage = null;
 
-            }else{
+            } else {
 
-                chatTable.add(Client.lastMessage[0]).left().row();
-                chatTable.add(Client.lastMessage[1] +"\n").left().row();
+                chatTable.add(Client.playerAndMessage[0]).left().row();
+                chatTable.add(Client.playerAndMessage[1] + "\n").left().row();
                 sendMessage.setText("");
-                Client.lastMessage = null;
+                Client.playerAndMessage = null;
             }
 
         }
-
-
-
-
-
 
 
     }
