@@ -41,6 +41,12 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private int drawDistance = 200;
     private float playerX = 0;
     private float playerZ = cameraHeight*cameraDepth;
+    private float playerSpeed = 10;
+    private final float playerMaxSpeed = 250;
+    private final float accel = playerMaxSpeed/5;
+    private final float offRoadDecel = -playerMaxSpeed/2;
+    private final float offRoadLimit = playerMaxSpeed/4;
+    private float dx = 0;
     private double cameraPosition = 0;
 
     public GameScreen() {
@@ -57,12 +63,14 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         renderSegments(renderer);
-        double result = cameraPosition + 100;
+        double result = cameraPosition + playerSpeed;
         while (result >= trackLenght)
             result -= trackLenght;
         while (result < 0)
             result += trackLenght;
         cameraPosition=result;
+
+        updatePosition(delta);
     }
 
     @Override
@@ -126,13 +134,23 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         return segments[(int) (Math.floor(p / segmentLenght) % segments.length)];
     }
 
+    private void updatePosition(float delta) {
+        dx = delta * 2 * (playerSpeed/playerMaxSpeed);
+        //Beschleunigen | Bremsen | Nach Links | Nach Rechts
+        checkInput(OGRacerGame.getInstance(), delta);
+        // Langsamer auf Offroad
+        if (((playerX < -1) || (playerX > 1)) && (playerSpeed > offRoadLimit)) {
+            playerSpeed = playerSpeed + (offRoadDecel * delta);
+            playerSpeed = (int)Util.limit(playerSpeed, 0, playerMaxSpeed);
+        }
+    }
+
     /** [GameScreen] Fragt ab ob eine Taste gedruckt wurde/ist */
     @Override
-    public void checkInput(OGRacerGame game) {
+    public void checkInput(OGRacerGame game, float dt) {
         // Pausieren/Fortfahren des Spiels
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.isRunning = !game.isRunning;
-            System.out.println("DDD");
             //Menü anzeigen
         }
         // Wenn das Spiel pausiert ist, sollen keine Eingaben zum steuern des Autos abgefragt werden
@@ -145,14 +163,26 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 		*/
         if(Gdx.input.isKeyPressed(Input.Keys.W)) {
             //Beschleunigen
+            playerSpeed = playerSpeed + (accel * dt);
+            playerSpeed = Util.limit(playerSpeed, 0, playerMaxSpeed);
         } else if(Gdx.input.isKeyPressed(Input.Keys.S)) {
             //Bremsen
+            playerSpeed = playerSpeed + (-playerMaxSpeed * dt);
+            playerSpeed = (int)Util.limit(playerSpeed, 0, playerMaxSpeed);
+        } else {
+            //Entschleunigen
+            playerSpeed = playerSpeed + (-accel * dt);
+            playerSpeed = (int)Util.limit(playerSpeed, 0, playerMaxSpeed);
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.A)) {
             //Nach links fahren
+            playerX = playerX - dx;
+            playerX = Util.limit(playerX, -2, 2);
         } else if(Gdx.input.isKeyPressed(Input.Keys.D)) {
             //Nach Rechts fahren
+            playerX = playerX + dx;
+            playerX = Util.limit(playerX, -2, 2);
         }
     }
 }

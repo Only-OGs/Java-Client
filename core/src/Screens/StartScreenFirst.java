@@ -21,7 +21,7 @@ import org.json.JSONException;
 
 import java.util.Objects;
 
-public class StartScreenFirst extends ScreenAdapter implements IInputHandler {
+public class StartScreenFirst extends ScreenAdapter {
 
     private boolean loginSucess = false;
     private boolean connectionCheck = false;
@@ -442,13 +442,6 @@ public class StartScreenFirst extends ScreenAdapter implements IInputHandler {
             }
         });
 
-    }
-
-    /**
-     * [StartScreen] Fragt ab ob eine Taste gedruckt wurde/ist
-     */
-    @Override
-    public void checkInput(OGRacerGame game) {
     }
 
     @Override

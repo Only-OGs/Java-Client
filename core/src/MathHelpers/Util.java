@@ -46,7 +46,7 @@ public class Util {
 
     }
 
-    public static int accelerate(int v, int accel, int dt) {
+    public static float accelerate(int v, int accel, float dt) {
         return v + (accel * dt);
     }
 
@@ -95,6 +95,10 @@ public class Util {
         p.getScreen().setX((int) Math.round(((double) width / 2) + (p.getScreen().getScale() * p.getCamera().getX() * (width / 2))));
         p.getScreen().setY((int) Math.round(((double) height / 2) - (p.getScreen().getScale() * p.getCamera().getY() * (height / 2))));
         p.getScreen().setW((int) Math.round((p.getScreen().getScale() * roadWidth * (width / 2))));
+    }
+
+    public static float limit(float value, float min, float max) {
+        return Math.max( min,  Math.min(value, max) );
     }
 
     public static boolean overlap(int x1, int w1, int x2, int w2, double percent) {
