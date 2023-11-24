@@ -26,7 +26,7 @@ public abstract class MenuScreen extends ScreenAdapter {
 
     public MenuScreen() {
         batch = new SpriteBatch();
-        backgroundTexture = new Texture("background/BackgroundOGRacerGame.png");
+        backgroundTexture = new Texture("Background/BackgroundOGRacerGame.png");
         Constants.viewport = new FitViewport(Gdx.graphics.getWidth(),  Gdx.graphics.getHeight());
         Constants.stage = new Stage(Constants.viewport);
         if (Constants.music != null) {
