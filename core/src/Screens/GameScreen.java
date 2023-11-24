@@ -46,6 +46,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private final float accel = playerMaxSpeed/5;
     private final float offRoadDecel = -playerMaxSpeed/2;
     private final float offRoadLimit = playerMaxSpeed/4;
+    private float centrifugal = 3f;
+    private float speedPercent = playerSpeed/playerMaxSpeed;
     private float dx = 0;
     private double cameraPosition = 0;
 
@@ -164,6 +166,11 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         if(Gdx.input.isKeyPressed(Input.Keys.W)) {
             //Beschleunigen
             playerSpeed = playerSpeed + (accel * dt);
+            //Centrifugal
+            Segment playerSegment = findSegment(cameraPosition+playerZ);
+            playerX = playerX - (dx * speedPercent * playerSegment.getCurve() * centrifugal);
+            playerX = Util.limit(playerX, -2, 2);
+
             playerSpeed = Util.limit(playerSpeed, 0, playerMaxSpeed);
         } else if(Gdx.input.isKeyPressed(Input.Keys.S)) {
             //Bremsen
@@ -178,6 +185,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         if(Gdx.input.isKeyPressed(Input.Keys.A)) {
             //Nach links fahren
             playerX = playerX - dx;
+            Segment playerSegment = findSegment(cameraPosition+playerZ);
+            playerX = playerX - (dx * speedPercent * playerSegment.getCurve() * centrifugal);
             playerX = Util.limit(playerX, -2, 2);
         } else if(Gdx.input.isKeyPressed(Input.Keys.D)) {
             //Nach Rechts fahren
