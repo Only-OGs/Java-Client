@@ -52,7 +52,6 @@ public class LoginMenu extends MultiplayerMenu {
 
         if ("login_failed".equals(Client.loginStatus)) {
             loginMessage();
-
         }
 
         if ("logout_success".equals(Client.logoutStatus) || "logout_failed".equals(Client.logoutStatus)) {
@@ -65,7 +64,6 @@ public class LoginMenu extends MultiplayerMenu {
                 serverMessage.setText("");
                 statusOnOff = false;
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(user));
-
             }
         }
         super.render(delta);

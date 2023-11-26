@@ -39,7 +39,6 @@ public class SearchScreen extends ScreenAdapter {
     private Label idLabel;
     private int count = 0;
 
-
     public SearchScreen(String ID) {
         this.ID = ID;
 

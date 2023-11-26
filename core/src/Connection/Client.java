@@ -106,10 +106,11 @@ public class Client {
         socket.on("search_lobby", args -> {
             JSONObject obj = (JSONObject) args[0];
             try {
-                searchStatus = (String) obj.get("status"); // register_success und  register_failed
-                joinMessage = (String) obj.get("message");// Nachricht vom Server wie Benutzer schon vorhanden
+                searchStatus = (String) obj.get("status"); // joined und failed
+                joinMessage = (String) obj.get("message");// Nachricht vom Server
                 players = (String) obj.get("players"); // Liste der Spieler
 
+                System.out.println(searchStatus);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -136,6 +137,7 @@ public class Client {
         // Wenn eine Lobby erstellt wird, bekommt man eine Lobby ID zurück
         socket.on("lobby_created", args -> {
             JSONObject obj = (JSONObject) args[0];
+
             try {
                 lobbyID = (String) obj.get("message");
 
