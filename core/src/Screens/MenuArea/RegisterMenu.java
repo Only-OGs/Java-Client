@@ -26,7 +26,7 @@ public class RegisterMenu extends MultiplayerMenu {
             serverMessage.setText("");
             delay++;
         }else if( delay < 200){
-            serverMessage.setText(Client.statusMessage);
+            serverMessage.setText(Client.registerMessage);
             delay++;
         }
         super.render(delta);
@@ -39,7 +39,7 @@ public class RegisterMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-                Client.statusMessage = "";
+                Client.registerMessage = "";
                 OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
             }
         });
@@ -55,7 +55,7 @@ public class RegisterMenu extends MultiplayerMenu {
                     delay = 0;
                     userField.setText("");
                     passwordField.setText("");
-                    Client.statusMessage = "";
+                    Client.registerMessage = "";
 
                     try {
                         Client.sendRegisterData(user, password);

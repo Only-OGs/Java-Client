@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class LobbyScreen extends ScreenAdapter {
 
@@ -159,7 +160,6 @@ public class LobbyScreen extends ScreenAdapter {
         addLobbyID();
         updateChat();
 
-
         if (isScrollBarAtBottom()) {
             scrollChat.layout(); // Das Layout aktualisieren, bevor wir scrollen
             scrollChat.scrollTo(0, 0, 0, 0); // Nach unten scrollen (0, 0)
@@ -167,8 +167,6 @@ public class LobbyScreen extends ScreenAdapter {
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-
-
     }
 
     private void updateChat() {
@@ -223,8 +221,8 @@ public class LobbyScreen extends ScreenAdapter {
                 Constants.clickButton.play(0.2f);
                 idList = new ArrayList<>(8);
                 Client.leaveLobby();
-                Client.player = "";
-                Client.joinLobby = "";
+                Client.playerString = "";
+                Client.joinLobbyStatus = "";
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(ID));
             }
         });

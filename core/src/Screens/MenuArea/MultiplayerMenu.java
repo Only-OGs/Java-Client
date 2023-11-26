@@ -31,7 +31,6 @@ public class MultiplayerMenu extends MenuScreen {
         addConnectionStatuslabel();
         addServerMessageLabel();
         if(!Client.connect) Client.connect();
-
     }
 
     @Override
@@ -119,7 +118,6 @@ public class MultiplayerMenu extends MenuScreen {
             passwordLabel.setBounds(buttonRight.getX() + 28, buttonRight.getY()-180,50,30);
             passwordField.setBounds(buttonRight.getX() + 28, buttonRight.getY()-220,190,40);
         }
-
 
         stage.addActor(userLabel);
         stage.addActor(passwordLabel);

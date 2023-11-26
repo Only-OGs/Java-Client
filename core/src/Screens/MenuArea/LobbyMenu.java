@@ -14,9 +14,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class LobbyMenu extends MultiplayerMenu {
 
     private Button createButton, quickButton, searchButton, logOut;
+
+    private String lobbyMessage = "";
 
     private Label idLabel;
 
@@ -43,29 +48,35 @@ public class LobbyMenu extends MultiplayerMenu {
         stage.act();
         stage.draw();
 
+        if (!Client.connect) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
+
+        if("login_success".equals(Client.loginStatus)){
+            lobbyMessage = Client.loginMessage;
+            Client.loginStatus = "";
+            Client.loginMessage = "";
+        }
+
+        if ("failed".equals(Client.joinLobbyStatus)) {
+            count = 0;
+            lobbyMessage = Client.joinMessage;
+            Client.joinLobbyStatus = "";
+            Client.joinMessage = "";
+        }
+
+        if ("joined".equals(Client.joinLobbyStatus)) {
+            OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));
+            Client.joinLobbyStatus = "";
+            Client.joinMessage = "";
+        }
 
         if (200 == count) {
             serverMessage.setText("");
-            Client.statusMessage = "";
+            lobbyMessage = "";
             count++;
         } else if (count < 200) {
-            serverMessage.setText(Client.statusMessage);
+            serverMessage.setText(lobbyMessage);
             count++;
         }
-
-        if (!Client.connect) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
-
-        if ("joined".equals(Client.joinLobby)) {
-            OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));
-            Client.joinLobby = "";
-        }
-
-        if ("false".equals(Client.getLobbyStatus)) {
-            count = 0;
-            Client.statusMessage = "Keine vorhandene oder leere Lobby gefunden";
-            Client.getLobbyStatus = "";
-        }
-
     }
 
     public void addLabelID() {
@@ -79,7 +90,7 @@ public class LobbyMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-                Client.statusMessage = "";
+                lobbyMessage = "";
                 try {
                     createLobby();
                 } catch (JSONException e) {
@@ -92,7 +103,7 @@ public class LobbyMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-                Client.statusMessage = "";
+                lobbyMessage = "";
                 Client.getLobby();
             }
         });
@@ -101,7 +112,6 @@ public class LobbyMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-                Client.statusMessage = "";
                 OGRacerGame.getInstance().setScreen(new SearchScreen(ID));
             }
         });
@@ -110,7 +120,9 @@ public class LobbyMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-                if (serverMessage != null) serverMessage.remove();
+                serverMessage.setText("");
+                Client.loginStatus = "";
+                Client.loginMessage = "";
                 try {
                     Client.sendLogOut();
                 } catch (JSONException e) {

@@ -19,6 +19,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class SearchScreen extends ScreenAdapter {
 
     private TextButton sendButton = new TextButton("Senden", Constants.buttonSkin);
@@ -82,7 +85,7 @@ public class SearchScreen extends ScreenAdapter {
                 if (messageField.getText().length() > 1) {
 
                     try {
-                        Client.player = "";
+                        Client.playerString = "";
                         count = 0;
                         Client.joinLobby(messageField.getText());
                     } catch (JSONException e) {
@@ -97,7 +100,7 @@ public class SearchScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-                Client.player = "";
+                Client.joinMessage = "";
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(ID));
             }
         });
@@ -110,17 +113,17 @@ public class SearchScreen extends ScreenAdapter {
 
         if(!Client.connect) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
 
-        if("joined".equals(Client.joinLobby)){
+        if("joined".equals(Client.searchStatus)){
+            LobbyScreen.idList= new ArrayList<>(Arrays.asList(Client.playerString.split(";")));
             OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));
-            Client.joinLobby = "";
+            Client.searchStatus= "";
         }
-
 
         if (200 == count) {
             serverMessage.setText("");
             count++;
         }else if( count < 200){
-            serverMessage.setText(Client.player);
+            serverMessage.setText(Client.joinMessage);
             count++;
         }
 

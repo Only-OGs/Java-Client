@@ -10,22 +10,35 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
 public class Client {
 
     public static Socket socket;
-    public static String status;
 
-    public static String getLobbyStatus = "";
-    public static String statusMessage;
+    public static String loginStatus;
 
-    public static String joinLobby;
+    public static String loginMessage;
+
+    public static String logoutStatus;
+
+    public static String logoutMessage;
+
+    public static String registerStatus;
+
+    public static String registerMessage;
+
+    public static String joinMessage;
+
+    public static String searchStatus;
+
+    public static String players;
+
+    public static String joinLobbyStatus;
+
     public static String lobbyID;
-
 
     public static String[] playerAndMessage;
 
-    public static String player;
+    public static String playerString;
 
     public static boolean connect = false;
 
@@ -38,116 +51,120 @@ public class Client {
      */
     public static void connect() {
 
-
         try {
             socket = IO.socket("http://89.58.1.158:8080");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
 
-        // Überprüft ob wir Verbunden sind
+        // Überprüft, ob wir Verbunden sind.
         socket.on(Socket.EVENT_CONNECT, args -> {
             connect = true;
             System.out.println("Verbindung zum Server");
         });
 
-        // Überprüft ob wir nicht mehr verbunden sind
-        socket.on(Socket.EVENT_DISCONNECT, args ->{
+        // Überprüft ob wir nicht mehr verbunden sind.
+        socket.on(Socket.EVENT_DISCONNECT, args -> {
             connect = false;
             System.out.println("Verbindung zum Server verloren");
         });
 
-
-
-
-        // Bekommt man Nachrichten vom Server übermittelt
-        socket.on("response", args -> {
+        // Bekommt man Login Informationen
+        socket.on("login", args -> {
             JSONObject obj = (JSONObject) args[0];
             try {
-               status = (String) obj.get("status");
-               statusMessage = (String) obj.get("message");
+                loginStatus = (String) obj.get("status"); // login_success und login_failed
+                loginMessage = (String) obj.get("message"); // Nachricht vom Server wie Benutzer nicht vorhanden oder Passwort falsch
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
         });
 
-        // Wenn eine Lobby erstellt wird bekommt man eine Lobby ID zurück
+        // Bekommt man Logout Informationen
+        socket.on("logout", args -> {
+            JSONObject obj = (JSONObject) args[0];
+            try {
+                logoutStatus = (String) obj.get("status"); // logout_success und logout_failed
+                logoutMessage = (String) obj.get("message"); // Nachricht vom Server Benutzer abgemeldet
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // Bekommt man Infotainment über den Registrierungsvorgang
+        socket.on("register", args -> {
+            JSONObject obj = (JSONObject) args[0];
+            try {
+                registerStatus = (String) obj.get("status"); // register_success und register_failed
+                registerMessage = (String) obj.get("message"); // Nachricht vom Server wie Benutzer schon vorhanden
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // Bekommt man Informationen über das schnelles Spiel
+        socket.on("search_lobby", args -> {
+            JSONObject obj = (JSONObject) args[0];
+            try {
+                searchStatus = (String) obj.get("status"); // register_success und  register_failed
+                joinMessage = (String) obj.get("message");// Nachricht vom Server wie Benutzer schon vorhanden
+                players = (String) obj.get("players"); // Liste der Spieler
+
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // Hier werden Lobby Information an den Client geschickt
+        socket.on("lobby_management", args -> {
+            JSONObject obj = (JSONObject) args[0];
+            try {
+                playerString = (String) obj.get("players");
+                joinLobbyStatus = (String) obj.get("status"); // failed und joined
+                lobbyID = (String) obj.get("lobby");
+                joinMessage = (String) obj.get("message");
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+            if ("joined".equals(Client.joinLobbyStatus)) {
+                LobbyScreen.idList = new ArrayList<>(Arrays.asList(playerString.split(";")));
+                joinMessage = "";
+            }
+
+        });
+
+        // Wenn eine Lobby erstellt wird, bekommt man eine Lobby ID zurück
         socket.on("lobby_created", args -> {
             JSONObject obj = (JSONObject) args[0];
             try {
-                lobbyID= (String) obj.get("message");
+                lobbyID = (String) obj.get("message");
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
         });
 
-        // Wird eine Chat Nachricht erhalten mit ID udn seine Nachricht
+        // Wird eine Chatnachricht erhalten mit ID udn seine Nachricht
         socket.on("new_message", args -> {
             playerAndMessage = ((String) args[0]).split(";");
         });
 
-
-
-        // Rückmeldung ob Search Schlüssel korrekt war oder nicht
-        socket.on("get_lobby", args -> {
-            getLobbyStatus = (String) args[0];
-        });
-
-
-        socket.on("player_joined", args -> {
-            JSONObject obj = (JSONObject) args[0];
-            try {
-                player = (String) obj.get("message");
-                joinLobby = (String) obj.get("status");
-                lobbyID = (String) obj.get("lobby");
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-
-            if(joinLobby.equals("joined")){
-                // Splittet den bekommenen String und setzt die idList mit den aktuellen Spieler Ids
-                LobbyScreen.idList= new ArrayList<>(Arrays.asList(player.split(";")));
-
-            }
-
-
-
-
-        });
-
+        // Wenn ein Spieler die Lobby verlässt, wird eie neue Liste gesendet mit dn aktuellen Spielern
         socket.on("player_leave", args -> {
             JSONObject obj = (JSONObject) args[0];
             try {
-                player = (String) obj.get("message");
+                playerString = (String) obj.get("message");
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            String[] playerIDS = player.split(";");
-            ArrayList<String> tempID = new ArrayList<>(8);
 
-            // Gebe die getrennten Teile aus
-            for (String teil : playerIDS) {
-                tempID.add(teil);
-            }
-
-            LobbyScreen.idList = tempID;
-
-            for (String list: LobbyScreen.idList) {
-
-                System.out.println(list);
-
-            };
-
+            LobbyScreen.idList = new ArrayList<>(Arrays.asList(Client.playerString.split(";")));
         });
-
-        socket.on("connection_success", args -> System.out.println(Arrays.toString(args)));
 
         // Verbindung herstellen
         socket.connect();
     }
-
 
     public static void sendRegisterData(String user, String password) throws JSONException {
         if (socket.connected()) {
@@ -187,19 +204,19 @@ public class Client {
         }
     }
 
-    public static void sendMessage(String message){
+    public static void sendMessage(String message) {
         if (socket.connected()) {
             socket.emit("sent_message", message);
         }
     }
 
-    public static void leaveLobby(){
+    public static void leaveLobby() {
         if (socket.connected()) {
             socket.emit("leave_lobby");
         }
     }
 
-    public static void getLobby(){
+    public static void getLobby() {
         if (socket.connected()) {
             socket.emit("get_lobby");
         }

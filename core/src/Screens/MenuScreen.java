@@ -75,6 +75,7 @@ public abstract class MenuScreen extends ScreenAdapter {
         Constants.buttonSkin.dispose();
         Constants.music.dispose();
         Constants.clickButton.dispose();
+        Constants.messageReceived.dispose();
     }
 
     protected void addButton(String btn1, String btn2, String btn3) {
