@@ -2,12 +2,17 @@ package Screens;
 
 import OGRacerGame.OGRacerGame;
 import MathHelpers.Util;
+import Rendering.CarRenderer;
 import Rendering.RenderSegment;
+import Rendering.SpritesRenderer;
+import Rendering.SunShade;
+import Road.CustomSprite;
 import Road.RoadBuilder;
 import Road.Segment;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -58,16 +63,18 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     private float playerZ = cameraHeight*cameraDepth;
 
-    private float playerSpeed = 10;
+    private float playerSpeed = 0;
     private final float playerMaxSpeed = 250;
     private final float accel = playerMaxSpeed/5;
     private final float offRoadDecel = -playerMaxSpeed/2;
     private final float offRoadLimit = playerMaxSpeed/4;
-    private float centrifugal = 3f;
+    private float centrifugal = 0.3f;
     private float speedPercent = playerSpeed/playerMaxSpeed;
     private float dx = 0;
-
     private double cameraPosition = 0;
+    private float resolution = Gdx.graphics.getHeight()/480;
+    private float sunOffset = 0;
+    private double fogDensity = drawDistance/20;
 
 
     public GameScreen() {
@@ -83,6 +90,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT  );
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         renderSegments(renderer);
         double result = cameraPosition + playerSpeed;
         while (result >= trackLenght)
@@ -110,6 +121,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         int playerY = (int) Util.interpolate(playerSegment.getP1().getWorld().getY(),playerSegment.getP2().getWorld().getY(),playerPercent);
         float x = 0;                                                                                                    //Akkumulierter seitlicher versatz der Segmente
         float dx = 0f- (baseSegment.getCurve()*basePercent);                                                            // hilft die Versätzung zu speichern und berechnen
+        sunOffset += dx;
+        int renderedCounter=0;
 
         Segment segment;
         int segmentLoopedValue;
@@ -117,6 +130,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         for (int i=0;i<drawDistance;i++){
             segment = segments[(baseSegment.getIndex()+i)%segments.length];
             segment.setLooped(segment.getIndex()<baseSegment.getIndex());
+            segment.setFog(1-Util.exponentialFog(Float.parseFloat(String.valueOf(i))/drawDistance,fogDensity));
+            segment.setClip(maxy);
 
             if(segment.isLooped()){
                 segmentLoopedValue=trackLenght;
@@ -130,7 +145,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             x += dx;   //nach jeden segment steigt oder singt die Versätzung der Segmente abhängig von der Stärke der Kurve
             dx += segment.getCurve();
 
-            if((segment.getP1().getCamera().getZ() <= cameraDepth) || (segment.getP2().getScreen().getY()>=maxy)){
+            if((segment.getP1().getCamera().getZ() <= cameraDepth) ||
+                    (segment.getP2().getScreen().getY()>=maxy)||
+                    (segment.getP2().getScreen().getY()>=segment.getP1().getScreen().getY())){
                 continue;
             }
             RenderSegment.render(r,Gdx.graphics.getWidth(),lanes,
@@ -140,10 +157,31 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
                     segment.getP2().getScreen().getX(),
                     segment.getP2().getScreen().getY(),
                     segment.getP2().getScreen().getW(),
-                    0,
-                    segment.getColor()
+                    segment.getFog(),
+                    segment.getColor(),
+                    segment
             );
-            maxy=segment.getP2().getScreen().getY();
+            maxy=segment.getP1().getScreen().getY();
+            renderedCounter++;
+        }
+        SunShade.sun(r,batch,sunOffset,maxy);
+        Segment s;
+        for(int n = (drawDistance-1) ; n > 0 ; n--) {
+            s = segments[((baseSegment.getIndex() + n) % segments.length)];
+            if(s.getSprites()!=null){
+                for(int q=0;q<s.getSprites().length;q++){
+                    CustomSprite cs = s.getSprites()[q];
+                    double spriteScale = s.getP1().getScreen().getScale();
+                    float spriteX = (float) (s.getP1().getScreen().getX()+(spriteScale*cs.getOffset()*roadWidth*Gdx.graphics.getWidth()/2));
+                    float spriteY = s.getP1().getScreen().getY();
+                    SpritesRenderer.render(batch,resolution,roadWidth,cs.getT(),spriteScale,spriteX,spriteY,(cs.getOffset() < 0 ? -1f : 0f) ,-1f ,s.getClip());
+                }
+            }
+            if(s==playerSegment){
+                CarRenderer.renderPlayerCar(batch,playerSegment,resolution,roadWidth,playerSpeed/playerMaxSpeed,cameraDepth/playerZ,Gdx.graphics.getWidth()/2,
+                        (int) ((Gdx.graphics.getHeight()/2)-(cameraDepth/playerZ*Util.interpolate((int) playerSegment.getP1().getCamera().getY(), (int) playerSegment.getP2().getCamera().getY(),playerPercent))*Gdx.graphics.getHeight()/2));
+
+            }
         }
     }
 
@@ -181,10 +219,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         if(Gdx.input.isKeyPressed(Input.Keys.W)) {
             //Beschleunigen
             playerSpeed = playerSpeed + (accel * dt);
-            //Centrifugal
-            playerX = playerX - (dx * speedPercent * findSegment(cameraPosition+playerZ).getCurve() * centrifugal);
-            playerX = Util.limit(playerX, -2, 2);
-
             playerSpeed = Util.limit(playerSpeed, 0, playerMaxSpeed);
         } else if(Gdx.input.isKeyPressed(Input.Keys.S)) {
             //Bremsen
@@ -199,13 +233,12 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         if(Gdx.input.isKeyPressed(Input.Keys.A)) {
             //Nach links fahren
             playerX = playerX - dx;
-            Segment playerSegment = findSegment(cameraPosition+playerZ);
-            playerX = playerX - (dx * speedPercent * playerSegment.getCurve() * centrifugal);
-            playerX = Util.limit(playerX, -2, 2);
         } else if(Gdx.input.isKeyPressed(Input.Keys.D)) {
             //Nach Rechts fahren
             playerX = playerX + dx;
-            playerX = Util.limit(playerX, -2, 2);
         }
+        //Centrifugal
+        playerX = playerX - (dx * speedPercent * findSegment(cameraPosition+playerZ).getCurve() * centrifugal);
+        playerX = Util.limit(playerX, -2, 2);
     }
 }

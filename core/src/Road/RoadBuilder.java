@@ -4,9 +4,12 @@ import MathHelpers.Util;
 import Rendering.ColorThemes;
 import Screens.GameScreen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 
 
 public class RoadBuilder {
+
+    private static Texture t = new Texture("sprites/tree1.png");
     /**
      * erstellt die Strecke
      * @param l die Anzahl der Segmente der Strecke
@@ -14,17 +17,19 @@ public class RoadBuilder {
      * @return
      */
     public static Segment[] resetRoad(int l,int segmentLenght){
+        CustomSprite [] arr= createSpriteArr(l);
         Segment[] segments= new Segment[l];
         segments[0]=buildStart(segmentLenght);
         int index=1;
-        index += addRoad(segments,segmentLenght,index,50,Curve.EASYLEFT,-40);
-        index += addRoad(segments,segmentLenght,index,50,Curve.NONE,60);
-        index += addRoad(segments,segmentLenght,index,50,Curve.MEDIUMLEFT,-20);
+        index += addRoad(segments,segmentLenght,index,50,Curve.HARDLeft,60);
+        index += addRoad(segments,segmentLenght,index,50,Curve.EASYRIGHT,-20);
+        index += addRoad(segments,segmentLenght,index,50,Curve.MEDIUMRIGHT,-40);
 
         for(int i=index;i<l-1;i++){
             addSegment(segments,segmentLenght,i,0,0);
         }
         segments[l-1]=buildfinsih(segmentLenght,l-1);
+        addSprites(segments,arr,200);
         return segments;
     }
 
@@ -115,5 +120,22 @@ public class RoadBuilder {
         }else {
             return road[index-1].getP2().getWorld().getY();
         }
+    }
+    private static void addSprites(Segment[] segments,CustomSprite [] cs,int segmentlenght){
+        for (CustomSprite c: cs) {
+            Segment s = findSegment(segments,c.getZ(),segmentlenght);
+            s.addSprite(c);
+        }
+    }
+    private static Segment findSegment(Segment[] s, double p,int segmentLenght) {
+        return s[(int) (Math.floor(p / segmentLenght) % s.length)];
+    }
+    private static CustomSprite[] createSpriteArr(int l){
+        CustomSprite[] cs= new CustomSprite[l/4];
+        for(int i=0;i<l/4;i++){
+            CustomSprite s = new CustomSprite(t,i%4==0?-1:1,i*4*1000);
+            cs[i]=s;
+        }
+        return cs;
     }
 }
