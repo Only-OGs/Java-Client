@@ -30,8 +30,6 @@ public class Client {
 
     public static String searchStatus;
 
-    public static String players;
-
     public static String joinLobbyStatus;
 
     public static String lobbyID;
@@ -108,11 +106,14 @@ public class Client {
             try {
                 searchStatus = (String) obj.get("status"); // joined und failed
                 joinMessage = (String) obj.get("message");// Nachricht vom Server
-                players = (String) obj.get("players"); // Liste der Spieler
+                playerString = (String) obj.get("players"); // Liste der Spieler
 
-                System.out.println(searchStatus);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
+            }
+            if ("joined".equals(Client.searchStatus)) {
+                LobbyScreen.idList = new ArrayList<>(Arrays.asList(playerString.split(";")));
+                searchStatus = "";
             }
         });
 
