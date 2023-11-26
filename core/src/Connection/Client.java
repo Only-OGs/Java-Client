@@ -15,6 +15,8 @@ public class Client {
 
     public static Socket socket;
     public static String status;
+
+    public static String getLobbyStatus = "";
     public static String statusMessage;
 
     public static String joinLobby;
@@ -87,6 +89,12 @@ public class Client {
 
 
 
+        // Rückmeldung ob Search Schlüssel korrekt war oder nicht
+        socket.on("get_lobby", args -> {
+            getLobbyStatus = (String) args[0];
+        });
+
+
         socket.on("player_joined", args -> {
             JSONObject obj = (JSONObject) args[0];
             try {
@@ -97,8 +105,13 @@ public class Client {
                 throw new RuntimeException(e);
             }
 
-            // Splittet den bekommenen String und setzt die idList mit den aktuellen Spieler Ids
-            LobbyScreen.idList= new ArrayList<>(Arrays.asList(player.split(";")));
+            if(joinLobby.equals("joined")){
+                // Splittet den bekommenen String und setzt die idList mit den aktuellen Spieler Ids
+                LobbyScreen.idList= new ArrayList<>(Arrays.asList(player.split(";")));
+
+            }
+
+
 
 
         });
@@ -120,6 +133,12 @@ public class Client {
             }
 
             LobbyScreen.idList = tempID;
+
+            for (String list: LobbyScreen.idList) {
+
+                System.out.println(list);
+
+            };
 
         });
 

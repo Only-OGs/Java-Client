@@ -45,7 +45,7 @@ public class SettingMenu extends MenuScreen {
     private void addSlider() {
         musicSlider = new Slider(0.0f, 0.7f, 0.01f, false, Constants.buttonSkin);
         musicSlider.setValue(Constants.music.getVolume());
-        musicSlider.setPosition( Constants.stage.getWidth() / 1.3f, 20);
+        musicSlider.setPosition( stage.getWidth() / 1.3f, 20);
         musicSlider.setSize(200, 10);
 
         musicSlider.addListener(new ChangeListener() {
@@ -55,11 +55,6 @@ public class SettingMenu extends MenuScreen {
                 Constants.music.setVolume(volume);
             }
         });
-        Constants.stage.addActor(musicSlider);
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
+        stage.addActor(musicSlider);
     }
 }

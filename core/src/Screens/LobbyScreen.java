@@ -4,6 +4,7 @@ import Connection.Client;
 import OGRacerGame.OGRacerGame;
 import Root.StyleGuide;
 import Screens.MenuArea.LobbyMenu;
+import Screens.MenuArea.MultiplayerMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
@@ -27,8 +28,8 @@ import java.util.ArrayList;
 
 public class LobbyScreen extends ScreenAdapter {
 
-    FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-    private Stage chatStage = new Stage(viewport);
+    private FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    private Stage stage = new Stage(viewport);
     private int searchCounter = 0;
     public static ArrayList<String> idList = new ArrayList<>(8);
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -43,47 +44,42 @@ public class LobbyScreen extends ScreenAdapter {
     private TextArea messageField = new TextArea("", Constants.buttonSkin);
 
     private Texture muteIcon = new Texture("Icon/muteIcon.png");
-    private Texture notMuteIcon =  new Texture("Icon/unMuteIcon.png");
+    private Texture notMuteIcon = new Texture("Icon/unMuteIcon.png");
 
     private ImageButton muteButton;
 
     public LobbyScreen(String ID) {
         this.ID = ID;
-        Gdx.input.setInputProcessor(chatStage);
+        Gdx.input.setInputProcessor(stage);
         Constants.title.setText("Die Lobby");
-        Constants.stage.clear();
         Constants.title.setSize(Gdx.graphics.getWidth(), 100);
-        Constants.title.setPosition(0, Constants.stage.getHeight() - 100);
+        Constants.title.setPosition(0, stage.getHeight() - 100);
         Constants.title.setAlignment(Align.center);
-        Constants.stage.addActor(Constants.title);
-        Constants.stage.addActor(Constants.title);
+        stage.addActor(Constants.title);
+
         addLabelPlayer();
         adddPlayerID();
         addChatLable();
         addLabelLobbyID();
         addLeaveButton();
         buildChat();
-        addMuteButton();
         buttonListener();
-
-
     }
 
-    private void addMuteButton(){
+    private void addMuteButton() {
         ImageButton.ImageButtonStyle muteButtonStyle = new ImageButton.ImageButtonStyle();
         muteButtonStyle.up = new TextureRegionDrawable(muteIcon);
         muteButtonStyle.up = new TextureRegionDrawable(notMuteIcon);
         muteButton = new ImageButton(muteButtonStyle);
-        muteButton.setBounds(Gdx.graphics.getWidth()-70, (float) Gdx.graphics.getHeight() /4,50,50);
-        chatStage.addActor(muteButton);
-
+        muteButton.setBounds(Gdx.graphics.getWidth() - 70, (float) Gdx.graphics.getHeight() / 4, 50, 50);
+        stage.addActor(muteButton);
     }
 
     private void addChatLable() {
         chatLable = new Label("Chat: ", Constants.buttonSkin);
         chatLable.setSize(190, 40);
-        chatLable.setPosition(Constants.stage.getWidth() / 1.9f, Constants.stage.getHeight() - 138);
-        Constants.stage.addActor(chatLable);
+        chatLable.setPosition(stage.getWidth() / 1.9f, stage.getHeight() - 138);
+        stage.addActor(chatLable);
     }
 
     private void buildChat() {
@@ -106,12 +102,12 @@ public class LobbyScreen extends ScreenAdapter {
         messageField.setBounds(Gdx.graphics.getWidth() / 1.9f, 180, scrollChat.getWidth(), 100);
 
         sendMessageButton.setBounds(messageField.getX() + messageField.getWidth() - 122, messageField.getY() - 60, 130, 50);
-        Constants.stage.addActor(sendMessageButton);
+        stage.addActor(sendMessageButton);
 
         chatTable.add("                                                ").left().row();
-        chatStage.addActor(scrollChat);
-        chatStage.addActor(sendMessageButton);
-        chatStage.addActor(messageField);
+        stage.addActor(scrollChat);
+        stage.addActor(sendMessageButton);
+        stage.addActor(messageField);
     }
 
     private boolean isScrollBarAtBottom() {
@@ -123,8 +119,8 @@ public class LobbyScreen extends ScreenAdapter {
     public void adddPlayerID() {
         idLabel = new Label("ID: " + ID, Constants.buttonSkin);
         idLabel.setSize(190, 40);
-        idLabel.setPosition(Constants.stage.getWidth() / 1.3f, Constants.stage.getHeight() - 65);
-        Constants.stage.addActor(idLabel);
+        idLabel.setPosition(stage.getWidth() / 1.3f, stage.getHeight() - 65);
+        stage.addActor(idLabel);
     }
 
 
@@ -137,13 +133,12 @@ public class LobbyScreen extends ScreenAdapter {
 
         lobbyCode = new Label("Lobby ID: ", style);
         lobbyCode.setSize(190, 40);
-        lobbyCode.setPosition(Constants.stage.getWidth() / 1.2f, 25);
-        Constants.stage.addActor(lobbyCode);
+        lobbyCode.setPosition(stage.getWidth() / 1.2f, 25);
+        stage.addActor(lobbyCode);
     }
 
     private void addLobbyID() {
         lobbyCode.setText("Lobby ID: " + Client.lobbyID);
-
     }
 
     private void addLabelPlayer() {
@@ -158,26 +153,25 @@ public class LobbyScreen extends ScreenAdapter {
         ScreenUtils.clear(20 / 255f, 21 / 255f, 44 / 255f, 1.0f);
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
+        if (!Client.connect) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
+
         updateField();
         addLobbyID();
+        updateChat();
+
 
         if (isScrollBarAtBottom()) {
             scrollChat.layout(); // Das Layout aktualisieren, bevor wir scrollen
             scrollChat.scrollTo(0, 0, 0, 0); // Nach unten scrollen (0, 0)
         }
 
-
-        chatStage.act(Gdx.graphics.getDeltaTime());
-        chatStage.draw();
-        Constants.stage.act(Gdx.graphics.getDeltaTime());
-        Constants.stage.draw();
-
-        updateChat();
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
 
 
     }
 
-    private void updateChat(){
+    private void updateChat() {
         if (Client.playerAndMessage != null) {
             Label playerColor = new Label("", Constants.buttonSkin);
             if (ID.equals(Client.playerAndMessage[0])) {
@@ -197,13 +191,11 @@ public class LobbyScreen extends ScreenAdapter {
 
                 for (int i = 0; i < idList.size(); i++) {
 
-                    if(Client.playerAndMessage[0].equals(idList.get(i))){
+                    if (Client.playerAndMessage[0].equals(idList.get(i))) {
                         playerColor.setText(idList.get(i));
                         playerColor.setColor(StyleGuide.colors[i]);
                     }
-
                 }
-
 
                 chatTable.add(playerColor).left().row();
                 chatTable.add(Client.playerAndMessage[1] + "\n").left().row();
@@ -211,12 +203,8 @@ public class LobbyScreen extends ScreenAdapter {
                 Client.playerAndMessage = null;
                 Constants.messageReceived.play(0.05f);
             }
-
-
         }
     }
-
-
 
     private void buttonListener() {
 
@@ -233,40 +221,41 @@ public class LobbyScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-                idList =  new ArrayList<>(8);
-
+                idList = new ArrayList<>(8);
                 Client.leaveLobby();
-
+                Client.player = "";
+                Client.joinLobby = "";
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(ID));
             }
         });
 
+        /*
         muteButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
             }
         });
-
+        */
     }
 
-   private void addLeaveButton(){
-       lobbyLeaveButton.setBounds(95, Constants.stage.getHeight() - 70, 170, 50);
-       chatStage.addActor(lobbyLeaveButton);
-   }
-
+    private void addLeaveButton() {
+        lobbyLeaveButton.setBounds(95, stage.getHeight() - 70, 170, 50);
+        stage.addActor(lobbyLeaveButton);
+    }
 
     @Override
     public void resize(int width, int height) {
-        Constants.stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         super.resize(width, height);
     }
 
     @Override
     public void dispose() {
+        stage.dispose();
+        shapeRenderer.dispose();
         super.dispose();
     }
-
 
     void updateField() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -307,16 +296,14 @@ public class LobbyScreen extends ScreenAdapter {
             }
             searchCounter = 0;
         }
-
     }
-
 
     void createPlayer() {
         int count = 560;
         for (int i = 0; i < player.length; i++) {
             player[i].setPosition(120, ((float) Gdx.graphics.getHeight() / 16) + count);
             player[i].setSize(400, 40);
-            Constants.stage.addActor(player[i]);
+            stage.addActor(player[i]);
             count -= 80;
         }
     }

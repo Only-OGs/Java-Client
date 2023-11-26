@@ -9,7 +9,7 @@ import org.json.JSONException;
 
 public class RegisterMenu extends MultiplayerMenu {
 
-    protected boolean updateStatusMessage = false;
+    private int delay = 0;
 
     public RegisterMenu() {
         Constants.title.setText("Registrieren");
@@ -21,12 +21,15 @@ public class RegisterMenu extends MultiplayerMenu {
 
     @Override
     public void render(float delta) {
-        if (updateStatusMessage) addServerMessage();
+
+        if (200 == delay) {
+            serverMessage.setText("");
+            delay++;
+        }else if( delay < 200){
+            serverMessage.setText(Client.statusMessage);
+            delay++;
+        }
         super.render(delta);
-    }
-    @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
     }
 
     @Override
@@ -49,6 +52,7 @@ public class RegisterMenu extends MultiplayerMenu {
                 password = passwordField.getText();
 
                 if (user.length() > 3 && password.length() > 5 && Client.connect) {
+                    delay = 0;
                     userField.setText("");
                     passwordField.setText("");
                     Client.statusMessage = "";
@@ -59,7 +63,6 @@ public class RegisterMenu extends MultiplayerMenu {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-                    updateStatusMessage = true;
                 }
             }
         });

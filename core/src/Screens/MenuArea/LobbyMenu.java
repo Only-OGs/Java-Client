@@ -5,7 +5,6 @@ import OGRacerGame.OGRacerGame;
 import Screens.Constants;
 import Screens.LobbyScreen;
 import Screens.SearchScreen;
-import Screens.WaitScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -33,7 +32,6 @@ public class LobbyMenu extends MultiplayerMenu {
         removeButton();
         lobbySelectionButton();
         lobbyButtonListener();
-        updateStatusMessage = true;
         addLabelID();
         Constants.music.stop();
     }
@@ -42,37 +40,38 @@ public class LobbyMenu extends MultiplayerMenu {
     public void render(float delta) {
 
         ScreenUtils.clear(20 / 255f, 21 / 255f, 44 / 255f, 1.0f);
-        Constants.stage.act();
-        Constants.stage.draw();
-        Constants.stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage.act();
+        stage.draw();
 
 
         if (200 == count) {
-            if (serverMessage != null) serverMessage.remove();
+            serverMessage.setText("");
             Client.statusMessage = "";
-        }else if( count < 200){
-            addServerMessage();
+            count++;
+        } else if (count < 200) {
+            serverMessage.setText(Client.statusMessage);
             count++;
         }
 
+        if (!Client.connect) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
 
-
-        if(!Client.connect){
-            OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
+        if ("joined".equals(Client.joinLobby)) {
+            OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));
+            Client.joinLobby = "";
         }
+
+        if ("false".equals(Client.getLobbyStatus)) {
+            count = 0;
+            Client.statusMessage = "Keine vorhandene oder leere Lobby gefunden";
+            Client.getLobbyStatus = "";
+        }
+
     }
 
     public void addLabelID() {
         idLabel = new Label("ID: " + ID, Constants.buttonSkin);
-        idLabel.setSize(190, 40);
-        idLabel.setPosition( Constants.stage.getWidth() / 1.3f,  Constants.stage.getHeight() - 65);
-        Constants.stage.addActor(idLabel);
-
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
+        idLabel.setBounds(stage.getWidth() / 1.3f, stage.getHeight() - 65, 190, 40);
+        stage.addActor(idLabel);
     }
 
     protected void lobbyButtonListener() {
@@ -95,8 +94,6 @@ public class LobbyMenu extends MultiplayerMenu {
                 Constants.clickButton.play(0.2f);
                 Client.statusMessage = "";
                 Client.getLobby();
-                OGRacerGame.getInstance().setScreen(new WaitScreen(ID));
-
             }
         });
 
@@ -106,7 +103,6 @@ public class LobbyMenu extends MultiplayerMenu {
                 Constants.clickButton.play(0.2f);
                 Client.statusMessage = "";
                 OGRacerGame.getInstance().setScreen(new SearchScreen(ID));
-
             }
         });
 
@@ -120,8 +116,7 @@ public class LobbyMenu extends MultiplayerMenu {
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-                OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
-
+                OGRacerGame.getInstance().setScreen(new LoginMenu());
             }
         });
     }
@@ -129,26 +124,29 @@ public class LobbyMenu extends MultiplayerMenu {
     private void lobbySelectionButton() {
 
         createButton = new TextButton("Lobby erstellen", Constants.buttonSkin);
+
         createButton.setSize(260, 60);
-        createButton.setPosition( Constants.stage.getWidth() / 2 - (createButton.getWidth() / 2),  Constants.stage.getHeight() / 2 - (createButton.getHeight()/2)+90);
-        Constants.stage.addActor(createButton);
+        createButton.setPosition(stage.getWidth() / 2 - (createButton.getWidth() / 2), stage.getHeight() / 2 - (createButton.getHeight() / 2) + 90);
+
+        stage.addActor(createButton);
 
         quickButton = new TextButton("Schnelles Spiel", Constants.buttonSkin);
         quickButton.setSize(260, 60);
-        quickButton.setPosition( Constants.stage.getWidth() / 2 - (quickButton.getWidth() / 2),  Constants.stage.getHeight() / 2 - (quickButton.getHeight()/2));
-        Constants.stage.addActor(quickButton);
+        quickButton.setPosition(stage.getWidth() / 2 - (quickButton.getWidth() / 2), stage.getHeight() / 2 - (quickButton.getHeight() / 2));
+
+        stage.addActor(quickButton);
 
         searchButton = new TextButton("Lobby suchen", Constants.buttonSkin);
         searchButton.setSize(260, 60);
-        searchButton.setPosition( Constants.stage.getWidth() / 2 - (searchButton.getWidth() / 2),  Constants.stage.getHeight() / 2 - (searchButton.getHeight()/2)-90);
-        Constants.stage.addActor(searchButton);
+        searchButton.setPosition(stage.getWidth() / 2 - (searchButton.getWidth() / 2), stage.getHeight() / 2 - (searchButton.getHeight() / 2) - 90);
+        stage.addActor(searchButton);
 
         logOut = new TextButton("Abmelden", Constants.buttonSkin);
         logOut.setSize(260, 60);
-        logOut.setPosition( Constants.stage.getWidth() / 2 - (logOut.getWidth() / 2),  Constants.stage.getHeight() / 2 - (logOut.getHeight()/2)-180);
-        Constants.stage.addActor(logOut);
+        logOut.setPosition(stage.getWidth() / 2 - (logOut.getWidth() / 2), stage.getHeight() / 2 - (logOut.getHeight() / 2) - 180);
+        stage.addActor(logOut);
 
-        Gdx.input.setInputProcessor( Constants.stage);
+        Gdx.input.setInputProcessor(stage);
     }
 
     private void createLobby() throws JSONException {
@@ -157,13 +155,4 @@ public class LobbyMenu extends MultiplayerMenu {
         LobbyScreen.idList.add(ID);
         OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));
     }
-
-    private void searchLobbyButton(){
-        Constants.title.setText("Lobby Auswahl");
-    }
-
-    private void quickGameButton(){
-        Constants.title.setText("Lobby Auswahl");
-    }
-
 }

@@ -21,16 +21,6 @@ public class MainMenu extends MenuScreen {
     }
 
     @Override
-    public void render(float delta) {
-        super.render(delta);
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
-    }
-
-    @Override
     protected void buttonListener() {
         buttonLeft.addListener(new ClickListener() {
             @Override

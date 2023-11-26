@@ -11,6 +11,8 @@ import java.util.Objects;
 
 public class LoginMenu extends MultiplayerMenu {
 
+    private int delay = 0;
+
     public LoginMenu() {
         Constants.title.setText("Anmelden");
         removeButton();
@@ -22,14 +24,20 @@ public class LoginMenu extends MultiplayerMenu {
     @Override
     public void render(float delta) {
 
-        if (updateStatusMessage) addServerMessage();
+        if (200 == delay) {
+            serverMessage.setText("");
+            delay++;
+        }else if( delay < 200){
+            serverMessage.setText(Client.statusMessage);
+            delay++;
+        }
 
         if (!loginSuccess) {
             if (Objects.equals(Client.status, "login_success")) {
                 loginSuccess = true;
                 Client.status = "";
+                serverMessage.setText("");
                 statusOnOff = false;
-                updateStatusMessage = false;
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(user));
 
             }
@@ -53,7 +61,7 @@ public class LoginMenu extends MultiplayerMenu {
                 password = passwordField.getText();
 
                 if (user.length() > 3 && password.length() > 5 && Client.connect) {
-
+                    delay = 0;
                     userField.setText("");
                     passwordField.setText("");
 
@@ -63,7 +71,6 @@ public class LoginMenu extends MultiplayerMenu {
                         throw new RuntimeException(e);
                     }
                     Client.statusMessage = "";
-                    updateStatusMessage = true;
                 }
             }
         });
@@ -76,11 +83,6 @@ public class LoginMenu extends MultiplayerMenu {
                 OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
             }
         });
-    }
-
-    @Override
-    public void dispose() {
-        Constants.stage.dispose();
     }
 }
 
