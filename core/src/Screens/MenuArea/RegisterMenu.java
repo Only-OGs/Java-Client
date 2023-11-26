@@ -1,15 +1,18 @@
-package Screens.Area;
+package Screens.MenuArea;
 
 import Connection.Client;
 import OGRacerGame.OGRacerGame;
+import Screens.Constants;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.json.JSONException;
 
 public class RegisterMenu extends MultiplayerMenu {
 
+    private int delay = 0;
+
     public RegisterMenu() {
-        title.setText("Registrieren");
+        Constants.title.setText("Registrieren");
         removeButton();
         addButton("", "Zurueck", "Registrieren");
         buttonListener();
@@ -18,8 +21,14 @@ public class RegisterMenu extends MultiplayerMenu {
 
     @Override
     public void render(float delta) {
-        if (updateStatusMessage) addServerMessage();
 
+        if (200 == delay) {
+            serverMessage.setText("");
+            delay++;
+        }else if( delay < 200){
+            serverMessage.setText(Client.registerMessage);
+            delay++;
+        }
         super.render(delta);
     }
 
@@ -29,8 +38,8 @@ public class RegisterMenu extends MultiplayerMenu {
         buttonMiddle.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play(0.2f);
-                Client.statusMessage = "";
+                Constants.clickButton.play(0.2f);
+                Client.registerMessage = "";
                 OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
             }
         });
@@ -38,14 +47,15 @@ public class RegisterMenu extends MultiplayerMenu {
         buttonRight.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play(0.2f);
+                Constants.clickButton.play(0.2f);
                 user = userField.getText();
                 password = passwordField.getText();
 
                 if (user.length() > 3 && password.length() > 5 && Client.connect) {
+                    delay = 0;
                     userField.setText("");
                     passwordField.setText("");
-                    Client.statusMessage = "";
+                    Client.registerMessage = "";
 
                     try {
                         Client.sendRegisterData(user, password);
@@ -53,7 +63,6 @@ public class RegisterMenu extends MultiplayerMenu {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-                    updateStatusMessage = true;
                 }
             }
         });

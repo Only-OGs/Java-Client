@@ -14,38 +14,60 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameScreen extends ScreenAdapter implements IInputHandler{
 
-    private static Camera camera;
-    private static Viewport viewport;
+    private Viewport viewport;
+
+    protected Stage stage;
+
     private SpriteBatch batch;
+
     private Texture background;
+
     private ShapeRenderer renderer;
+
     private int backgroundWitdh = 500;
+
     private int backgroundHeight = 500;
+
 
     //TEST Variables
     private Segment[] segments;
+
     private int roadWidth = 2000;
+
     private int segmentLenght = 200;
+
     private int lanes = 3;
+
     private int segmentsCount=600;
+
     private int trackLenght;
+
     private int FOV = 100;
+
     private int cameraHeight = 1000;
+
     private float cameraDepth  = (float) (1/Math.tan((FOV/2)*Math.PI/180));
+
     private int drawDistance = 200;
+
     private float playerX = 0;
+
     private float playerZ = cameraHeight*cameraDepth;
+
     private double cameraPosition = 0;
 
+
     public GameScreen() {
-        camera = new OrthographicCamera();
-        viewport = new ScreenViewport();
+        viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage = new Stage(viewport);
         batch = new SpriteBatch();
         background = new Texture("background/hills.png");
         renderer = new ShapeRenderer();
@@ -66,14 +88,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     }
 
     @Override
-    public void resize(int width, int height) {
-    }
-
-    @Override
     public void dispose () {
         batch.dispose();
         background.dispose();
-
+        stage.dispose();
     }
 
     public void renderSegments(ShapeRenderer r){

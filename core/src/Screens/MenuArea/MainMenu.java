@@ -1,22 +1,23 @@
-package Screens.Area;
+package Screens.MenuArea;
 
 import OGRacerGame.OGRacerGame;
+import Screens.Constants;
 import Screens.GameScreen;
+import Screens.MenuScreen;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public class MainMenu extends MenuArea {
+public class MainMenu extends MenuScreen {
 
     public MainMenu() {
-        title.setText("Hauptmenu");
+        Constants.title.setText("Hauptmenu");
         removeButton();
         addButton("Einzelspieler","Einstellungen","Mehrspieler");
         buttonListener();
-    }
-
-    @Override
-    public void render(float delta) {
-        super.render(delta);
     }
 
     @Override
@@ -24,16 +25,17 @@ public class MainMenu extends MenuArea {
         buttonLeft.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play(0.2f);
+                Constants.music.stop();
+                removeButton();
                 OGRacerGame.getInstance().setScreen(new GameScreen());
-                music.stop();
             }
         });
 
         buttonMiddle.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play(0.2f);
+                Constants.clickButton.play(0.2f);
+                removeButton();
                 OGRacerGame.getInstance().setScreen(new SettingMenu());
 
             }
@@ -42,7 +44,8 @@ public class MainMenu extends MenuArea {
         buttonRight.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play(0.2f);
+                Constants.clickButton.play(0.2f);
+                removeButton();
                 OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
             }
         });

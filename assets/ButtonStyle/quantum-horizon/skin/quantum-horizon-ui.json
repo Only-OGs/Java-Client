@@ -2,11 +2,11 @@
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	font: {
 		file: font-export.fnt
-	}
+	},
 	title: {
 		file: font-title-export.fnt
 	}
-}
+},
 com.badlogic.gdx.graphics.Color: {
 	background: {
 		r: 0.7484462
