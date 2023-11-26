@@ -4,9 +4,12 @@ import MathHelpers.Util;
 import Rendering.ColorThemes;
 import Screens.GameScreen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 
 
 public class RoadBuilder {
+
+    private static Texture t = new Texture("sprites/tree1.png");
     /**
      * erstellt die Strecke
      * @param l die Anzahl der Segmente der Strecke
@@ -14,17 +17,25 @@ public class RoadBuilder {
      * @return
      */
     public static Segment[] resetRoad(int l,int segmentLenght){
+        CustomSprite cs = new CustomSprite(t,-1,10000);
+        CustomSprite cs1 = new CustomSprite(t,-1,20000);
+        CustomSprite cs2 = new CustomSprite(t,-1,30000);
+        CustomSprite [] arr= new CustomSprite[3];
+        arr[0]=cs;
+        arr[1]=cs1;
+        arr[2]=cs2;
         Segment[] segments= new Segment[l];
         segments[0]=buildStart(segmentLenght);
         int index=1;
-        index += addRoad(segments,segmentLenght,index,50,Curve.EASYLEFT,-60);
-        index += addRoad(segments,segmentLenght,index,50,Curve.HARDRIGHT,120);
-        index += addRoad(segments,segmentLenght,index,50,Curve.MEDIUMLEFT,-60);
+        index += addRoad(segments,segmentLenght,index,50,Curve.EASYLEFT,20);
+        index += addRoad(segments,segmentLenght,index,50,Curve.NONE,0);
+        index += addRoad(segments,segmentLenght,index,50,Curve.EASYRIGHT,-20);
 
         for(int i=index;i<l-1;i++){
             addSegment(segments,segmentLenght,i,0,0);
         }
         segments[l-1]=buildfinsih(segmentLenght,l-1);
+        addSprites(segments,arr,200);
         return segments;
     }
 
@@ -115,5 +126,14 @@ public class RoadBuilder {
         }else {
             return road[index-1].getP2().getWorld().getY();
         }
+    }
+    private static void addSprites(Segment[] segments,CustomSprite [] cs,int segmentlenght){
+        for (CustomSprite c: cs) {
+            Segment s = findSegment(segments,c.getZ(),segmentlenght);
+            s.addSprite(c);
+        }
+    }
+    private static Segment findSegment(Segment[] s, double p,int segmentLenght) {
+        return s[(int) (Math.floor(p / segmentLenght) % s.length)];
     }
 }

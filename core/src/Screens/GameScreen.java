@@ -4,7 +4,9 @@ import OGRacerGame.OGRacerGame;
 import MathHelpers.Util;
 import Rendering.CarRenderer;
 import Rendering.RenderSegment;
+import Rendering.SpritesRenderer;
 import Rendering.SunShade;
+import Road.CustomSprite;
 import Road.RoadBuilder;
 import Road.Segment;
 import com.badlogic.gdx.Gdx;
@@ -50,8 +52,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private float decel = - accel;
     private float offRoadDecel = -maxSpeed/2;
     private float offRoadLimit = maxSpeed/4;
-    private int speed=0;
-    private float sunOffset=0;
+    private int speed = 0;
+    private float sunOffset = 0;
     private Music music;
     private float resoultion = Gdx.graphics.getHeight()/2;
     private double fogDensity = drawDistance/20;
@@ -118,6 +120,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             segment = segments[(baseSegment.getIndex()+i)%segments.length];
             segment.setLooped(segment.getIndex()<baseSegment.getIndex());
             segment.setFog(1-Util.exponentialFog(Float.parseFloat(String.valueOf(i))/drawDistance,fogDensity));
+            segment.setClip(maxy);
 
             if(segment.isLooped()){
                 segmentLoopedValue=trackLenght;
@@ -131,7 +134,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             x += dx;   //nach jeden segment steigt oder singt die Versätzung der Segmente abhängig von der Stärke der Kurve
             dx += segment.getCurve();
 
-            if((segment.getP1().getCamera().getZ() <= cameraDepth) || (segment.getP2().getScreen().getY()>=maxy)){
+            if((segment.getP1().getCamera().getZ() <= cameraDepth) ||
+                    (segment.getP2().getScreen().getY()>=maxy)||
+                    (segment.getP2().getScreen().getY()>=segment.getP1().getScreen().getY())){
                 continue;
             }
             RenderSegment.render(r,Gdx.graphics.getWidth(),lanes,
@@ -145,12 +150,29 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
                     segment.getColor(),
                     segment
             );
-            maxy=segment.getP2().getScreen().getY();
+            maxy=segment.getP1().getScreen().getY();
             renderedCounter++;
         }
-        SunShade.sunShade(r,sunOffset,maxy,renderedCounter);
-        CarRenderer.renderPlayerCar(batch,playerSegment,resolution,roadWidth,speed/maxSpeed,cameraDepth/playerZ,Gdx.graphics.getWidth()/2,
-                (int) ((Gdx.graphics.getHeight()/2)-(cameraDepth/playerZ*Util.interpolate((int) playerSegment.getP1().getCamera().getY(), (int) playerSegment.getP2().getCamera().getY(),playerPercent))));
+        Segment s;
+        for(int n = (drawDistance-1) ; n > 0 ; n--) {
+            s = segments[((baseSegment.getIndex() + n) % segments.length)];
+            if(s.getSprites()!=null){
+                for(int q=0;q<s.getSprites().length;q++){
+                    CustomSprite cs = s.getSprites()[q];
+                    double spriteScale = s.getP1().getScreen().getScale();
+                    float spriteX = (float) (s.getP1().getScreen().getX()+(spriteScale*cs.getOffset()*roadWidth*Gdx.graphics.getWidth()/2));
+                    float spriteY = s.getP1().getScreen().getY();
+                    SpritesRenderer.render(batch,resolution,roadWidth,cs.getT(),spriteScale,spriteX,spriteY,(cs.getOffset() < 0 ? -1f : 0f) ,-1f ,s.getClip());
+                }
+            }
+            if(s==playerSegment){
+                CarRenderer.renderPlayerCar(batch,playerSegment,resolution,roadWidth,speed/maxSpeed,cameraDepth/playerZ,Gdx.graphics.getWidth()/2,
+                        (int) ((Gdx.graphics.getHeight()/2)-(cameraDepth/playerZ*Util.interpolate((int) playerSegment.getP1().getCamera().getY(), (int) playerSegment.getP2().getCamera().getY(),playerPercent))*Gdx.graphics.getHeight()/2));
+
+            }
+        }
+
+        /*SunShade.sunShade(r,sunOffset,maxy,renderedCounter);*/
     }
 
     private Segment findSegment(double p) {

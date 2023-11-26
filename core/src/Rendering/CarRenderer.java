@@ -18,7 +18,6 @@ public class CarRenderer {
 
 
     public static void renderPlayerCar(SpriteBatch batch, Segment curr,float resolution, int roadwidth,float speedPercent,float scale,int destX, int destY){
-        batch.begin();
         Texture t;
         float bounce = (float) ((1.5+Math.random()*speedPercent*resolution)* Util.randomChoice(new int[]{1, -1}));
         if(curr.getP1().getWorld().getY()<curr.getP2().getWorld().getY()){
@@ -39,6 +38,5 @@ public class CarRenderer {
             }
         }
         SpritesRenderer.render(batch,resolution,roadwidth,t,scale,destX,destY+bounce,-0.5f,-1f,0);
-        batch.end();
     }
 }

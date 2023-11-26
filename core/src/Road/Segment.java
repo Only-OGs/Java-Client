@@ -5,6 +5,9 @@ import Rendering.ColorThemes;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class Segment {
 
@@ -15,6 +18,9 @@ public class Segment {
     private double fog;
     private Color[] color;
     private float curve;
+    private CustomSprite[] sprites;
+    private int clip;
+
 
     public Segment(int index, P p1, P p2, Color[] c, float curve) {
         this.index = index;
@@ -79,5 +85,22 @@ public class Segment {
     public void setCurve(float curve) {
         this.curve = curve;
     }
+
+    public void addSprite(CustomSprite cs){
+        if(sprites!=null){
+            ArrayList<CustomSprite> temp = (ArrayList<CustomSprite>) Arrays.stream(this.sprites).toList();
+            temp.add(cs);
+            sprites = temp.toArray(new CustomSprite[temp.size()]);
+        }else{
+            sprites = new CustomSprite[1];
+            sprites[0]=cs;
+        }
+    }
+
+    public CustomSprite[] getSprites() {return sprites;}
+
+    public void setClip(int clip) {this.clip = clip;}
+
+    public int getClip() {return clip;}
 }
 
