@@ -17,13 +17,7 @@ public class RoadBuilder {
      * @return
      */
     public static Segment[] resetRoad(int l,int segmentLenght){
-        CustomSprite cs = new CustomSprite(t,-1,10000);
-        CustomSprite cs1 = new CustomSprite(t,-1,20000);
-        CustomSprite cs2 = new CustomSprite(t,-1,30000);
-        CustomSprite [] arr= new CustomSprite[3];
-        arr[0]=cs;
-        arr[1]=cs1;
-        arr[2]=cs2;
+        CustomSprite [] arr= createSpriteArr(l);
         Segment[] segments= new Segment[l];
         segments[0]=buildStart(segmentLenght);
         int index=1;
@@ -135,5 +129,13 @@ public class RoadBuilder {
     }
     private static Segment findSegment(Segment[] s, double p,int segmentLenght) {
         return s[(int) (Math.floor(p / segmentLenght) % s.length)];
+    }
+    private static CustomSprite[] createSpriteArr(int l){
+        CustomSprite[] cs= new CustomSprite[l/4];
+        for(int i=0;i<l/4;i++){
+            CustomSprite s = new CustomSprite(t,i%4==0?-1:1,i*4*1000);
+            cs[i]=s;
+        }
+        return cs;
     }
 }

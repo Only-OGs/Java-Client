@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class Segment {
@@ -88,9 +89,12 @@ public class Segment {
 
     public void addSprite(CustomSprite cs){
         if(sprites!=null){
-            ArrayList<CustomSprite> temp = (ArrayList<CustomSprite>) Arrays.stream(this.sprites).toList();
-            temp.add(cs);
-            sprites = temp.toArray(new CustomSprite[temp.size()]);
+            CustomSprite[] temp = new CustomSprite[sprites.length+1];
+            for(int i=0;i<sprites.length;i++){
+                temp[i]= sprites[i];
+            }
+            temp[sprites.length]=cs;
+            sprites=temp;
         }else{
             sprites = new CustomSprite[1];
             sprites[0]=cs;
