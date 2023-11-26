@@ -1,17 +1,12 @@
 package Rendering;
 
+import Road.Segment;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.EarClippingTriangulator;
-import com.badlogic.gdx.utils.FloatArray;
-import com.badlogic.gdx.utils.ShortArray;
 
 public class RenderSegment {
-    public static void render(ShapeRenderer shape, int width, int lanes, float x1, float y1, float w1, float x2, float y2, float w2, int fog, Color[] color){
+    public static void render(ShapeRenderer shape, int width, int lanes, float x1, float y1, float w1, float x2, float y2, float w2, double fog, Color[] color, Segment segment){
         float r1 = RenderHelpers.rumbleWidth(w1,lanes);
         float r2 = RenderHelpers.rumbleWidth(w2,lanes);
         float l1 = RenderHelpers.laneMarkerWidth(w1,lanes);
@@ -50,5 +45,9 @@ public class RenderSegment {
                 lanex2+=lanew2;
             }
         }
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+        shape.setColor(new Color( 63f/255f, 171f/255f, 162f/255f, (float) fog));
+        shape.rect(0, libgdxY1, Gdx.graphics.getWidth(),libgdxY2-libgdxY1);
+        shape.end();
     }
 }
