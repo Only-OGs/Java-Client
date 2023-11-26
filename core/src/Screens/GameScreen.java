@@ -58,13 +58,12 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     private float playerZ = cameraHeight*cameraDepth;
 
-    private float playerSpeed = 10;
+    private float playerSpeed = 0;
     private final float playerMaxSpeed = 250;
     private final float accel = playerMaxSpeed/5;
     private final float offRoadDecel = -playerMaxSpeed/2;
     private final float offRoadLimit = playerMaxSpeed/4;
-    private float centrifugal = 3f;
-    private float speedPercent = playerSpeed/playerMaxSpeed;
+    private float centrifugal = 0.3f;
     private float dx = 0;
 
     private double cameraPosition = 0;
@@ -171,7 +170,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             //Menü anzeigen
         }
         // Wenn das Spiel pausiert ist, sollen keine Eingaben zum steuern des Autos abgefragt werden
-        if(!game.isRunning) return;
+        // if(!game.isRunning) return;
 
 
 		/*	Durch die Struktur ist es unmöglich
@@ -182,7 +181,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             //Beschleunigen
             playerSpeed = playerSpeed + (accel * dt);
             //Centrifugal
-            playerX = playerX - (dx * speedPercent * findSegment(cameraPosition+playerZ).getCurve() * centrifugal);
+            playerX = playerX - (dx * playerSpeed/playerMaxSpeed * findSegment(cameraPosition+playerZ).getCurve() * centrifugal);
             playerX = Util.limit(playerX, -2, 2);
 
             playerSpeed = Util.limit(playerSpeed, 0, playerMaxSpeed);
@@ -199,8 +198,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         if(Gdx.input.isKeyPressed(Input.Keys.A)) {
             //Nach links fahren
             playerX = playerX - dx;
-            Segment playerSegment = findSegment(cameraPosition+playerZ);
-            playerX = playerX - (dx * speedPercent * playerSegment.getCurve() * centrifugal);
             playerX = Util.limit(playerX, -2, 2);
         } else if(Gdx.input.isKeyPressed(Input.Keys.D)) {
             //Nach Rechts fahren
