@@ -32,21 +32,12 @@ public class OGRacerGame extends Game {
 	@Override
 	public void render() {
 		super.render();
-		handleInput();
 
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		super.resize(width, height);
-	}
-
-	public void handleInput() {
-		if(getScreen() instanceof GameScreen gs) {
-			gs.checkInput(this);
-		} else if(getScreen() instanceof StartScreenFirst sc) {
-            sc.checkInput(this);
-		}
 	}
 
 	public void setup(){

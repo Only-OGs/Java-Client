@@ -4,5 +4,5 @@ import OGRacerGame.OGRacerGame;
 
 public interface IInputHandler {
 
-    void checkInput(OGRacerGame game);
+    void checkInput(OGRacerGame game, float dt);
 }
