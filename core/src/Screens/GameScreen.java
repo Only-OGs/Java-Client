@@ -10,6 +10,7 @@ import Road.CustomSprite;
 import Road.RoadBuilder;
 import Road.Segment;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import OGRacerGame.OGRacerGame;
@@ -54,10 +55,11 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private float offRoadLimit = maxSpeed/4;
     private int speed = 0;
     private float sunOffset = 0;
-    private Music music;
     private float resoultion = Gdx.graphics.getHeight()/2;
     private double fogDensity = drawDistance/20;
     private float resolution = Gdx.graphics.getHeight()/480;
+    private Music[] songs;
+    private int currSong=0;
 
     public GameScreen() {
         camera = new OrthographicCamera();
@@ -67,10 +69,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         renderer = new ShapeRenderer();
         segments = RoadBuilder.resetRoad(segmentsCount,segmentLenght);
         trackLenght = segments.length*segmentLenght;
-        music = Gdx.audio.newMusic(Gdx.files.internal("Music/Initial D-Deja Vu.mp3"));
-        music.setLooping(true);
-        music.setVolume(0.1f);
-        music.play();
+        setupPlaylist();
+        playnext();
+
     }
 
     @Override
@@ -111,7 +112,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         float dx = 0f- (baseSegment.getCurve()*basePercent);                                                            // hilft die Versätzung zu speichern und berechnen
         sunOffset += dx;
         int renderedCounter=0;
-        SunShade.sun(r,sunOffset);
 
         Segment segment;
         int segmentLoopedValue;
@@ -153,6 +153,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             maxy=segment.getP1().getScreen().getY();
             renderedCounter++;
         }
+        SunShade.sun(r,batch,sunOffset,maxy);
         Segment s;
         for(int n = (drawDistance-1) ; n > 0 ; n--) {
             s = segments[((baseSegment.getIndex() + n) % segments.length)];
@@ -207,5 +208,44 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         } else if(Gdx.input.isKeyPressed(Input.Keys.D)) {
             //Nach Rechts fahren
         }
+    }
+    private void setupPlaylist(){
+        songs= new Music[3];
+        Music m1 = null;
+        Music m2 = null;
+        Music m3 = null;
+        try{
+            m1 = Gdx.audio.newMusic(Gdx.files.internal("Music/Initial D-Deja Vu.mp3"));
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        try{
+            m2 = Gdx.audio.newMusic(Gdx.files.internal("Music/InitialD NightOfFire .mp3"));
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        try{
+            m3 = Gdx.audio.newMusic(Gdx.files.internal("Music/InitialD-RunninginThe90s.mp3"));
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        songs[0]=m1;
+        songs[1]=m2;
+        songs[2]=m3;
+    }
+    public void playnext(){
+        if(songs[currSong]!=null)
+        songs[currSong].setOnCompletionListener(this::completsong);
+        songs[currSong].setLooping(false);
+        songs[currSong].setVolume(0.3f);
+        songs[currSong].play();
+    }
+
+    public void setCurrSong(int currSong) {
+        this.currSong = currSong;
+    }
+    public void completsong(Music c){
+        setCurrSong((currSong+1)%3);
+        playnext();
     }
 }

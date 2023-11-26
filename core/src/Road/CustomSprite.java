@@ -12,6 +12,11 @@ public class CustomSprite {
         this.offset = offset;
         this.z = z;
     }
+    public CustomSprite(String texturepath,float offset,double z){
+        this.t = new Texture("sprites/"+texturepath);
+        this.offset = offset;
+        this.z = z;
+    }
 
     public Texture getT() {
         return t;
