@@ -91,7 +91,7 @@ public class Client {
             }
         });
 
-        // Bekommt man Infotainment über den Registrierungsvorgang
+        // Bekommt man Informationen über den Registrierungsvorgang
         socket.on("register", args -> {
             JSONObject obj = (JSONObject) args[0];
             try {

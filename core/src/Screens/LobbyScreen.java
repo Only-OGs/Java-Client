@@ -197,7 +197,6 @@ public class LobbyScreen extends ScreenAdapter {
 
                 chatTable.add(playerColor).left().row();
                 chatTable.add(Client.playerAndMessage[1] + "\n").left().row();
-                messageField.setText("");
                 Client.playerAndMessage = null;
                 Constants.messageReceived.play(0.05f);
             }
