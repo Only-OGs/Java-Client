@@ -101,6 +101,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             result += trackLenght;
         cameraPosition=result;
 
+        updatePosition(delta);
     }
 
     @Override
@@ -185,6 +186,17 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     private Segment findSegment(double p) {
         return segments[(int) (Math.floor(p / segmentLenght) % segments.length)];
+    }
+
+    private void updatePosition(float delta) {
+        dx = delta * 2 * (playerSpeed/playerMaxSpeed);
+        //Beschleunigen | Bremsen | Nach Links | Nach Rechts
+        checkInput(OGRacerGame.getInstance(), delta);
+        // Langsamer auf Offroad
+        if (((playerX < -1) || (playerX > 1)) && (playerSpeed > offRoadLimit)) {
+            playerSpeed = playerSpeed + (offRoadDecel * delta);
+            playerSpeed = (int)Util.limit(playerSpeed, 0, playerMaxSpeed);
+        }
     }
 
     @Override
