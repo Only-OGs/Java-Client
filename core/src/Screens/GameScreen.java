@@ -102,7 +102,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             result += trackLenght;
         cameraPosition=result;
 
-        updatePosition(delta);
     }
 
     @Override
@@ -189,56 +188,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         return segments[(int) (Math.floor(p / segmentLenght) % segments.length)];
     }
 
-    private void updatePosition(float delta) {
-        dx = delta * 2 * (playerSpeed/playerMaxSpeed);
-        //Beschleunigen | Bremsen | Nach Links | Nach Rechts
-        checkInput(OGRacerGame.getInstance(), delta);
-        // Langsamer auf Offroad
-        if (((playerX < -1) || (playerX > 1)) && (playerSpeed > offRoadLimit)) {
-            playerSpeed = playerSpeed + (offRoadDecel * delta);
-            playerSpeed = (int)Util.limit(playerSpeed, 0, playerMaxSpeed);
-        }
-    }
-
-    /** [GameScreen] Fragt ab ob eine Taste gedruckt wurde/ist */
     @Override
     public void checkInput(OGRacerGame game, float dt) {
-        // Pausieren/Fortfahren des Spiels
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.isRunning = !game.isRunning;
-            //Menü anzeigen
-        }
-        // Wenn das Spiel pausiert ist, sollen keine Eingaben zum steuern des Autos abgefragt werden
-        if(!game.isRunning) return;
 
-
-		/*	Durch die Struktur ist es unmöglich
-			gleichzeitig zu bremsen und zu beschleunigen bzw.
-			gleichzeitig nach Links und nach Rechts zu fahren
-		*/
-        if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-            //Beschleunigen
-            playerSpeed = playerSpeed + (accel * dt);
-            playerSpeed = Util.limit(playerSpeed, 0, playerMaxSpeed);
-        } else if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-            //Bremsen
-            playerSpeed = playerSpeed + (-playerMaxSpeed * dt);
-            playerSpeed = (int)Util.limit(playerSpeed, 0, playerMaxSpeed);
-        } else {
-            //Entschleunigen
-            playerSpeed = playerSpeed + (-accel * dt);
-            playerSpeed = (int)Util.limit(playerSpeed, 0, playerMaxSpeed);
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-            //Nach links fahren
-            playerX = playerX - dx;
-        } else if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-            //Nach Rechts fahren
-            playerX = playerX + dx;
-        }
-        //Centrifugal
-        playerX = playerX - (dx * speedPercent * findSegment(cameraPosition+playerZ).getCurve() * centrifugal);
-        playerX = Util.limit(playerX, -2, 2);
     }
 }
