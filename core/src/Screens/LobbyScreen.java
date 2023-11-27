@@ -88,26 +88,33 @@ public class LobbyScreen extends ScreenAdapter {
         stage.addActor(chatLable);
     }
 
-    private String splitString(String text, int limit) {
-        StringBuilder result = new StringBuilder();
-        StringBuilder currentLine = new StringBuilder();
-        String[] words = text.split("\\s+");
+    public static String splitString(String input) {
+        StringBuilder sb = new StringBuilder();
+        int length = input.length();
+        int index = 0;
 
-        for (String word : words) {
-            if (currentLine.length() + word.length() <= limit) {
-                currentLine.append(word).append(" ");
+        while (index < length) {
+            if (index + 24 >= length) {
+                sb.append(input.substring(index));
+                break;
+            }
+
+            int nextSpace = input.lastIndexOf(" ", index + 24);
+            if (nextSpace <= index || nextSpace >= index + 24) {
+                sb.append(input, index, index + 24).append("-\n");
+                index += 24;
             } else {
-                result.append(currentLine.toString().trim()).append("\n");
-                currentLine = new StringBuilder(word + " ");
+                sb.append(input, index, nextSpace).append("\n");
+                index = nextSpace + 1;
             }
         }
 
-        if (currentLine.length() > 0) {
-            result.append(currentLine.toString().trim());
-        }
-
-        return result.toString();
+        return sb.toString();
     }
+
+
+
+
 
     private void buildChat() {
 
@@ -300,7 +307,7 @@ public class LobbyScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (messageField.getText().length() > 0) {
-                    Client.sendMessage(splitString(messageField.getText(), 25));
+                    Client.sendMessage(splitString(messageField.getText()));
                 }
             }
         });
