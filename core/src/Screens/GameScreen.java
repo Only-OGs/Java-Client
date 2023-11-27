@@ -24,16 +24,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     private SpriteBatch batch;
 
-    private Texture background;
-
     private ShapeRenderer renderer;
 
-    private int backgroundWitdh = 500;
-
-    private int backgroundHeight = 500;
-
-
-    //TEST Variables
     private Segment[] segments;
 
     private int roadWidth = 2000;
@@ -74,7 +66,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
         batch = new SpriteBatch();
-        background = new Texture("background/hills.png");
         renderer = new ShapeRenderer();
         segments = RoadBuilder.resetRoad(segmentsCount,segmentLenght);
         trackLenght = segments.length*segmentLenght;
@@ -97,7 +88,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     @Override
     public void dispose () {
         batch.dispose();
-        background.dispose();
+        renderer.dispose();
         stage.dispose();
     }
 

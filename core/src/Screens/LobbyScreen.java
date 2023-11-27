@@ -6,6 +6,7 @@ import Root.StyleGuide;
 import Screens.MenuArea.LobbyMenu;
 import Screens.MenuArea.MultiplayerMenu;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -48,6 +49,10 @@ public class LobbyScreen extends ScreenAdapter {
     private Texture notMuteIcon = new Texture("Icon/unMuteIcon.png");
 
     private ImageButton muteButton;
+
+    private boolean check = false;
+
+    private int counter = 0;
 
     public LobbyScreen(String ID) {
         this.ID = ID;
@@ -101,6 +106,71 @@ public class LobbyScreen extends ScreenAdapter {
         chatTable.add("").left().row();
 
         messageField.setBounds(Gdx.graphics.getWidth() / 1.9f, 180, scrollChat.getWidth(), 100);
+        messageField.setTextFieldListener((textField, key) -> {
+/*
+            if(check){
+                String tempS = textField.getText();
+                String allNotLast = tempS.substring(0, Math.max(tempS.length() - 1, 0));
+                char last = tempS.charAt(tempS.length()-1);
+                tempS = allNotLast + "\n" +last;
+
+                textField.setText("");
+                textField.appendText(tempS);
+                check = false;
+            }
+
+
+            counter = (int) Math.floor((double) textField.getText().length() /11);
+
+            if(key == Input.Keys.BACKSPACE && textField.getText().length() == 1){
+                textField.setText("");
+            }
+
+            if ((textField.getText().length() - counter) % 10 == 0 && textField.getText().length() > 0) {
+                textField.appendText("\n");
+
+            }
+
+ */
+
+            StringBuilder temp = new StringBuilder("");
+            for (int i = 0; i < textField.getText().length(); i++) {
+                if (i % 11 == 0 && textField.getText().length() != 0) {
+                    temp.append("\n");
+                    if(textField.getText().length() < 10){
+                        temp = new StringBuilder();
+                    }
+                }
+                if (textField.getText().charAt(i) != '\n') {
+                    temp.append(textField.getText().charAt(i));
+                }
+            }
+            textField.setText("");
+            textField.appendText(temp.toString());
+
+            /*
+            String forTemp = textField.getText();
+            forTemp.replaceAll("\n","");
+            StringBuilder temp = new StringBuilder();
+            for (int i = 0; i < forTemp.length(); i++) {
+
+                if (i % 10 == 0 && i != 0) {
+                    temp.append("\n");
+                }
+
+                if(forTemp.charAt(i) != '\n'){
+                    temp.append(forTemp.charAt(i));
+                }
+
+
+
+            }
+            textField.setText("");
+            textField.appendText(temp.toString());
+             */
+
+        });
+
 
         sendMessageButton.setBounds(messageField.getX() + messageField.getWidth() - 122, messageField.getY() - 60, 130, 50);
         stage.addActor(sendMessageButton);
@@ -202,6 +272,7 @@ public class LobbyScreen extends ScreenAdapter {
             }
         }
     }
+
 
     private void buttonListener() {
 

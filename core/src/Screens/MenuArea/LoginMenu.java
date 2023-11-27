@@ -58,20 +58,12 @@ public class LoginMenu extends MultiplayerMenu {
             logoutMessage();
         }
 
-        if (!loginSuccess) {
-            if (Objects.equals(Client.loginStatus, "login_success")) {
-                loginSuccess = true;
-                serverMessage.setText("");
-                statusOnOff = false;
-                OGRacerGame.getInstance().setScreen(new LobbyMenu(user));
-            }
+        if ("login_success".equals(Client.loginStatus)) {
+            statusOnOff = false;
+            OGRacerGame.getInstance().setScreen(new LobbyMenu(user));
+
         }
         super.render(delta);
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
     }
 
     @Override

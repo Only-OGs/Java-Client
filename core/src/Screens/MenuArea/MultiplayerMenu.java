@@ -11,9 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MultiplayerMenu extends MenuScreen {
 
-    protected boolean loginSuccess = false;
-
-
     protected boolean statusOnOff = true;
 
     protected Label status, statusTitle, serverMessage, userLabel, passwordLabel;
