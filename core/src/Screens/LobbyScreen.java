@@ -26,7 +26,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class LobbyScreen extends ScreenAdapter {
 
@@ -41,6 +40,7 @@ public class LobbyScreen extends ScreenAdapter {
     private Table chatTable = new Table(Constants.buttonSkin);
     private ScrollPane scrollChat = new ScrollPane(chatTable, Constants.buttonSkin);
     private TextButton sendMessageButton = new TextButton("Senden", Constants.buttonSkin);
+
 
     private TextButton lobbyLeaveButton = new TextButton("Verlassen", Constants.buttonSkin);
     private TextArea messageField = new TextArea("", Constants.buttonSkin);
@@ -88,6 +88,27 @@ public class LobbyScreen extends ScreenAdapter {
         stage.addActor(chatLable);
     }
 
+    private String splitString(String text, int limit) {
+        StringBuilder result = new StringBuilder();
+        StringBuilder currentLine = new StringBuilder();
+        String[] words = text.split("\\s+");
+
+        for (String word : words) {
+            if (currentLine.length() + word.length() <= limit) {
+                currentLine.append(word).append(" ");
+            } else {
+                result.append(currentLine.toString().trim()).append("\n");
+                currentLine = new StringBuilder(word + " ");
+            }
+        }
+
+        if (currentLine.length() > 0) {
+            result.append(currentLine.toString().trim());
+        }
+
+        return result.toString();
+    }
+
     private void buildChat() {
 
         Pixmap backgroundPixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -105,7 +126,7 @@ public class LobbyScreen extends ScreenAdapter {
         scrollChat.setScrollingDisabled(true, false); // Horizontales Scrollen deaktivieren
         chatTable.add("").left().row();
 
-        messageField.setBounds(Gdx.graphics.getWidth() / 1.9f, 180, scrollChat.getWidth(), 100);
+        messageField.setBounds(Gdx.graphics.getWidth() / 1.9f, 150, scrollChat.getWidth() - 65, 130);
         messageField.setTextFieldListener((textField, key) -> {
 /*
             if(check){
@@ -131,7 +152,7 @@ public class LobbyScreen extends ScreenAdapter {
 
             }
 
- */
+            /*
 
             StringBuilder temp = new StringBuilder("");
             for (int i = 0; i < textField.getText().length(); i++) {
@@ -147,6 +168,7 @@ public class LobbyScreen extends ScreenAdapter {
             }
             textField.setText("");
             textField.appendText(temp.toString());
+ */
 
             /*
             String forTemp = textField.getText();
@@ -161,9 +183,6 @@ public class LobbyScreen extends ScreenAdapter {
                 if(forTemp.charAt(i) != '\n'){
                     temp.append(forTemp.charAt(i));
                 }
-
-
-
             }
             textField.setText("");
             textField.appendText(temp.toString());
@@ -171,8 +190,9 @@ public class LobbyScreen extends ScreenAdapter {
 
         });
 
-
-        sendMessageButton.setBounds(messageField.getX() + messageField.getWidth() - 122, messageField.getY() - 60, 130, 50);
+        sendMessageButton.setTransform(true);
+        sendMessageButton.setRotation(270);
+        sendMessageButton.setBounds(messageField.getX() + messageField.getWidth() +10, messageField.getY() +messageField.getHeight(), 130, 55);
         stage.addActor(sendMessageButton);
 
         chatTable.add("                                                ").left().row();
@@ -280,7 +300,7 @@ public class LobbyScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (messageField.getText().length() > 0) {
-                    Client.sendMessage(messageField.getText());
+                    Client.sendMessage(splitString(messageField.getText(), 25));
                 }
             }
         });
