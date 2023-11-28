@@ -19,9 +19,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.json.JSONException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class SearchScreen extends ScreenAdapter {
 
     private TextButton sendButton = new TextButton("Senden", Constants.buttonSkin);
@@ -44,25 +41,28 @@ public class SearchScreen extends ScreenAdapter {
 
         Gdx.input.setInputProcessor(stage);
 
+        setup();
+        buttonListener();
+    }
+
+    private void setup(){
         messageField.setBounds((float) Gdx.graphics.getWidth() / 2 - (75), (float) Gdx.graphics.getHeight() / 2, 150, 22);
         sendButton.setBounds((float) Gdx.graphics.getWidth() / 2 - (75), (float) Gdx.graphics.getHeight() / 2 - 60, 150, 50);
         backButton.setBounds((float) Gdx.graphics.getWidth() / 1.3f, (float) Gdx.graphics.getHeight() / 2 - 60, 150, 50);
 
-        buttonListener();
         stage.addActor(messageField);
         stage.addActor(backButton);
         stage.addActor(sendButton);
-        addLabels();
-        addLabelID();
+
+        setupLabel();
     }
 
-    public void addLabelID() {
+    private void setupLabel(){
+
         idLabel = new Label("ID: " + ID, Constants.buttonSkin);
         idLabel.setBounds(stage.getWidth() / 1.3f,  stage.getHeight() - 65,190, 40);
         stage.addActor(idLabel);
-    }
 
-    private void addLabels(){
         serverMessage.setBounds(stage.getWidth() / 30f, 10,190, 40);
         lobbyCodeTitle.setBounds(messageField.getX(),messageField.getY() + messageField.getHeight() +5,150,20);
         lobbyCodeTitle.setFontScale(0.8f);
@@ -73,6 +73,7 @@ public class SearchScreen extends ScreenAdapter {
 
         stage.addActor(Constants.title);
         stage.addActor(lobbyCodeTitle);
+        stage.addActor(idLabel);
         stage.addActor(serverMessage);
     }
 
@@ -99,7 +100,8 @@ public class SearchScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-                Client.joinMessage = "";
+                Client.searchLobbyCodeMessage = "";
+                Client.searchLobbyCodeStatus = "";
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(ID));
             }
         });
@@ -112,17 +114,17 @@ public class SearchScreen extends ScreenAdapter {
 
         if(!Client.connect) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
 
-        if("joined".equals(Client.searchStatus)){
-            LobbyScreen.idList= new ArrayList<>(Arrays.asList(Client.playerString.split(";")));
+        if("success".equals(Client.searchLobbyCodeStatus)){
+            Client.searchLobbyCodeStatus = "";
+            Client.searchLobbyCodeMessage = "";
             OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));
-            Client.searchStatus= "";
         }
 
         if (200 == count) {
             serverMessage.setText("");
             count++;
         }else if( count < 200){
-            serverMessage.setText(Client.joinMessage);
+            serverMessage.setText(Client.searchLobbyCodeMessage);
             count++;
         }
 

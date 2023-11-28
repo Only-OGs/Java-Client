@@ -26,9 +26,13 @@ public class Client {
 
     public static String registerMessage;
 
-    public static String joinMessage;
+    public static String searchLobbyCodeStatus;
 
-    public static String searchStatus;
+    public static String searchLobbyCodeMessage;
+
+    public static String quickStatus;
+
+    public static String quickMessage;
 
     public static String joinLobbyStatus;
 
@@ -100,20 +104,34 @@ public class Client {
             }
         });
 
-        // Bekommt man Informationen über das schnelles Spiel
+
+        // Spiel mit Lobby Code suchen
         socket.on("search_lobby", args -> {
             JSONObject obj = (JSONObject) args[0];
             try {
-                searchStatus = (String) obj.get("status"); // joined und failed
-                joinMessage = (String) obj.get("message");// Nachricht vom Server
-                playerString = (String) obj.get("players"); // Liste der Spieler
 
+                searchLobbyCodeStatus = (String) obj.get("status"); // joined und failed
+                searchLobbyCodeMessage = (String) obj.get("message");// Nachricht vom Server
+                System.out.println("Search Code Game: " + searchLobbyCodeStatus);
+                System.out.println("Search Code Game: " + searchLobbyCodeMessage);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            if ("joined".equals(Client.searchStatus)) {
-                LobbyScreen.idList = new ArrayList<>(Arrays.asList(playerString.split(";")));
-                searchStatus = "";
+        });
+
+
+        // Schnelles Spiel suchen
+        socket.on("get_lobby", args -> {
+            JSONObject obj = (JSONObject) args[0];
+            try {
+
+                quickStatus = (String) obj.get("status"); // joined und failed
+                quickMessage = (String) obj.get("message");// Nachricht vom Server
+                System.out.println("Quick Game: " + quickStatus);
+                System.out.println("QuickGame : " + quickMessage);
+
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
             }
         });
 
@@ -124,13 +142,16 @@ public class Client {
                 playerString = (String) obj.get("players");
                 joinLobbyStatus = (String) obj.get("status"); // failed und joined
                 lobbyID = (String) obj.get("lobby");
-                joinMessage = (String) obj.get("message");
+                searchLobbyCodeMessage = (String) obj.get("message");
+
+                System.out.println("player ids: " + playerString);
+                System.out.println("Lobby ID: " + lobbyID);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
             if ("joined".equals(Client.joinLobbyStatus)) {
                 LobbyScreen.idList = new ArrayList<>(Arrays.asList(playerString.split(";")));
-                joinMessage = "";
+                searchLobbyCodeMessage = "";
             }
 
         });
