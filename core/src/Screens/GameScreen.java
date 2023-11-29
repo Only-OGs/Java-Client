@@ -9,6 +9,7 @@ import Rendering.SunShade;
 import Road.CustomSprite;
 import Road.RoadBuilder;
 import Road.Segment;
+import Root.StyleGuide;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
@@ -17,9 +18,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
+import java.util.Date;
 
 public class GameScreen extends ScreenAdapter implements IInputHandler{
 
@@ -37,6 +41,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     private int backgroundHeight = 500;
 
+    Label timeLabel = new Label("", Constants.buttonSkin);
+    Label lastLapTimeLabel = new Label("", Constants.buttonSkin);
+    Label fastestTimeLabel = new Label("", Constants.buttonSkin);
+    Label speedLabel = new Label("", Constants.buttonSkin);
 
     //TEST Variables
     private Segment[] segments;
@@ -72,10 +80,13 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private float speedPercent = playerSpeed/playerMaxSpeed;
     private float dx = 0;
     private double cameraPosition = 0;
+    private double lastCameraPosition = 0;
     private float resolution = Gdx.graphics.getHeight()/480;
     private float sunOffset = 0;
     private double fogDensity = drawDistance/20;
-
+    private float timer = 0;
+    private float lastLapTime = 0;
+    private float fastestLapTime = 0;
 
     public GameScreen() {
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -84,6 +95,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         renderer = new ShapeRenderer();
         segments = RoadBuilder.resetRoad(segmentsCount,segmentLenght);
         trackLenght = segments.length*segmentLenght;
+        setupHUD(stage);
     }
 
     @Override
@@ -99,9 +111,14 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             result -= trackLenght;
         while (result < 0)
             result += trackLenght;
+        lastCameraPosition = cameraPosition;
         cameraPosition=result;
 
         updatePosition(delta);
+        updateHUD();
+        stage.draw();
+
+        timer += delta;
     }
 
     @Override
@@ -182,6 +199,36 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
             }
         }
+    }
+
+    private void setupHUD(Stage stage) {
+        Gdx.input.setInputProcessor(stage);
+        int spacing = Gdx.graphics.getWidth() / 5;
+
+        timeLabel.setBounds(25 + 0*spacing, Gdx.graphics.getHeight() - 50, 0, 0);
+        stage.addActor(timeLabel);
+
+        lastLapTimeLabel.setBounds(1*spacing - 25, Gdx.graphics.getHeight() - 50, 0, 0);
+        stage.addActor(lastLapTimeLabel);
+
+        fastestTimeLabel.setBounds(75 + 2*spacing, Gdx.graphics.getHeight() - 50, 0, 0);
+        stage.addActor(fastestTimeLabel);
+
+        speedLabel.setBounds(175 + 3*spacing, Gdx.graphics.getHeight() - 50, 0, 0);
+        stage.addActor(speedLabel);
+    }
+
+    private void updateHUD() {
+        if(cameraPosition < lastCameraPosition) {
+            fastestLapTime = lastLapTime > 0 ? Math.min(lastLapTime, timer) : timer;
+            lastLapTime = timer;
+            timer = 0;
+        }
+
+        timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
+        lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
+        fastestTimeLabel.setText("Schnelllste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
+        speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed,playerMaxSpeed));
     }
 
     private Segment findSegment(double p) {

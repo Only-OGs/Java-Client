@@ -114,4 +114,33 @@ public class Util {
         double max2 = x2 + (w2 * half);
         return !((max1 < min2) || (min1 > max2));
     }
+
+    public static int closer(int num1, int num2, int target) {
+        return Math.abs(target - num1) <= Math.abs(target - num2) ? num1 : num2;
+    }
+
+    public static String formatTimer(float timer) {
+        String timeString = "";
+        int minutes = (int)timer / 60;
+        int seconds = (int)timer % 60;
+        int millis = (int) (timer % 1 * 10);
+        timeString += minutes > 0 ? minutes + "." : "0.";
+        timeString += seconds > 0 ? seconds + "." : "0.";
+        timeString += millis > 0 ? millis + "" : "0";
+
+        return timeString;
+    }
+
+    public static String formatSpeed(float speed, float maxSpeed) {
+        int formatedSpeed = 0;
+        int step = 5;
+        int s = (int)speed;
+        for(int i = 0; i < (int)(speed/step); i++){
+            if(s - step >= 0) {
+                formatedSpeed += step;
+                s -= step;
+            }
+        }
+        return ""+closer(formatedSpeed, (int)maxSpeed, (int)speed);
+    }
 }
