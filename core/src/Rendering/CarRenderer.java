@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class CarRenderer {
-    static Texture tS = new Texture("sprites/player_straight.png");
+    public static Texture tS = new Texture("sprites/player_straight.png");
     static Texture tUpS = new Texture("sprites/player_uphill_straight.png");
     static Texture tL = new Texture("sprites/player_left.png");
     static Texture tUpL = new Texture("sprites/player_uphill_left.png");
