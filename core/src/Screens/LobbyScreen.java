@@ -1,9 +1,11 @@
 package Screens;
 
 import Connection.Client;
+import Messenger.MessageChat;
 import OGRacerGame.OGRacerGame;
 import Root.StyleGuide;
 import Screens.MenuArea.LobbyMenu;
+import Screens.MenuArea.LoginMenu;
 import Screens.MenuArea.MultiplayerMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -19,6 +21,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -38,17 +41,24 @@ public class LobbyScreen extends ScreenAdapter {
 
     private TextButton optionButton = new TextButton("Einstellungen", Constants.buttonSkin);
 
+    private TextButton logoutButton = new TextButton("Abmelden", Constants.buttonSkin);
+
     private int lastIDListSize = 0;
 
     private Timer.Task timerTask;
 
     private MessageChat chat;
 
-    private String time = "-";
+    private float time = 11;
+
+    private boolean startTime = false;
+
+    private boolean startCountdown = false;
+
 
     public LobbyScreen(String ID) {
         this.ID = ID;
-        chat = new MessageChat(ID,stage);
+        chat = new MessageChat(ID, stage);
         Gdx.input.setInputProcessor(stage);
         Constants.title.setText("Die Lobby");
         Constants.title.setSize(Gdx.graphics.getWidth(), 100);
@@ -64,13 +74,13 @@ public class LobbyScreen extends ScreenAdapter {
     }
 
 
-    private void setupLabel(){
+    private void setupLabel() {
 
         for (int i = 0; i < player.length; i++)
             player[i] = new Label("Suchen ", Constants.buttonSkin);
 
-        timeLabel = new Label("Start in: ", Constants.buttonSkin);
-        timeLabel.setBounds(stage.getWidth() / 1.3f, stage.getHeight() - 75, 140, 50);
+        timeLabel = new Label("Start in: -", Constants.buttonSkin);
+        timeLabel.setBounds(stage.getWidth() / 1.3f+12, stage.getHeight() - 75, 190, 40);
         stage.addActor(timeLabel);
 
         idLabel = new Label("ID: " + ID, Constants.buttonSkin);
@@ -91,9 +101,6 @@ public class LobbyScreen extends ScreenAdapter {
         lobbyCode.setText("Lobby ID: " + Client.lobbyID);
     }
 
-    private void updateTime() {
-        timeLabel.setText("Start in: " + time);
-    }
 
     @Override
     public void render(float delta) {
@@ -106,12 +113,13 @@ public class LobbyScreen extends ScreenAdapter {
         addLobbyID();
         chat.update(idList);
         chat.updateScrollBar();
-        updateTime();
+        if (startTime) startTimer(delta);
 
         if (idList.size() != lastIDListSize) {
             if (timerTask != null) timerTask.cancel();
-
-            time = "-";
+            time = 11;
+            startTime = false;
+            timeLabel.setText("Start in:  ");
         }
 
         if (idList.size() != lastIDListSize && idList.size() > 1) waitTimer();
@@ -127,13 +135,12 @@ public class LobbyScreen extends ScreenAdapter {
         timerTask = new Timer.Task() {
             @Override
             public void run() {
-                time = "10";
+                startTime = true;
             }
         };
 
         // Starte den Timer mit einer Verzögerung von 3 Sekunden
         Timer.schedule(timerTask, 5);
-
     }
 
     private void buttonListener() {
@@ -149,8 +156,27 @@ public class LobbyScreen extends ScreenAdapter {
                 if (timerTask != null) {
                     timerTask.cancel();
                 }
-                time = "-";
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(ID));
+            }
+        });
+
+        logoutButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Constants.clickButton.play(0.2f);
+                idList = new ArrayList<>(8);
+                Client.playerString = "";
+                Client.joinLobbyStatus = "";
+                try {
+                    Client.leaveLobby();
+                    Client.sendLogOut();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                if (timerTask != null) {
+                    timerTask.cancel();
+                }
+                OGRacerGame.getInstance().setScreen(new LoginMenu());
             }
         });
 
@@ -163,16 +189,45 @@ public class LobbyScreen extends ScreenAdapter {
         });
     }
 
+    private void startTimer(float delta) {
+
+
+        if (time > 0f) {
+            time = Math.max(time - delta, 0f);
+        }
+
+        if(time <= 4.2f && !startCountdown){
+            Constants.countdown.play(1f);
+            startCountdown = true;
+        }
+
+
+
+        if(time > 10){
+            timeLabel.setText("Start in: " + (int) time);
+        }else{
+            timeLabel.setText("Start in:  " + (int) time);
+        }
+
+
+    }
+
     private void setupButton() {
-        lobbyLeaveButton.setBounds(70, stage.getHeight() - 190, 170, 50);
+
+        optionButton.setBounds(70, stage.getHeight() / 2 - 115, 230, 50);
+        optionButton.setTransform(true);
+        optionButton.setRotation(90);
+        stage.addActor(optionButton);
+
+        lobbyLeaveButton.setBounds(70, stage.getHeight() / 1.5f, 180, 50);
         lobbyLeaveButton.setTransform(true);
         lobbyLeaveButton.setRotation(90);
         stage.addActor(lobbyLeaveButton);
 
-        optionButton.setBounds(70, stage.getHeight() - 420, 225, 50);
-        optionButton.setTransform(true);
-        optionButton.setRotation(90);
-        stage.addActor(optionButton);
+        logoutButton.setBounds(70, stage.getHeight() / 3f - 170, 170, 50);
+        logoutButton.setTransform(true);
+        logoutButton.setRotation(90);
+        stage.addActor(logoutButton);
     }
 
     @Override

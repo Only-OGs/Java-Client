@@ -3,18 +3,15 @@ package Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Constants {
 
 
     public static final Music music  = Gdx.audio.newMusic(Gdx.files.internal("Music/StartMenuMusic.mp3"));
+
+    public static final Sound countdown = Gdx.audio.newSound(Gdx.files.internal("Music/countdown.mp3"));
 
     public static final Sound clickButton = Gdx.audio.newSound((Gdx.files.internal("Music/clickInterface.mp3")));
 

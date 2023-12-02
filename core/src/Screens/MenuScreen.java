@@ -34,6 +34,7 @@ public abstract class MenuScreen extends ScreenAdapter {
         backgroundTexture = new Texture("Background/BackgroundOGRacerGame.png");
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
+        Gdx.input.setInputProcessor(stage);
         if (Constants.music != null) {
             Constants.music.setLooping(true);
             Constants.music.setVolume(0.01f);
@@ -59,7 +60,6 @@ public abstract class MenuScreen extends ScreenAdapter {
 
         super.render(delta);
     }
-
 
     @Override
     public void resize(int width, int height) {
@@ -100,7 +100,6 @@ public abstract class MenuScreen extends ScreenAdapter {
             buttonRight.setPosition((stage.getWidth() - buttonRight.getWidth()) / 2 + buttonRight.getWidth() + 50, stage.getHeight() / 2 - (buttonRight.getHeight()) + 25);
             stage.addActor(buttonRight);
         }
-        Gdx.input.setInputProcessor(stage);
     }
 
     protected void removeButton() {

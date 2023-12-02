@@ -86,6 +86,7 @@ public class SearchScreen extends ScreenAdapter {
 
                     try {
                         Client.playerString = "";
+                        Client.searchLobbyCodeMessage = "";
                         count = 0;
                         Client.joinLobby(messageField.getText());
                     } catch (JSONException e) {

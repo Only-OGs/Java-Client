@@ -63,7 +63,7 @@ public class LobbyMenu extends MultiplayerMenu {
             Client.quickMessage = "";
         }
 
-        if ("joined".equals(Client.quickStatus)) {
+        if ("success".equals(Client.quickStatus)) {
 
             LobbyScreen.idList = new ArrayList<>(Arrays.asList(Client.playerString.split(";")));
             OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));
