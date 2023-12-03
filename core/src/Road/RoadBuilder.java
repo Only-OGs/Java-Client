@@ -2,14 +2,16 @@ package Road;
 
 import MathHelpers.Util;
 import Rendering.ColorThemes;
-import Screens.GameScreen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+
+import java.util.ArrayList;
 
 
 public class RoadBuilder {
 
     private static Texture t = new Texture("sprites/tree1.png");
+    private static Texture tCar = new Texture("sprites/car01.png");
     /**
      * erstellt die Strecke
      * @param l die Anzahl der Segmente der Strecke
@@ -18,19 +20,20 @@ public class RoadBuilder {
      */
     public static Segment[] resetRoad(int l,int segmentLenght){
         CustomSprite [] arr= createSpriteArr(l);
-        Segment[] segments= new Segment[l];
-        segments[0]=buildStart(segmentLenght);
+        ArrayList<Segment> segments= new ArrayList<>();
+        segments.add(buildStart(segmentLenght));
         int index=1;
-        index += addRoad(segments,segmentLenght,index,50,Curve.HARDLeft,60);
-        index += addRoad(segments,segmentLenght,index,50,Curve.EASYRIGHT,-20);
-        index += addRoad(segments,segmentLenght,index,50,Curve.MEDIUMRIGHT,-40);
+        index += addRoad(segments,segmentLenght,index,50,Curve.HARDLeft.getValue(),60);
+        index += addRoad(segments,segmentLenght,index,50,Curve.EASYRIGHT.getValue(),-20);
+        index += addRoad(segments,segmentLenght,index,50,Curve.MEDIUMRIGHT.getValue(),-40);
 
         for(int i=index;i<l-1;i++){
             addSegment(segments,segmentLenght,i,0,0);
         }
-        segments[l-1]=buildfinsih(segmentLenght,l-1);
-        addSprites(segments,arr,200);
-        return segments;
+        segments.add(buildfinsih(segmentLenght,l-1));
+        Segment[] s = segments.toArray(Segment[]::new);
+        addSprites(s,arr,200);
+        return (s);
     }
 
     /**
@@ -78,12 +81,12 @@ public class RoadBuilder {
      * @param index
      * @param curve Gibt die Stärke der Kurve des einzelnen Segments an
      */
-    private static void addSegment(Segment[] road,int segmentLenght, int index,float curve,int y){
+    private static void addSegment(ArrayList<Segment> road,int segmentLenght, int index,float curve,int y){
         P p1 = new P(new World(index*segmentLenght,lastY(road,index)),new Cam(),new Screen());
         P p2 = new P(new World((index+1)*segmentLenght,y),new Cam(),new Screen());
 
         Segment s = new Segment(index,p1,p2,getColorTheme(index), curve);
-        road[index]=s;
+        road.add(s);
     }
 
     /**
@@ -95,30 +98,30 @@ public class RoadBuilder {
      * @param curve hier gibt dies die Stärke der Kutve am stärksten Punkt an
      * @return
      */
-    private static int addRoad(Segment[] road,int segmentLenght,int index,int roadSegmentLenght, Curve curve,int y){
+    private static int addRoad(ArrayList<Segment> road,int segmentLenght,int index,int roadSegmentLenght, float curve,int y){
         double c = 0;
         int startY = lastY(road,index);
         int endY = startY + y*segmentLenght;
         for(int i=index;i<index+roadSegmentLenght;i++,c++){
-            addSegment(road,segmentLenght,i, Util.easeIn(0,curve.getValue(),c/roadSegmentLenght),(int)Util.easeInOut(startY,endY,c/(3*roadSegmentLenght)));
+            addSegment(road,segmentLenght,i, Util.easeIn(0,curve,c/roadSegmentLenght),(int)Util.easeInOut(startY,endY,c/(3*roadSegmentLenght)));
         }
         c=0;
         index+=roadSegmentLenght;
         for(int i=index;i<index+roadSegmentLenght;i++,c++){
-            addSegment(road,segmentLenght,i,curve.getValue(),(int) Util.easeInOut(startY,endY,(roadSegmentLenght+c)/(3*roadSegmentLenght)));
+            addSegment(road,segmentLenght,i,curve,(int) Util.easeInOut(startY,endY,(roadSegmentLenght+c)/(3*roadSegmentLenght)));
         }
         c=0;
         index+=roadSegmentLenght;
         for(int i=index;i<index+roadSegmentLenght;i++,c++){
-            addSegment(road,segmentLenght,i, Util.easeInOut(0,curve.getValue(),c/roadSegmentLenght),(int) Util.easeInOut(startY,endY,(roadSegmentLenght*2+c)/(3*roadSegmentLenght)));
+            addSegment(road,segmentLenght,i, Util.easeInOut(0,curve,c/roadSegmentLenght),(int) Util.easeInOut(startY,endY,(roadSegmentLenght*2+c)/(3*roadSegmentLenght)));
         }
         return 3*roadSegmentLenght;
     }
-    private static int lastY(Segment[] road, int index){
+    private static int lastY(ArrayList<Segment> road, int index){
         if(index==0){
             return 0;
         }else {
-            return road[index-1].getP2().getWorld().getY();
+            return road.get(index-1).getP2().getWorld().getY();
         }
     }
     private static void addSprites(Segment[] segments,CustomSprite [] cs,int segmentlenght){
@@ -137,5 +140,19 @@ public class RoadBuilder {
             cs[i]=s;
         }
         return cs;
+    }
+    public static Car[] createCarArr(int l){
+        CustomSprite[] cs= new CustomSprite[l/10];
+        for(int i=0;i<l/10;i++){
+            CustomSprite s = new CustomSprite(tCar,i%4==0?-0.5f:0.5f,i*10*500);
+            cs[i]=s;
+        }
+        Car[] cars = new Car[l/10];
+        for(int i = 0;i<l/10;i++){
+            Car temp = new Car();
+            temp.setCs(cs[i]);
+            cars[i]= temp;
+        }
+        return  cars;
     }
 }

@@ -54,7 +54,7 @@ public class Util {
         return (double) (n % total) / total;
     }
 
-    public static double interpolate(int a, int b, double percent) {
+    public static double interpolate(double a, double b, double percent) {
         return a + (b - a) * percent;
     }
 
