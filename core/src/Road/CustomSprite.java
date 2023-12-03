@@ -29,4 +29,6 @@ public class CustomSprite {
     public double getZ() {
         return z;
     }
+
+    public void setZ(double z) {this.z = z;}
 }

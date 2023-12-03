@@ -1,13 +1,8 @@
 package Road;
 
-
-import Rendering.ColorThemes;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 public class Segment {
@@ -21,6 +16,7 @@ public class Segment {
     private float curve;
     private CustomSprite[] sprites;
     private int clip;
+    private ArrayList<Car> cars;
 
 
     public Segment(int index, P p1, P p2, Color[] c, float curve) {
@@ -100,8 +96,21 @@ public class Segment {
             sprites[0]=cs;
         }
     }
+    public void addCar(Car c){
+        if(cars==null){
+            cars = new ArrayList<>();
+            cars.add(c);
+        }else{
+            cars.add(c);
+        }
+    }
+    public void removeCar(Car car) {
+        cars.remove(car);
+    }
 
     public CustomSprite[] getSprites() {return sprites;}
+
+    public ArrayList<Car> getCars() {return cars;}
 
     public void setClip(int clip) {this.clip = clip;}
 

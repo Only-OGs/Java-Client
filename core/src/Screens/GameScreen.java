@@ -6,6 +6,7 @@ import Rendering.CarRenderer;
 import Rendering.RenderSegment;
 import Rendering.SpritesRenderer;
 import Rendering.SunShade;
+import Road.Car;
 import Road.CustomSprite;
 import Road.RoadBuilder;
 import Road.Segment;
@@ -31,11 +32,11 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     private ShapeRenderer renderer;
 
-    private Segment[] segments;
+    private static Segment[] segments;
 
     private int roadWidth = 2000;
 
-    private int segmentLenght = 200;
+    private static int segmentLenght = 200;
 
     private int lanes = 3;
 
@@ -56,7 +57,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private float playerZ = cameraHeight*cameraDepth;
 
     private float playerSpeed = 0;
-    private final float playerMaxSpeed = 250;
+    private final float playerMaxSpeed = segmentLenght;
     private final float accel = playerMaxSpeed/5;
     private final float offRoadDecel = -playerMaxSpeed/2;
     private final float offRoadLimit = playerMaxSpeed/4;
@@ -67,6 +68,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private float resolution = Gdx.graphics.getHeight()/480;
     private float sunOffset = 0;
     private double fogDensity = drawDistance/20;
+    private boolean newCarsToPlace = false;
+    private Car[] newCars;
+    private Car[] oldCars;
 
 
     public GameScreen() {
@@ -76,6 +80,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         renderer = new ShapeRenderer();
         segments = RoadBuilder.resetRoad(segmentsCount,segmentLenght);
         trackLenght = segments.length*segmentLenght;
+        setNewCars(RoadBuilder.createCarArr(segmentsCount));
     }
 
     @Override
@@ -86,6 +91,20 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         renderSegments(renderer);
+        if(newCarsToPlace){
+            if(oldCars!=null){
+                for (Car c:oldCars) {
+                    c.remove();
+                }
+            }
+            if(newCars!=null){
+                for (Car c:newCars) {
+                    c.place();
+                }
+                oldCars = newCars;
+            }
+            newCarsToPlace = false;
+        }
         double result = cameraPosition + playerSpeed;
         while (result >= trackLenght)
             result -= trackLenght;
@@ -159,6 +178,16 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         Segment s;
         for(int n = (drawDistance-1) ; n > 0 ; n--) {
             s = segments[((baseSegment.getIndex() + n) % segments.length)];
+            //cars
+            if(s.getCars()!=null){
+                for(int q=0;q<s.getCars().size();q++){
+                    Car car = s.getCars().get(q);
+                    double spriteScale = Util.interpolate(s.getP1().getScreen().getScale(),s.getP2().getScreen().getScale(),0.5f);
+                    float spriteX = (float) (Util.interpolate(s.getP1().getScreen().getX(),s.getP2().getScreen().getX(),0.5f)+(spriteScale*0.5f*roadWidth*Gdx.graphics.getWidth()/2));
+                    float spriteY = (float) (Util.interpolate(s.getP1().getScreen().getY(),s.getP2().getScreen().getY(),0.5f));
+                    SpritesRenderer.render(batch,resolution,roadWidth,car.getCs().getT(),spriteScale,spriteX,spriteY,-0.5f,-1f ,s.getClip());
+                }
+            }
             if(s.getSprites()!=null){
                 for(int q=0;q<s.getSprites().length;q++){
                     CustomSprite cs = s.getSprites()[q];
@@ -234,4 +263,12 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             playerX = Util.limit(playerX, -2, 2);
         }
     }
+    public void setNewCars(Car[] cars){
+        newCars = cars;
+        newCarsToPlace = true;
+    }
+
+    public static Segment[] getSegments() {return segments;}
+
+    public static int getSegmentLenght() {return segmentLenght;}
 }
