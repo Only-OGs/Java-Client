@@ -19,7 +19,6 @@ public class MultiplayerMenu extends MenuScreen {
 
     protected TextField userField, passwordField;
 
-
     public MultiplayerMenu() {
         Constants.title.setText("Mehrspieler");
         removeButton();

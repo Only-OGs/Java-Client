@@ -50,23 +50,25 @@ public class LobbyMenu extends MultiplayerMenu {
 
         if (!Client.connect) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
 
-        if("login_success".equals(Client.loginStatus)){
+        if ("login_success".equals(Client.loginStatus)) {
             lobbyMessage = Client.loginMessage;
             Client.loginStatus = "";
             Client.loginMessage = "";
         }
 
-        if ("failed".equals(Client.joinLobbyStatus)) {
+        if ("failed".equals(Client.quickStatus)) {
             count = 0;
-            lobbyMessage = Client.joinMessage;
-            Client.joinLobbyStatus = "";
-            Client.joinMessage = "";
+            lobbyMessage = Client.quickMessage;
+            Client.quickStatus = "";
+            Client.quickMessage = "";
         }
 
-        if ("joined".equals(Client.joinLobbyStatus)) {
+        if ("success".equals(Client.quickStatus)) {
+
+            LobbyScreen.idList = new ArrayList<>(Arrays.asList(Client.playerString.split(";")));
             OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));
-            Client.joinLobbyStatus = "";
-            Client.joinMessage = "";
+            Client.quickStatus = "";
+            Client.quickMessage = "";
         }
 
         if (200 == count) {

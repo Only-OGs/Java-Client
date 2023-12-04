@@ -2,17 +2,14 @@ package Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Objects;
@@ -23,9 +20,9 @@ public abstract class MenuScreen extends ScreenAdapter {
 
     protected Stage stage;
 
-    protected SpriteBatch batch;
+    private final SpriteBatch batch;
 
-    protected Texture backgroundTexture;
+    private final Texture backgroundTexture;
 
     protected TextButton buttonLeft, buttonMiddle, buttonRight;
 
@@ -34,6 +31,7 @@ public abstract class MenuScreen extends ScreenAdapter {
         backgroundTexture = new Texture("Background/BackgroundOGRacerGame.png");
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
+        Gdx.input.setInputProcessor(stage);
         if (Constants.music != null) {
             Constants.music.setLooping(true);
             Constants.music.setVolume(0.01f);
@@ -59,7 +57,6 @@ public abstract class MenuScreen extends ScreenAdapter {
 
         super.render(delta);
     }
-
 
     @Override
     public void resize(int width, int height) {
@@ -100,7 +97,6 @@ public abstract class MenuScreen extends ScreenAdapter {
             buttonRight.setPosition((stage.getWidth() - buttonRight.getWidth()) / 2 + buttonRight.getWidth() + 50, stage.getHeight() / 2 - (buttonRight.getHeight()) + 25);
             stage.addActor(buttonRight);
         }
-        Gdx.input.setInputProcessor(stage);
     }
 
     protected void removeButton() {
@@ -109,6 +105,5 @@ public abstract class MenuScreen extends ScreenAdapter {
         if (buttonRight != null) buttonRight.remove();
     }
 
-    protected void buttonListener() {
-    }
+    protected abstract void buttonListener();
 }
