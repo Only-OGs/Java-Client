@@ -6,15 +6,11 @@ import Rendering.CarRenderer;
 import Rendering.RenderSegment;
 import Rendering.SpritesRenderer;
 import Rendering.SunShade;
-import Road.Car;
-import Road.CustomSprite;
-import Road.RoadBuilder;
-import Road.Segment;
+import Road.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -22,7 +18,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.ArrayList;
+
 public class GameScreen extends ScreenAdapter implements IInputHandler{
+
+    public static ArrayList<RoadPart> roadBuilders = new ArrayList<>();
 
     private Viewport viewport;
 

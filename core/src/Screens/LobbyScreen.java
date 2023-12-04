@@ -120,12 +120,17 @@ public class LobbyScreen extends ScreenAdapter {
             timeLabel.setText("Start in:  ");
         }
 
-        if (idList.size() != lastIDListSize && idList.size() > 1) waitTimer(); // muss 1 sein
+        if (idList.size() != lastIDListSize && idList.size() > 0) waitTimer(); // muss 1 sein
 
         lastIDListSize = idList.size();
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+
+        if(Client.startGame.equals("go")){
+            Client.startGame = "";
+            OGRacerGame.getInstance().setScreen(new ReadyScreen());
+        }
     }
 
     private void waitTimer() {
@@ -138,7 +143,7 @@ public class LobbyScreen extends ScreenAdapter {
         };
 
         // Starte den Timer mit einer Verzögerung von 10 Sekunden
-        Timer.schedule(timerTask, 10);  // muss 10
+        Timer.schedule(timerTask, 2);  // muss 10
     }
 
     private void buttonListener() {
@@ -150,7 +155,7 @@ public class LobbyScreen extends ScreenAdapter {
                 idList = new ArrayList<>(8);
                 Client.leaveLobby();
                 Client.playerString = "";
-                Client.joinLobbyStatus = "";
+                Client.joinStatus = "";
                 if (timerTask != null) {
                     timerTask.cancel();
                 }
@@ -164,7 +169,7 @@ public class LobbyScreen extends ScreenAdapter {
                 Constants.clickButton.play(0.2f);
                 idList = new ArrayList<>(8);
                 Client.playerString = "";
-                Client.joinLobbyStatus = "";
+                Client.joinStatus = "";
                 try {
                     Client.leaveLobby();
                     Client.sendLogOut();
@@ -194,14 +199,18 @@ public class LobbyScreen extends ScreenAdapter {
             time = Math.max(time - delta, 0f);
         }
 
-
         if(time > 10){
             timeLabel.setText("Start in: " + (int) time);
         }else if(time > 1){
             timeLabel.setText("Start in:  " + (int) time);
         }else{
             timeLabel.setColor(Color.GREEN);
-            timeLabel.setText("   --> GO -->");
+            timeLabel.setText("              GO");
+        }
+
+        if(time == 0){
+            Client.ready();
+            startTime = false;
         }
 
     }
@@ -232,6 +241,7 @@ public class LobbyScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
+        timerTask.cancel();
         stage.dispose();
         shapeRenderer.dispose();
         super.dispose();
