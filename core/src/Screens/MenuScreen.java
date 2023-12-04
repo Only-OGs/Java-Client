@@ -1,5 +1,6 @@
 package Screens;
 
+import Connection.Client;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;

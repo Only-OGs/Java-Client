@@ -1,10 +1,14 @@
 package Connection;
 
+import Road.RoadPart;
+import Screens.GameScreen;
 import Screens.LobbyScreen;
 import io.socket.client.IO;
 import io.socket.client.Socket;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONString;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -34,13 +38,18 @@ public class Client {
 
     public static String quickMessage;
 
-    public static String joinLobbyStatus;
+    public static String joinStatus;
+
+    public static String joinMessage;
 
     public static String lobbyID;
 
     public static String[] playerAndMessage;
 
     public static String playerString;
+
+
+    public static String startGame = "";
 
     public static boolean connect = false;
 
@@ -110,10 +119,8 @@ public class Client {
             JSONObject obj = (JSONObject) args[0];
             try {
 
-                searchLobbyCodeStatus = (String) obj.get("status"); // joined und failed
+                searchLobbyCodeStatus = (String) obj.get("status"); // success und failed
                 searchLobbyCodeMessage = (String) obj.get("message");// Nachricht vom Server
-                System.out.println("Search Code Game: " + searchLobbyCodeStatus);
-                System.out.println("Search Code Game: " + searchLobbyCodeMessage);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -125,10 +132,8 @@ public class Client {
             JSONObject obj = (JSONObject) args[0];
             try {
 
-                quickStatus = (String) obj.get("status"); // joined und failed
+                quickStatus = (String) obj.get("status"); // success und failed
                 quickMessage = (String) obj.get("message");// Nachricht vom Server
-                System.out.println("Quick Game: " + quickStatus);
-                System.out.println("QuickGame : " + quickMessage);
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -140,16 +145,14 @@ public class Client {
             JSONObject obj = (JSONObject) args[0];
             try {
                 playerString = (String) obj.get("players");
-                joinLobbyStatus = (String) obj.get("status"); // failed und joined
                 lobbyID = (String) obj.get("lobby");
-                searchLobbyCodeMessage = (String) obj.get("message");
+                //joinMessage = (String) obj.get("message");
+                joinStatus = (String) obj.get("status"); // failed und joined
 
-                System.out.println("player ids: " + playerString);
-                System.out.println("Lobby ID: " + lobbyID);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
-            if ("joined".equals(Client.joinLobbyStatus)) {
+            if ("joined".equals(Client.joinStatus)) {
                 LobbyScreen.idList = new ArrayList<>(Arrays.asList(playerString.split(";")));
                 searchLobbyCodeMessage = "";
             }
@@ -185,6 +188,34 @@ public class Client {
 
             LobbyScreen.idList = new ArrayList<>(Arrays.asList(Client.playerString.split(";")));
         });
+
+        socket.on("game_start", args -> {
+            startGame = (String) args[0]; // go oder nichts
+        });
+
+        // Daten vom Track
+        socket.on("receive_track", args -> {
+
+            try {
+                // Erstelle ein JSONArray-Objekt aus dem JSON-String
+                JSONArray jsonArrayString = (JSONArray) args[0];
+
+                // Iteriere durch jedes JSON-Objekt im Array
+                for (int i = 0; i < jsonArrayString.length(); i++) {
+                    JSONObject jsonObj = jsonArrayString.getJSONObject(i);
+
+                    // Greife auf die Werte der Schlüssel zu
+                    String key1 = jsonObj.getString("segment_length");
+                    String key2 = jsonObj.getString("curve_strength");
+                    String key3 = jsonObj.getString("hill_height");
+                    GameScreen.roadBuilders.add(new RoadPart(key1,key2,key3));
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+
 
         // Verbindung herstellen
         socket.connect();
@@ -243,6 +274,12 @@ public class Client {
     public static void getLobby() {
         if (socket.connected()) {
             socket.emit("get_lobby");
+        }
+    }
+
+    public static void ready() {
+        if (socket.connected()) {
+            socket.emit("start_game");
         }
     }
 }
