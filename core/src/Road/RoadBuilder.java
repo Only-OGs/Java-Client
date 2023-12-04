@@ -2,6 +2,7 @@ package Road;
 
 import MathHelpers.Util;
 import Rendering.ColorThemes;
+import Screens.GameScreen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -33,6 +34,16 @@ public class RoadBuilder {
         segments.add(buildfinsih(segmentLenght,l-1));
         Segment[] s = segments.toArray(Segment[]::new);
         addSprites(s,arr,200);
+        return (s);
+    }
+    public static Segment[] resetRoad(RoadPart[] road){
+        int segmentLenght = GameScreen.getSegmentLenght();
+        ArrayList<Segment> segments= new ArrayList<>();
+        int index=0;
+        for(RoadPart rp:road){
+            index+=addRoad(segments,segmentLenght,index,rp.getLenght(),rp.getCurve(),rp.getHill());
+        }
+        Segment[] s = segments.toArray(Segment[]::new);
         return (s);
     }
 

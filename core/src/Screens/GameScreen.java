@@ -83,6 +83,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         setNewCars(RoadBuilder.createCarArr(segmentsCount));
     }
 
+
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
