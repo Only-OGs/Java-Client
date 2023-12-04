@@ -7,8 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.json.JSONException;
 
-import java.util.Objects;
-
 public class LoginMenu extends MultiplayerMenu {
 
     private int delay = 0;

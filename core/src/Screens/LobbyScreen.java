@@ -53,8 +53,6 @@ public class LobbyScreen extends ScreenAdapter {
 
     private boolean startTime = false;
 
-    private boolean startCountdown = false;
-
 
     public LobbyScreen(String ID) {
         this.ID = ID;
@@ -80,7 +78,7 @@ public class LobbyScreen extends ScreenAdapter {
             player[i] = new Label("Suchen ", Constants.buttonSkin);
 
         timeLabel = new Label("Start in: -", Constants.buttonSkin);
-        timeLabel.setBounds(stage.getWidth() / 1.3f+12, stage.getHeight() - 75, 190, 40);
+        timeLabel.setBounds(stage.getWidth() / 1.3f+9, stage.getHeight() - 75, 190, 40);
         stage.addActor(timeLabel);
 
         idLabel = new Label("ID: " + ID, Constants.buttonSkin);
@@ -101,7 +99,6 @@ public class LobbyScreen extends ScreenAdapter {
         lobbyCode.setText("Lobby ID: " + Client.lobbyID);
     }
 
-
     @Override
     public void render(float delta) {
         ScreenUtils.clear(20 / 255f, 21 / 255f, 44 / 255f, 1.0f);
@@ -119,10 +116,11 @@ public class LobbyScreen extends ScreenAdapter {
             if (timerTask != null) timerTask.cancel();
             time = 11;
             startTime = false;
+            timeLabel.setColor(Color.WHITE);
             timeLabel.setText("Start in:  ");
         }
 
-        if (idList.size() != lastIDListSize && idList.size() > 1) waitTimer();
+        if (idList.size() != lastIDListSize && idList.size() > 1) waitTimer(); // muss 1 sein
 
         lastIDListSize = idList.size();
 
@@ -139,8 +137,8 @@ public class LobbyScreen extends ScreenAdapter {
             }
         };
 
-        // Starte den Timer mit einer Verzögerung von 3 Sekunden
-        Timer.schedule(timerTask, 5);
+        // Starte den Timer mit einer Verzögerung von 10 Sekunden
+        Timer.schedule(timerTask, 10);  // muss 10
     }
 
     private void buttonListener() {
@@ -196,19 +194,15 @@ public class LobbyScreen extends ScreenAdapter {
             time = Math.max(time - delta, 0f);
         }
 
-        if(time <= 4.2f && !startCountdown){
-            Constants.countdown.play(1f);
-            startCountdown = true;
-        }
-
-
 
         if(time > 10){
             timeLabel.setText("Start in: " + (int) time);
-        }else{
+        }else if(time > 1){
             timeLabel.setText("Start in:  " + (int) time);
+        }else{
+            timeLabel.setColor(Color.GREEN);
+            timeLabel.setText("   --> GO -->");
         }
-
 
     }
 

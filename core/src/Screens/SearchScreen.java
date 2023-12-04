@@ -21,17 +21,18 @@ import org.json.JSONException;
 
 public class SearchScreen extends ScreenAdapter {
 
-    private TextButton sendButton = new TextButton("Senden", Constants.buttonSkin);
+    private final TextButton sendButton = new TextButton("Senden", Constants.buttonSkin);
 
-    private TextButton backButton = new TextButton("Zurueck", Constants.buttonSkin);
+    private final TextButton backButton = new TextButton("Zurueck", Constants.buttonSkin);
 
-    private TextField messageField = new TextArea("", Constants.buttonSkin);
+    private final TextField messageField = new TextArea("", Constants.buttonSkin);
 
-    private FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-    private Stage stage = new Stage(viewport);
+    private final FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-    private Label serverMessage = new Label("",Constants.buttonSkin);
-    private Label lobbyCodeTitle = new Label("Lobby ID Eingabe",Constants.buttonSkin);
+    private final Stage stage = new Stage(viewport);
+
+    private final Label serverMessage = new Label("", Constants.buttonSkin);
+    private final Label lobbyCodeTitle = new Label("Lobby ID Eingabe", Constants.buttonSkin);
     private final String ID;
     private Label idLabel;
     private int count = 0;

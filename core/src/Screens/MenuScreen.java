@@ -2,17 +2,14 @@ package Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Objects;
@@ -23,9 +20,9 @@ public abstract class MenuScreen extends ScreenAdapter {
 
     protected Stage stage;
 
-    protected SpriteBatch batch;
+    private final SpriteBatch batch;
 
-    protected Texture backgroundTexture;
+    private final Texture backgroundTexture;
 
     protected TextButton buttonLeft, buttonMiddle, buttonRight;
 
@@ -108,6 +105,5 @@ public abstract class MenuScreen extends ScreenAdapter {
         if (buttonRight != null) buttonRight.remove();
     }
 
-    protected void buttonListener() {
-    }
+    protected abstract void buttonListener();
 }
