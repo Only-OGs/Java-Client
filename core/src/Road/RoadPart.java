@@ -1,6 +1,13 @@
 package Road;
 
 public class RoadPart {
+
+    public RoadPart(String lenght, String curve, String hill) {
+        this.lenght = Integer.parseInt(lenght);
+        this.curve = Integer.parseInt(curve);
+        this.hill = Integer.parseInt(hill);
+    }
+
     private int lenght;
     private int curve;
     private int hill;
