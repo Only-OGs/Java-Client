@@ -144,9 +144,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             result += trackLength;
         lastCameraPosition = cameraPosition;
         cameraPosition=result;
-
-        updatePosition(delta);
         updateHUD();
+        updatePosition(delta);
+
         stage.draw();
 
         timer += delta;
