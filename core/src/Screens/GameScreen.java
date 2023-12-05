@@ -87,6 +87,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private boolean newCarsToPlace = false;
     private Car[] newCars;
     private Car[] oldCars;
+    private boolean collsionLeave = false;
 
     private float timer = 0;
     private float lastLapTime = 0;
@@ -276,35 +277,39 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     }
 
     private void updatePosition(float delta) {
+        Segment playerSegment = findSegment(cameraPosition+playerZ);
         speedPercent=playerSpeed/playerMaxSpeed;
         dx = delta * 2 * (playerSpeed/playerMaxSpeed);
-        //Beschleunigen | Bremsen | Nach Links | Nach Rechts
-        checkInput(OGRacerGame.getInstance(), delta);
+
         // Langsamer auf Offroad
         if (((playerX < -1) || (playerX > 1))) {
             if((playerSpeed > offRoadLimit)) {
                 playerSpeed = playerSpeed + (offRoadDecel * delta);
                 playerSpeed = (int) Util.limit(playerSpeed, 0, playerMaxSpeed);
             }
-            checkSpriteCollision();
+            checkSpriteCollision(playerSegment);
+
         }
+        //Beschleunigen | Bremsen | Nach Links | Nach Rechts
+        checkInput(OGRacerGame.getInstance(), delta);
+        System.out.println(playerX);
     }
 
-    private void checkSpriteCollision() {
-        Segment playerSegment = findSegment(cameraPosition+playerZ);
+    private void checkSpriteCollision(Segment playerSegment) {
         if(playerSegment.getSprites() == null) {
             return;
         }
-
         for(int i = 0 ; i < playerSegment.getSprites().length ; i++) {
+
             double scale = playerSegment.getP1().getScreen().getScale();
 
             CustomSprite sprite = playerSegment.getSprites()[i];
-            int spriteW = (int)(sprite.getT().getWidth() * scale);
-            int playerW = (int)(CarRenderer.tS.getWidth() * scale);
-            if (Util.overlap((int)playerX, playerW, (int) (sprite.getOffset() + spriteW/2 * (sprite.getOffset() > 0 ? 1 : -1)), spriteW, 0)) {
+            double spriteW = sprite.getT().getWidth() * scale;
+            double playerW = CarRenderer.tS.getWidth() * scale;
+            if (Util.overlap(playerX, playerW, sprite.getOffset(), spriteW*4, 0.5f) ||
+                    Util.overlap(playerX, playerW, sprite.getOffset()-spriteW*4, spriteW*4, 0.5f)) {
                 playerSpeed = playerMaxSpeed/5;
-                cameraPosition = Util.increase(playerSegment.getP1().getWorld().getZ(), (int)-playerZ, trackLenght);
+                cameraPosition = Util.increase(playerSegment.getP1().getWorld().getZ(), (int) -playerZ, trackLenght);
                 break;
             }
         }

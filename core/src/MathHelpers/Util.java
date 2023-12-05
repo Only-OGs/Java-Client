@@ -101,18 +101,21 @@ public class Util {
         return Math.max( min,  Math.min(value, max) );
     }
 
-    public static boolean overlap(int x1, int w1, int x2, int w2, double percent) {
-        double half;
-        if (percent > 1) {
-            half = percent / 2;
-        } else {
-            half = 1.0 / 2;
+    public static boolean overlap(double x1, double w1, double x2, double w2, double percent) {
+        double half = percent;
+        if(percent >= 1) {
+            half = 0.5f;
         }
-        double min1 = x1 - (w1 * half);
-        double max1 = x1 + (w1 * half);
-        double min2 = x2 - (w2 * half);
-        double max2 = x2 + (w2 * half);
-        return !((max1 < min2) || (min1 > max2));
+
+        double left1 = x1 - (w1 * half);
+        double right1 = x1 + (w1 * half);
+        double left2 = x2;
+        double right2 = x2 + w2;
+
+        boolean leftIn = left1 >= left2 && left1 <= right2;
+        boolean rightIn = right1 <= right2 && right1 >= left2;
+
+        return leftIn || rightIn;
     }
 
     public static int closer(int num1, int num2, int target) {
