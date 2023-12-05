@@ -116,6 +116,7 @@ public class Util {
         boolean rightIn = right1 <= right2 && right1 >= left2;
 
         return leftIn || rightIn;
+<<<<<<< HEAD
     }
 
     public static int closer(int num1, int num2, int target) {
@@ -145,5 +146,7 @@ public class Util {
             }
         }
         return ""+closer(formatedSpeed, (int)maxSpeed, (int)speed);
+=======
+>>>>>>> 5fa8f285abd115ab3e513b3b1c2a6559d6b993fd
     }
 }

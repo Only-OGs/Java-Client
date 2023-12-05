@@ -99,7 +99,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         batch = new SpriteBatch();
         renderer = new ShapeRenderer();
         segments = RoadBuilder.resetRoad(segmentsCount,segmentLenght);
-
         trackLength = segments.length*segmentLenght;
         setNewCars(RoadBuilder.createCarArr(segmentsCount));
 
