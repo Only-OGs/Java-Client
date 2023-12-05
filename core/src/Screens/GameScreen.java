@@ -72,7 +72,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     private boolean newCarsToPlace = false;
     private Car[] newCars;
     private Car[] oldCars;
-    private boolean collsionLeave = false;
 
 
     public GameScreen() {
@@ -236,7 +235,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         }
         //Beschleunigen | Bremsen | Nach Links | Nach Rechts
         checkInput(OGRacerGame.getInstance(), delta);
-        System.out.println(playerX);
     }
 
     private void checkSpriteCollision(Segment playerSegment) {
