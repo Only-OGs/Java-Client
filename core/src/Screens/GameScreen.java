@@ -260,7 +260,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     private void updateHUD() {
         if(cameraPosition < lastCameraPosition) {
-            fastestLapTime = lastLapTime > 0 ? Math.min(lastLapTime, timer) : timer;
+            fastestLapTime = lastLapTime > 0 ? Math.min(fastestLapTime, timer) : timer;
             lastLapTime = timer;
             timer = 0;
         }
