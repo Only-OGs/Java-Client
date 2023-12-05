@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.ArrayList;
 
 public class GameScreen extends ScreenAdapter implements IInputHandler{
+    private boolean multiplayer;
 
     public static ArrayList<RoadPart> roadBuilders = new ArrayList<>();
 
@@ -74,6 +75,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
 
     public GameScreen() {
+        multiplayer=false;
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
         batch = new SpriteBatch();
@@ -82,6 +84,16 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         trackLenght = segments.length*segmentLenght;
         setNewCars(RoadBuilder.createCarArr(segmentsCount));
     }
+    public GameScreen(boolean multiplayer) {
+        this.multiplayer=multiplayer;
+        viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage = new Stage(viewport);
+        batch = new SpriteBatch();
+        renderer = new ShapeRenderer();
+        segments=RoadBuilder.resetRoad(roadBuilders.toArray(RoadPart[]::new));
+        trackLenght = segments.length*segmentLenght;
+    }
+
 
     @Override
     public void render(float delta) {
@@ -131,8 +143,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         int playerY = (int) Util.interpolate(playerSegment.getP1().getWorld().getY(),playerSegment.getP2().getWorld().getY(),playerPercent);
         float x = 0;                                                                                                    //Akkumulierter seitlicher versatz der Segmente
         float dx = 0f- (baseSegment.getCurve()*basePercent);                                                            // hilft die Versätzung zu speichern und berechnen
-        sunOffset += dx;
-        int renderedCounter=0;
+        sunOffset += dx*speedPercent;
 
         Segment segment;
         int segmentLoopedValue;
@@ -172,7 +183,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
                     segment
             );
             maxy=segment.getP1().getScreen().getY();
-            renderedCounter++;
         }
         SunShade.sun(r,batch,sunOffset,maxy);
         Segment s;
@@ -210,6 +220,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     }
 
     private void updatePosition(float delta) {
+        speedPercent=playerSpeed/playerMaxSpeed;
         dx = delta * 2 * (playerSpeed/playerMaxSpeed);
         //Beschleunigen | Bremsen | Nach Links | Nach Rechts
         checkInput(OGRacerGame.getInstance(), delta);

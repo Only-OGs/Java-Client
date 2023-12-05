@@ -54,7 +54,7 @@ public class ReadyScreen extends ScreenAdapter {
         timerTask = new Timer.Task() {
             @Override
             public void run() {
-                OGRacerGame.getInstance().setScreen(new GameScreen());
+                OGRacerGame.getInstance().setScreen(new GameScreen(true));
             }
         };
 

@@ -3,8 +3,8 @@ package Road;
 import Screens.GameScreen;
 
 public class Car {
-    private CustomSprite customSprite;
-    private Segment segment;
+    private CustomSprite customSprite;  // position und Aussehen des einzelnen Autos
+    private Segment segment;  // Wird später berechnet
 
     public CustomSprite getCs() {
         return customSprite;

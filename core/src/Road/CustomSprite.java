@@ -3,12 +3,18 @@ package Road;
 import com.badlogic.gdx.graphics.Texture;
 
 public class CustomSprite {
+    static Texture preCar = new Texture("sprites/car02.png");
     Texture t;
     float offset;
     double z;
 
     public CustomSprite(Texture t, float offset, double z) {
         this.t = t;
+        this.offset = offset;
+        this.z = z;
+    }
+    public CustomSprite(float offset, double z) {
+        this.t = preCar;
         this.offset = offset;
         this.z = z;
     }

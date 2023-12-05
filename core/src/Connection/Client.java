@@ -195,6 +195,7 @@ public class Client {
 
         // Daten vom Track
         socket.on("receive_track", args -> {
+            ArrayList<RoadPart> road= new ArrayList<>();
 
             try {
                 // Erstelle ein JSONArray-Objekt aus dem JSON-String
@@ -208,12 +209,12 @@ public class Client {
                     String key1 = jsonObj.getString("segment_length");
                     String key2 = jsonObj.getString("curve_strength");
                     String key3 = jsonObj.getString("hill_height");
-                    GameScreen.roadBuilders.add(new RoadPart(key1,key2,key3));
-
+                    road.add(new RoadPart(key1,key2,key3));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            GameScreen.roadBuilders=road;
         });
 
 
