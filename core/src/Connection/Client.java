@@ -280,7 +280,13 @@ public class Client {
 
     public static void ready() {
         if (socket.connected()) {
-            socket.emit("start_game");
+            socket.emit("is_ready");
+        }
+    }
+
+    public static void notReady() {
+        if (socket.connected()) {
+            socket.emit("isnot_ready");
         }
     }
 }

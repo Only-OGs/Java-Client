@@ -37,21 +37,25 @@ public class LobbyScreen extends ScreenAdapter {
 
     private final Label[] player = new Label[8];
 
-    private TextButton lobbyLeaveButton = new TextButton("Verlassen", Constants.buttonSkin);
+    private final TextButton leaveButton = new TextButton("Verlassen", Constants.buttonSkin);
 
-    private TextButton optionButton = new TextButton("Einstellungen", Constants.buttonSkin);
+    private final TextButton optionButton = new TextButton("Einstellungen", Constants.buttonSkin);
 
-    private TextButton logoutButton = new TextButton("Abmelden", Constants.buttonSkin);
+    private final TextButton logoutButton = new TextButton("Abmelden", Constants.buttonSkin);
+
+    private final TextButton readyButton = new TextButton("Bereit", Constants.buttonSkin);
 
     private int lastIDListSize = 0;
 
     private Timer.Task timerTask;
 
-    private MessageChat chat;
+    private final MessageChat chat;
 
     private float time = 11;
 
     private boolean startTime = false;
+
+    private boolean ready = false;
 
 
     public LobbyScreen(String ID) {
@@ -80,6 +84,10 @@ public class LobbyScreen extends ScreenAdapter {
         timeLabel = new Label("Start in: -", Constants.buttonSkin);
         timeLabel.setBounds(stage.getWidth() / 1.3f+9, stage.getHeight() - 75, 190, 40);
         stage.addActor(timeLabel);
+
+        idLabel = new Label("ID: " + ID, Constants.buttonSkin);
+        idLabel.setBounds(100, stage.getHeight() - 75, 190, 40);
+        stage.addActor(idLabel);
 
         idLabel = new Label("ID: " + ID, Constants.buttonSkin);
         idLabel.setBounds(100, stage.getHeight() - 75, 190, 40);
@@ -148,7 +156,7 @@ public class LobbyScreen extends ScreenAdapter {
 
     private void buttonListener() {
 
-        lobbyLeaveButton.addListener(new ClickListener() {
+        leaveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
@@ -190,6 +198,22 @@ public class LobbyScreen extends ScreenAdapter {
 
             }
         });
+
+
+        readyButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Constants.clickButton.play(0.2f);
+                if(!ready){
+                    Client.ready();
+                    ready = true;
+                }else{
+                    Client.notReady();
+                    ready = false;
+                }
+
+            }
+        });
     }
 
     private void startTimer(float delta) {
@@ -209,7 +233,7 @@ public class LobbyScreen extends ScreenAdapter {
         }
 
         if(time == 0){
-            Client.ready();
+
             startTime = false;
         }
 
@@ -222,10 +246,10 @@ public class LobbyScreen extends ScreenAdapter {
         optionButton.setRotation(90);
         stage.addActor(optionButton);
 
-        lobbyLeaveButton.setBounds(70, stage.getHeight() / 1.5f, 180, 50);
-        lobbyLeaveButton.setTransform(true);
-        lobbyLeaveButton.setRotation(90);
-        stage.addActor(lobbyLeaveButton);
+        leaveButton.setBounds(70, stage.getHeight() / 1.5f, 180, 50);
+        leaveButton.setTransform(true);
+        leaveButton.setRotation(90);
+        stage.addActor(leaveButton);
 
         logoutButton.setBounds(70, stage.getHeight() / 3f - 170, 170, 50);
         logoutButton.setTransform(true);
