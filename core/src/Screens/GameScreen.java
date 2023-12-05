@@ -57,7 +57,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
     private int segmentsCount=600;
 
-    private int trackLenght;
+    private int trackLength;
 
     private int FOV = 100;
 
@@ -99,8 +99,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         batch = new SpriteBatch();
         renderer = new ShapeRenderer();
         segments = RoadBuilder.resetRoad(segmentsCount,segmentLenght);
-        trackLenght = segments.length*segmentLenght;
 
+        trackLength = segments.length*segmentLenght;
         setNewCars(RoadBuilder.createCarArr(segmentsCount));
 
         setupHUD(stage);
@@ -112,7 +112,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
         batch = new SpriteBatch();
         renderer = new ShapeRenderer();
         segments=RoadBuilder.resetRoad(roadBuilders.toArray(RoadPart[]::new));
-        trackLenght = segments.length*segmentLenght;
+        trackLength = segments.length*segmentLenght;
     }
 
 
@@ -139,10 +139,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             newCarsToPlace = false;
         }
         double result = cameraPosition + playerSpeed;
-        while (result >= trackLenght)
-            result -= trackLenght;
+        while (result >= trackLength)
+            result -= trackLength;
         while (result < 0)
-            result += trackLenght;
+            result += trackLength;
         lastCameraPosition = cameraPosition;
         cameraPosition=result;
 
@@ -181,7 +181,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             segment.setClip(maxy);
 
             if(segment.isLooped()){
-                segmentLoopedValue=trackLenght;
+                segmentLoopedValue= trackLength;
             }else{
                 segmentLoopedValue=0;
             }
@@ -219,7 +219,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
                 for(int q=0;q<s.getCars().size();q++){
                     Car car = s.getCars().get(q);
                     double spriteScale = Util.interpolate(s.getP1().getScreen().getScale(),s.getP2().getScreen().getScale(),0.5f);
-                    float spriteX = (float) (Util.interpolate(s.getP1().getScreen().getX(),s.getP2().getScreen().getX(),0.5f)+(spriteScale*0.5f*roadWidth*Gdx.graphics.getWidth()/2));
+                    float spriteX = (float) (Util.interpolate(s.getP1().getScreen().getX(),s.getP2().getScreen().getX(),0.5f)+(spriteScale*car.getCs().getOffset()*roadWidth*Gdx.graphics.getWidth()/2));
                     float spriteY = (float) (Util.interpolate(s.getP1().getScreen().getY(),s.getP2().getScreen().getY(),0.5f));
                     SpritesRenderer.render(batch,resolution,roadWidth,car.getCs().getT(),spriteScale,spriteX,spriteY,-0.5f,-1f ,s.getClip());
                 }
@@ -289,6 +289,25 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             checkSpriteCollision(playerSegment);
 
         }
+
+        double scale = playerSegment.getP1().getScreen().getScale();
+        double playerW = CarRenderer.tS.getWidth() * scale;
+
+        if(playerSegment.getCars() != null) {
+            for(int i = 0 ; i < playerSegment.getCars().size() ; i++) {
+                Car car = playerSegment.getCars().get(i);
+                double carW = car.getCs().getT().getWidth() * scale;
+                //if (speed > car.speed) {
+                if (Util.overlap(playerX, playerW, car.getCs().getOffset() -carW*2 , carW * 3.5, 0.8)) {
+                    playerSpeed = playerMaxSpeed/5;//car.speed * (car.speed/speed);
+                    cameraPosition = Util.increase((int) car.getCs().getZ(), (int) -playerZ, trackLength);
+                    break;
+                }
+                //}
+            }
+        }
+
+
         //Beschleunigen | Bremsen | Nach Links | Nach Rechts
         checkInput(OGRacerGame.getInstance(), delta);
     }
@@ -307,7 +326,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
             if (Util.overlap(playerX, playerW, sprite.getOffset(), spriteW*4, 0.5f) ||
                     Util.overlap(playerX, playerW, sprite.getOffset()-spriteW*4, spriteW*4, 0.5f)) {
                 playerSpeed = playerMaxSpeed/5;
-                cameraPosition = Util.increase(playerSegment.getP1().getWorld().getZ(), (int) -playerZ, trackLenght);
+                cameraPosition = Util.increase(playerSegment.getP1().getWorld().getZ(), (int) -playerZ, trackLength);
                 break;
             }
         }
