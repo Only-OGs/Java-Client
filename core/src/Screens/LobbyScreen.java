@@ -28,11 +28,17 @@ import java.util.ArrayList;
 public class LobbyScreen extends ScreenAdapter {
 
     private FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
     private Stage stage = new Stage(viewport);
+
     private int searchCounter = 0;
+
     public static ArrayList<String> idList = new ArrayList<>(8);
+
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+
     private final String ID;
+
     private Label idLabel, lobbyCode, timeLabel;
 
     private final Label[] player = new Label[8];
@@ -43,20 +49,18 @@ public class LobbyScreen extends ScreenAdapter {
 
     private final TextButton logoutButton = new TextButton("Abmelden", Constants.buttonSkin);
 
-    private final TextButton readyButton = new TextButton("Bereit", Constants.buttonSkin);
+    private final TextButton readyButton = new TextButton("Nicht Bereit", Constants.buttonSkin);
 
-    private int lastIDListSize = 0;
-
-    private Timer.Task timerTask;
+    private final Button[] lobbyButton =  {
+            new TextButton("Verlassen", Constants.buttonSkin),
+            new TextButton("Einstellungen", Constants.buttonSkin),
+            new TextButton("Abmelden", Constants.buttonSkin),
+            new TextButton("Nicht Bereit", Constants.buttonSkin)
+    };
 
     private final MessageChat chat;
 
-    private float time = 11;
-
-    private boolean startTime = false;
-
     private boolean ready = false;
-
 
     public LobbyScreen(String ID) {
         this.ID = ID;
@@ -75,19 +79,14 @@ public class LobbyScreen extends ScreenAdapter {
         chat.build();
     }
 
-
     private void setupLabel() {
 
         for (int i = 0; i < player.length; i++)
             player[i] = new Label("Suchen ", Constants.buttonSkin);
 
-        timeLabel = new Label("Start in: -", Constants.buttonSkin);
+        timeLabel = new Label("Start in:", Constants.buttonSkin);
         timeLabel.setBounds(stage.getWidth() / 1.3f+9, stage.getHeight() - 75, 190, 40);
         stage.addActor(timeLabel);
-
-        idLabel = new Label("ID: " + ID, Constants.buttonSkin);
-        idLabel.setBounds(100, stage.getHeight() - 75, 190, 40);
-        stage.addActor(idLabel);
 
         idLabel = new Label("ID: " + ID, Constants.buttonSkin);
         idLabel.setBounds(100, stage.getHeight() - 75, 190, 40);
@@ -101,6 +100,10 @@ public class LobbyScreen extends ScreenAdapter {
         lobbyCode = new Label("Lobby ID: ", style);
         lobbyCode.setBounds(stage.getWidth() / 1.2f, 25, 190, 10);
         stage.addActor(lobbyCode);
+
+        readyButton.setBounds(Gdx.graphics.getWidth() / 1.9f-6,(float) Gdx.graphics.getHeight() / 16-5,410,60);
+        readyButton.setColor(StyleGuide.purpleDark);
+        stage.addActor(readyButton);
     }
 
     private void addLobbyID() {
@@ -118,19 +121,6 @@ public class LobbyScreen extends ScreenAdapter {
         addLobbyID();
         chat.update(idList);
         chat.updateScrollBar();
-        if (startTime) startTimer(delta);
-
-        if (idList.size() != lastIDListSize) {
-            if (timerTask != null) timerTask.cancel();
-            time = 11;
-            startTime = false;
-            timeLabel.setColor(Color.WHITE);
-            timeLabel.setText("Start in:  ");
-        }
-
-        if (idList.size() != lastIDListSize && idList.size() > 0) waitTimer(); // muss 1 sein
-
-        lastIDListSize = idList.size();
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -139,19 +129,6 @@ public class LobbyScreen extends ScreenAdapter {
             Client.startGame = "";
             OGRacerGame.getInstance().setScreen(new ReadyScreen());
         }
-    }
-
-    private void waitTimer() {
-
-        timerTask = new Timer.Task() {
-            @Override
-            public void run() {
-                startTime = true;
-            }
-        };
-
-        // Starte den Timer mit einer Verzögerung von 10 Sekunden
-        Timer.schedule(timerTask, 2);  // muss 10
     }
 
     private void buttonListener() {
@@ -164,9 +141,6 @@ public class LobbyScreen extends ScreenAdapter {
                 Client.leaveLobby();
                 Client.playerString = "";
                 Client.joinStatus = "";
-                if (timerTask != null) {
-                    timerTask.cancel();
-                }
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(ID));
             }
         });
@@ -184,9 +158,6 @@ public class LobbyScreen extends ScreenAdapter {
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-                if (timerTask != null) {
-                    timerTask.cancel();
-                }
                 OGRacerGame.getInstance().setScreen(new LoginMenu());
             }
         });
@@ -195,10 +166,8 @@ public class LobbyScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-
             }
         });
-
 
         readyButton.addListener(new ClickListener() {
             @Override
@@ -206,50 +175,30 @@ public class LobbyScreen extends ScreenAdapter {
                 Constants.clickButton.play(0.2f);
                 if(!ready){
                     Client.ready();
+                    readyButton.setColor(new Color((int) (0.98611116*255),0,1,1));
+                    readyButton.setText("Bereit");
                     ready = true;
                 }else{
                     Client.notReady();
+                    readyButton.setColor(StyleGuide.purpleDark);
+                    readyButton.setText("Nicht Bereit");
                     ready = false;
                 }
-
             }
         });
     }
 
-    private void startTimer(float delta) {
-
-
-        if (time > 0f) {
-            time = Math.max(time - delta, 0f);
-        }
-
-        if(time > 10){
-            timeLabel.setText("Start in: " + (int) time);
-        }else if(time > 1){
-            timeLabel.setText("Start in:  " + (int) time);
-        }else{
-            timeLabel.setColor(Color.GREEN);
-            timeLabel.setText("              GO");
-        }
-
-        if(time == 0){
-
-            startTime = false;
-        }
-
-    }
-
     private void setupButton() {
-
-        optionButton.setBounds(70, stage.getHeight() / 2 - 115, 230, 50);
-        optionButton.setTransform(true);
-        optionButton.setRotation(90);
-        stage.addActor(optionButton);
 
         leaveButton.setBounds(70, stage.getHeight() / 1.5f, 180, 50);
         leaveButton.setTransform(true);
         leaveButton.setRotation(90);
         stage.addActor(leaveButton);
+
+        optionButton.setBounds(70, stage.getHeight() / 2 - 115, 230, 50);
+        optionButton.setTransform(true);
+        optionButton.setRotation(90);
+        stage.addActor(optionButton);
 
         logoutButton.setBounds(70, stage.getHeight() / 3f - 170, 170, 50);
         logoutButton.setTransform(true);
@@ -265,7 +214,6 @@ public class LobbyScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
-        timerTask.cancel();
         stage.dispose();
         shapeRenderer.dispose();
         super.dispose();

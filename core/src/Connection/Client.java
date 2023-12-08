@@ -286,7 +286,7 @@ public class Client {
 
     public static void notReady() {
         if (socket.connected()) {
-            socket.emit("isnot_ready");
+            socket.emit("not_ready");
         }
     }
 }
