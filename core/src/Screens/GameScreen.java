@@ -336,6 +336,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 exitLeave.setVisible(false);
                 exitBackground.getStyle().background = null;
                 if (Client.socket != null) Client.socket.disconnect();
+                OGRacerGame.getInstance().setGameScreen(null);
                 OGRacerGame.getInstance().setScreen(new MainMenu());
             }
         });
