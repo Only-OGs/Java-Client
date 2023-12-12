@@ -34,8 +34,6 @@ public class LobbyScreen extends ScreenAdapter {
 
     public static ArrayList<String> idList = new ArrayList<>(8);
 
-    private static String[] playerReady;
-
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     private final String ID;
@@ -144,9 +142,11 @@ public class LobbyScreen extends ScreenAdapter {
             }
         }
 
-        if(Client.startGame){
-            OGRacerGame.getInstance().setScreen(new LoadingScreen());
+        if(Client.waitGame){
+            OGRacerGame.getInstance().setScreen(new LoadingScreen(ID));
         }
+
+
 
     }
 
@@ -237,10 +237,6 @@ public class LobbyScreen extends ScreenAdapter {
         stage.dispose();
         shapeRenderer.dispose();
         super.dispose();
-    }
-    
-    private void playerReady(){
-
     }
 
     void updateField() {

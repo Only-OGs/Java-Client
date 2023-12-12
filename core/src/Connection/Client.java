@@ -8,11 +8,11 @@ import io.socket.client.Socket;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONString;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Client {
 
@@ -48,17 +48,25 @@ public class Client {
 
     public static String playerString;
 
-    public static String readyString;
-
     public static int timer = -1;
 
     public static boolean timerStatus = false;
 
+    public static boolean waitGame = false;
+
     public static boolean startGame = false;
+
+    public static boolean updatePos = false;
 
     public static boolean connect = false;
 
+    public static JSONArray jsonArrayStartPos;
+
+    public static JSONArray jsonArrayUpdatePos;
+
+
     public Client() {
+
     }
 
     /**
@@ -158,15 +166,11 @@ public class Client {
                 playerString = (String) obj.get("players");
                 lobbyID = (String) obj.get("lobby");
                 //joinMessage = (String) obj.get("message");
-                joinStatus = (String) obj.get("status"); // failed und joined
-                readyString =  (String) obj.get("ready"); // Pascal;Olli
-
-                // TODO readyString
+                joinStatus = (String) obj.get("status");
 
                 System.out.println("Managment: " + playerString);
                 System.out.println("Managment: " + lobbyID);
                 System.out.println("Managment: " + joinStatus);
-                System.out.println("Managment: " + readyString);
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -191,7 +195,7 @@ public class Client {
 
         // Wenn das Spiel startet wird, löst es das Event aus
         socket.on("load_level", args -> {
-            startGame = true;
+            waitGame = true;
 
             ArrayList<RoadPart> road = new ArrayList<>();
 
@@ -213,6 +217,23 @@ public class Client {
                 e.printStackTrace();
             }
             GameScreen.roadBuilders = road;
+        });
+
+        //
+        socket.on("wait_for_start", args -> {
+            startGame = true;
+
+            // Erstelle ein JSONArray-Objekt aus dem JSON-String
+            jsonArrayStartPos = (JSONArray) args[0];
+
+        });
+
+        socket.on("updated_positions", args -> {
+            updatePos = true;
+
+            // Erstelle ein JSONArray-Objekt aus dem JSON-String
+            jsonArrayUpdatePos = (JSONArray) args[0];
+
         });
 
         // Wird eine Chatnachricht erhalten mit ID udn seine Nachricht
@@ -319,6 +340,21 @@ public class Client {
     public static void notReady() {
         if (socket.connected()) {
             socket.emit("not_ready");
+        }
+    }
+
+    public static void clientReady() {
+        if (socket.connected()) {
+            socket.emit("client_is_ingame");
+        }
+    }
+
+    public static void ingamePos(float offset, double pos) throws JSONException {
+        if (socket.connected()) {
+            JSONObject obj = new JSONObject();
+            obj.put("offset",offset);
+            obj.put("pos",pos);
+            socket.emit("ingame_pos", obj);
         }
     }
 }

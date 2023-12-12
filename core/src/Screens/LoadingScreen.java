@@ -2,6 +2,8 @@ package Screens;
 
 import Connection.Client;
 import OGRacerGame.OGRacerGame;
+import Road.Car;
+import Road.CustomSprite;
 import Screens.MenuArea.MultiplayerMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -11,6 +13,10 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class LoadingScreen extends ScreenAdapter {
 
@@ -20,13 +26,18 @@ public class LoadingScreen extends ScreenAdapter {
 
     private Timer.Task timerTask;
 
-    public LoadingScreen() {
+    private String userID;
+
+    public LoadingScreen(String userID) {
+        this.userID = userID;
         Gdx.input.setInputProcessor(stage);
         Constants.title.setText("Das Spiel startet gleich ...");
         Constants.title.setSize(Gdx.graphics.getWidth(), 100);
         Constants.title.setPosition(0, stage.getHeight() - 100);
         Constants.title.setAlignment(Align.center);
         stage.addActor(Constants.title);
+        OGRacerGame.getInstance().setGameScreen(new GameScreen(true,userID));
+        Client.clientReady();
         waitTimer();
     }
 
@@ -39,6 +50,11 @@ public class LoadingScreen extends ScreenAdapter {
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+
+        if(Client.startGame){
+            Client.startGame = false;
+            setPos();
+        }
 
         super.render(delta);
     }
@@ -54,12 +70,42 @@ public class LoadingScreen extends ScreenAdapter {
         timerTask = new Timer.Task() {
             @Override
             public void run() {
-                OGRacerGame.getInstance().setScreen(new GameScreen(true));
+                OGRacerGame.getInstance().setScreen(OGRacerGame.getInstance().getGameScreen());
             }
         };
 
         // Starte den Timer mit einer Verzögerung von 10 Sekunden
         Timer.schedule(timerTask, 5);  // muss 10
+    }
+
+    void setPos(){
+        ArrayList<Car> cars = new ArrayList<>();
+
+        try {
+
+            // Iteriere durch jedes JSON-Objekt im Array
+            for (int i = 0; i < Client.jsonArrayStartPos.length(); i++) {
+                JSONObject jsonObj = Client.jsonArrayStartPos.getJSONObject(i);
+
+                // Greife auf die Werte der Schlüssel zu
+                float offset = Float.parseFloat(jsonObj.getString("offset"));
+                double pos = Double.parseDouble(jsonObj.getString("pos"));
+                String id = jsonObj.getString("id");
+
+                if(!(id.equals("null")) ){
+                    if(id.equals(userID)){
+                        OGRacerGame.getInstance().getGameScreen().setPlayerX(offset);
+                        OGRacerGame.getInstance().getGameScreen().setCameraPosition(pos);
+                    }else{
+                        CustomSprite sprite = new CustomSprite(offset,pos);
+                        cars.add(new Car(id,sprite));
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        OGRacerGame.getInstance().getGameScreen().setNewCars(cars.toArray(Car[]::new));
     }
 
     @Override

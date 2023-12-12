@@ -1,12 +1,15 @@
 package OGRacerGame;
 
 
+import Screens.GameScreen;
 import Screens.LobbyScreen;
 import Screens.MenuArea.MainMenu;
 import com.badlogic.gdx.Game;
 
 public class OGRacerGame extends Game {
 	private static OGRacerGame instance;
+
+	private GameScreen gameScreen;
 
 
 	public boolean isRunning = false;
@@ -42,5 +45,13 @@ public class OGRacerGame extends Game {
 	public void setup(){
 		setScreen(new MainMenu());
 		isRunning = true;
+	}
+
+	public GameScreen getGameScreen() {
+		return gameScreen;
+	}
+
+	public void setGameScreen(GameScreen gameScreen) {
+		this.gameScreen = gameScreen;
 	}
 }
