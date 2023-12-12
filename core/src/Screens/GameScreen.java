@@ -9,6 +9,7 @@ import Rendering.SpritesRenderer;
 import Rendering.SunShade;
 
 import Road.*;
+import Screens.MenuArea.MultiplayerMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
@@ -108,7 +109,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         segments = RoadBuilder.resetRoad(segmentsCount, segmentLenght);
         trackLength = segments.length * segmentLenght;
         setNewCars(RoadBuilder.createCarArr(segmentsCount));
-
         setupHUD(stage);
     }
 
@@ -160,15 +160,21 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
         timer += delta;
 
-        try {
-            Client.ingamePos(playerX, cameraPosition);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+        if(multiplayer){
+            if (!Client.connect){
+                OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
+                OGRacerGame.getInstance().setGameScreen(null);
+            }
+            try {
+                Client.ingamePos(playerX, cameraPosition);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
 
-        if (Client.updatePos) {
-            Client.updatePos = false;
-            updateCars();
+            if (Client.updatePos) {
+                Client.updatePos = false;
+                updateCars();
+            }
         }
     }
 
