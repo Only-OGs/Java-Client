@@ -48,8 +48,11 @@ public class Client {
 
     public static String playerString;
 
+    public static int timer = -1;
 
-    public static String startGame = "";
+    public static boolean timerStatus = false;
+
+    public static boolean startGame = false;
 
     public static boolean connect = false;
 
@@ -121,6 +124,9 @@ public class Client {
 
                 searchLobbyCodeStatus = (String) obj.get("status"); // success und failed
                 searchLobbyCodeMessage = (String) obj.get("message");// Nachricht vom Server
+
+                System.out.println("Search IDLobby: " + searchLobbyCodeStatus);
+                System.out.println("Search IDLobby: " + searchLobbyCodeMessage);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -134,6 +140,9 @@ public class Client {
 
                 quickStatus = (String) obj.get("status"); // success und failed
                 quickMessage = (String) obj.get("message");// Nachricht vom Server
+
+                System.out.println("Quick Lobby: " + quickStatus);
+                System.out.println("Quick Lobby: " + quickMessage);
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -149,6 +158,10 @@ public class Client {
                 //joinMessage = (String) obj.get("message");
                 joinStatus = (String) obj.get("status"); // failed und joined
 
+                System.out.println("Managment: " + playerString);
+                System.out.println("Managment: " + lobbyID);
+                System.out.println("Managment: " + joinStatus);
+
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -157,6 +170,49 @@ public class Client {
                 searchLobbyCodeMessage = "";
             }
 
+        });
+
+        // Wenn der Timer abgebrochen wird, löst es das Event aus
+        socket.on("timer_abrupt", args -> {
+            System.out.println("ABRUPT");
+            timerStatus = true;
+        });
+
+        // Zeit die abläuft bis das Spiel startet
+        socket.on("timer_countdown", args -> {
+            timer= (int) args[0];
+            System.out.println("Timer gesendet");
+        });
+
+        // Wenn das Spiel startet wird, löst es das Event aus
+        socket.on("load_level", args -> {
+            startGame = true;
+
+            ArrayList<RoadPart> road= new ArrayList<>();
+
+            try {
+                // Erstelle ein JSONArray-Objekt aus dem JSON-String
+                JSONArray jsonArrayString = (JSONArray) args[0];
+
+                // Iteriere durch jedes JSON-Objekt im Array
+                for (int i = 0; i < jsonArrayString.length(); i++) {
+                    JSONObject jsonObj = jsonArrayString.getJSONObject(i);
+
+                    // Greife auf die Werte der Schlüssel zu
+                    String key1 = jsonObj.getString("segment_length");
+                    String key2 = jsonObj.getString("curve_strength");
+                    String key3 = jsonObj.getString("hill_height");
+                    road.add(new RoadPart(key1,key2,key3));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            GameScreen.roadBuilders=road;
+        });
+
+        // Wird eine Chatnachricht erhalten mit ID udn seine Nachricht
+        socket.on("new_message", args -> {
+            playerAndMessage = ((String) args[0]).split(";");
         });
 
         // Wenn eine Lobby erstellt wird, bekommt man eine Lobby ID zurück
@@ -188,35 +244,6 @@ public class Client {
 
             LobbyScreen.idList = new ArrayList<>(Arrays.asList(Client.playerString.split(";")));
         });
-
-        socket.on("game_start", args -> {
-            startGame = (String) args[0]; // go oder nichts
-        });
-
-        // Daten vom Track
-        socket.on("receive_track", args -> {
-            ArrayList<RoadPart> road= new ArrayList<>();
-
-            try {
-                // Erstelle ein JSONArray-Objekt aus dem JSON-String
-                JSONArray jsonArrayString = (JSONArray) args[0];
-
-                // Iteriere durch jedes JSON-Objekt im Array
-                for (int i = 0; i < jsonArrayString.length(); i++) {
-                    JSONObject jsonObj = jsonArrayString.getJSONObject(i);
-
-                    // Greife auf die Werte der Schlüssel zu
-                    String key1 = jsonObj.getString("segment_length");
-                    String key2 = jsonObj.getString("curve_strength");
-                    String key3 = jsonObj.getString("hill_height");
-                    road.add(new RoadPart(key1,key2,key3));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            GameScreen.roadBuilders=road;
-        });
-
 
         // Verbindung herstellen
         socket.connect();

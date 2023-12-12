@@ -19,7 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.json.JSONException;
 
@@ -39,7 +38,9 @@ public class LobbyScreen extends ScreenAdapter {
 
     private final String ID;
 
-    private Label idLabel, lobbyCode, timeLabel;
+    private Label idLabel, lobbyCode;
+
+    private final Label timeLabel = new Label("Start in", Constants.buttonSkin);
 
     private final Label[] player = new Label[8];
 
@@ -61,6 +62,7 @@ public class LobbyScreen extends ScreenAdapter {
     private final MessageChat chat;
 
     private boolean ready = false;
+
 
     public LobbyScreen(String ID) {
         this.ID = ID;
@@ -84,7 +86,6 @@ public class LobbyScreen extends ScreenAdapter {
         for (int i = 0; i < player.length; i++)
             player[i] = new Label("Suchen ", Constants.buttonSkin);
 
-        timeLabel = new Label("Start in:", Constants.buttonSkin);
         timeLabel.setBounds(stage.getWidth() / 1.3f+9, stage.getHeight() - 75, 190, 40);
         stage.addActor(timeLabel);
 
@@ -125,10 +126,24 @@ public class LobbyScreen extends ScreenAdapter {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
-        if(Client.startGame.equals("go")){
-            Client.startGame = "";
-            OGRacerGame.getInstance().setScreen(new ReadyScreen());
+        if(Client.timerStatus){
+            Client.timerStatus = false;
+            Client.timer = -1;
         }
+
+        if(Client.timer != -1){
+
+            if(Client.timer == 10){
+                timeLabel.setText("Start in: " + Client.timer);
+            }else{
+                timeLabel.setText("Start in:  " + Client.timer);
+            }
+        }
+
+        if(Client.startGame){
+            OGRacerGame.getInstance().setScreen(new LoadingScreen());
+        }
+
     }
 
     private void buttonListener() {

@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public class ReadyScreen extends ScreenAdapter {
+public class LoadingScreen extends ScreenAdapter {
 
     private FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -20,7 +20,7 @@ public class ReadyScreen extends ScreenAdapter {
 
     private Timer.Task timerTask;
 
-    public ReadyScreen() {
+    public LoadingScreen() {
         Gdx.input.setInputProcessor(stage);
         Constants.title.setText("Das Spiel startet gleich ...");
         Constants.title.setSize(Gdx.graphics.getWidth(), 100);
