@@ -1,5 +1,6 @@
 package Screens;
 
+import Connection.Client;
 import OGRacerGame.OGRacerGame;
 import MathHelpers.Util;
 import Rendering.CarRenderer;
@@ -8,14 +9,25 @@ import Rendering.SpritesRenderer;
 import Rendering.SunShade;
 
 import Road.*;
+import Screens.MenuArea.LobbyMenu;
+import Screens.MenuArea.MainMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -46,6 +58,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     Label lastLapTimeLabel = new Label("", Constants.buttonSkin);
     Label fastestTimeLabel = new Label("", Constants.buttonSkin);
     Label speedLabel = new Label("", Constants.buttonSkin);
+
+    Label exitBackground = new Label("", Constants.buttonSkin);
+    TextButton exitResume = new TextButton("WEITER", Constants.buttonSkin);
+    TextButton exitLeave = new TextButton("VERLASSEN", Constants.buttonSkin);
 
     //TEST Variables
 
@@ -255,6 +271,48 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
         speedLabel.setBounds(175 + 3*spacing, Gdx.graphics.getHeight() - 50, 0, 0);
         stage.addActor(speedLabel);
+
+        //Exit Screen
+        exitBackground.setSize(Gdx.graphics.getWidth()/2f, Gdx.graphics.getHeight()/1.5f);
+        exitBackground.setPosition(Gdx.graphics.getWidth()/2f - exitBackground.getWidth()/2,
+                                   Gdx.graphics.getHeight()/2f - exitBackground.getHeight()/2);
+        exitBackground.getStyle().background = new Image(new Texture("sprites/exitBackground.png")).getDrawable();
+        exitBackground.setVisible(false);
+        stage.addActor(exitBackground);
+
+        exitResume.setSize(exitBackground.getWidth()/2f, exitBackground.getHeight()/10);
+        exitResume.setPosition(Gdx.graphics.getWidth()/2f - exitResume.getWidth()/2,
+                Gdx.graphics.getHeight()/2f + exitResume.getHeight());
+        exitResume.setVisible(false);
+        exitResume.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Constants.clickButton.play(0.2f);
+                OGRacerGame.getInstance().isRunning = true;
+                exitBackground.setVisible(false);
+                exitResume.setVisible(false);
+                exitLeave.setVisible(false);
+            }
+        });
+        stage.addActor(exitResume);
+
+        exitLeave.setSize(exitBackground.getWidth()/2f, exitBackground.getHeight()/10);
+        exitLeave.setPosition(Gdx.graphics.getWidth()/2f - exitLeave.getWidth()/2,
+                Gdx.graphics.getHeight()/2f - exitLeave.getHeight() * 2);
+        exitLeave.setVisible(false);
+        exitLeave.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Constants.clickButton.play(0.2f);
+                OGRacerGame.getInstance().isRunning = true;
+                exitBackground.setVisible(false);
+                exitResume.setVisible(false);
+                exitLeave.setVisible(false);
+                OGRacerGame.getInstance().setScreen(new MainMenu());
+                //Disconnect bei Multiplayer
+            }
+        });
+        stage.addActor(exitLeave);
     }
 
     private void updateHUD() {
@@ -335,11 +393,19 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     public void checkInput(OGRacerGame game, float dt) {
         // Pausieren/Fortfahren des Spiels
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.isRunning = !game.isRunning;
+            game.isRunning = false;
             //Menü anzeigen
+            exitBackground.setVisible(true);
+            exitResume.setVisible(true);
+            exitLeave.setVisible(true);
         }
         // Wenn das Spiel pausiert ist, sollen keine Eingaben zum steuern des Autos abgefragt werden
-        // if(!game.isRunning) return;
+        if(!game.isRunning) {
+            playerSpeed = playerSpeed + (-accel * dt);
+            playerSpeed = (int)Util.limit(playerSpeed, 0, playerMaxSpeed);
+            playerX = playerX - (dx * playerSpeed/playerMaxSpeed * findSegment(cameraPosition+playerZ).getCurve() * centrifugal);
+            return;
+        }
 
 
 		/*	Durch die Struktur ist es unmöglich
