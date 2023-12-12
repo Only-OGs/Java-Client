@@ -127,6 +127,7 @@ public class LobbyScreen extends ScreenAdapter {
         stage.draw();
 
         if(Client.timerStatus){
+            timeLabel.setText("Start in:");
             Client.timerStatus = false;
             Client.timer = -1;
         }
