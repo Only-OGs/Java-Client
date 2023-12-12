@@ -134,6 +134,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         renderer = new ShapeRenderer();
         segments = RoadBuilder.resetRoad(roadBuilders.toArray(RoadPart[]::new));
         trackLength = segments.length * segmentLenght;
+        setupHUD(stage);
     }
 
 
