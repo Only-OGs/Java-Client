@@ -255,7 +255,9 @@ public class Client {
 
         // Wird eine Chatnachricht erhalten mit ID udn seine Nachricht
         socket.on("new_message", args -> {
+            System.out.println(args[0]);
             playerAndMessage = ((String) args[0]).split(";");
+
         });
 
         // Wenn ein Spieler die Lobby verlässt, wird eie neue Liste gesendet mit dn aktuellen Spielern

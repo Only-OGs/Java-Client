@@ -92,7 +92,7 @@ public class MessageChat {
             Label playerColor = new Label("", Constants.buttonSkin);
             if (ID.equals(Client.playerAndMessage[0])) {
                 for (int i = 0; i < idList.size(); i++) {
-                    if (ID.equals(idList.get(i))) {
+                    if (idList.get(i).equals(ID) || idList.get(i).equals(ID + "  -  READY")) {
                         playerColor.setText(ID);
                         playerColor.setColor(StyleGuide.colors[i]);
                     }
@@ -107,8 +107,8 @@ public class MessageChat {
 
                 for (int i = 0; i < idList.size(); i++) {
 
-                    if (Client.playerAndMessage[0].equals(idList.get(i))) {
-                        playerColor.setText(idList.get(i));
+                    if (Client.playerAndMessage[0].equals(idList.get(i)) || idList.get(i).equals(Client.playerAndMessage[0] + "  -  READY")) {
+                        playerColor.setText(Client.playerAndMessage[0]);
                         playerColor.setColor(StyleGuide.colors[i]);
                     }
                 }

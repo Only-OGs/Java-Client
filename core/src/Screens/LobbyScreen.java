@@ -143,6 +143,7 @@ public class LobbyScreen extends ScreenAdapter {
         }
 
         if(Client.waitGame){
+            Client.waitGame = false;
             OGRacerGame.getInstance().setScreen(new LoadingScreen(ID));
         }
 

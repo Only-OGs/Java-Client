@@ -135,6 +135,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         segments = RoadBuilder.resetRoad(roadBuilders.toArray(RoadPart[]::new));
         trackLength = segments.length * segmentLenght;
         setupHUD(stage);
+
     }
 
 
@@ -336,6 +337,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 exitLeave.setVisible(false);
                 exitBackground.getStyle().background = null;
                 if (Client.socket != null) Client.socket.disconnect();
+                OGRacerGame.getInstance().setGameScreen(null);
                 OGRacerGame.getInstance().setScreen(new MainMenu());
             }
         });
@@ -471,9 +473,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             //Beschleunigen
             playerSpeed = playerSpeed + (accel * dt);
-            //Centrifugal
-            playerX = playerX - (dx * playerSpeed / playerMaxSpeed * findSegment(cameraPosition + playerZ).getCurve() * centrifugal);
-            playerX = Util.limit(playerX, -2, 2);
 
             playerSpeed = Util.limit(playerSpeed, 0, playerMaxSpeed);
         } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
@@ -495,6 +494,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             playerX = playerX + dx;
             playerX = Util.limit(playerX, -2, 2);
         }
+
+        //Centrifugal
+        playerX = playerX - (dx * playerSpeed / playerMaxSpeed * findSegment(cameraPosition + playerZ).getCurve() * centrifugal);
+        playerX = Util.limit(playerX, -2, 2);
     }
 
     public void setNewCars(Car[] cars) {
