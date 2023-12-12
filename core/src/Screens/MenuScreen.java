@@ -36,7 +36,7 @@ public abstract class MenuScreen extends ScreenAdapter {
         if (Constants.music != null) {
             Constants.music.setLooping(true);
             Constants.music.setVolume(0.01f);
-            Constants.music.play();
+           // Constants.music.play();
         }
         Constants.title.setSize(Gdx.graphics.getWidth(), 100);
         Constants.title.setPosition(0, stage.getHeight() - 100);

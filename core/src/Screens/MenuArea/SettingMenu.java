@@ -57,4 +57,8 @@ public class SettingMenu extends MenuScreen {
         });
         stage.addActor(musicSlider);
     }
+
+    private void setupButton(){
+
+    }
 }

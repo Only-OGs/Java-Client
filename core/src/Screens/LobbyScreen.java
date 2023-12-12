@@ -19,7 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import org.json.JSONException;
 
@@ -28,30 +27,44 @@ import java.util.ArrayList;
 public class LobbyScreen extends ScreenAdapter {
 
     private FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
     private Stage stage = new Stage(viewport);
+
     private int searchCounter = 0;
+
     public static ArrayList<String> idList = new ArrayList<>(8);
+
+    private static String[] playerReady;
+
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+
     private final String ID;
-    private Label idLabel, lobbyCode, timeLabel;
+
+    private Label idLabel, lobbyCode;
+
+    private final Label timeLabel = new Label("Start in:", Constants.buttonSkin);
 
     private final Label[] player = new Label[8];
 
-    private TextButton lobbyLeaveButton = new TextButton("Verlassen", Constants.buttonSkin);
 
-    private TextButton optionButton = new TextButton("Einstellungen", Constants.buttonSkin);
+    private final TextButton leaveButton = new TextButton("Verlassen", Constants.buttonSkin);
 
-    private TextButton logoutButton = new TextButton("Abmelden", Constants.buttonSkin);
+    private final TextButton optionButton = new TextButton("Einstellungen", Constants.buttonSkin);
 
-    private int lastIDListSize = 0;
+    private final TextButton logoutButton = new TextButton("Abmelden", Constants.buttonSkin);
 
-    private Timer.Task timerTask;
+    private final TextButton readyButton = new TextButton("Nicht Bereit", Constants.buttonSkin);
 
-    private MessageChat chat;
+    private final Button[] lobbyButton =  {
+            new TextButton("Verlassen", Constants.buttonSkin),
+            new TextButton("Einstellungen", Constants.buttonSkin),
+            new TextButton("Abmelden", Constants.buttonSkin),
+            new TextButton("Nicht Bereit", Constants.buttonSkin)
+    };
 
-    private float time = 11;
+    private final MessageChat chat;
 
-    private boolean startTime = false;
+    private boolean ready = false;
 
 
     public LobbyScreen(String ID) {
@@ -71,13 +84,11 @@ public class LobbyScreen extends ScreenAdapter {
         chat.build();
     }
 
-
     private void setupLabel() {
 
         for (int i = 0; i < player.length; i++)
             player[i] = new Label("Suchen ", Constants.buttonSkin);
 
-        timeLabel = new Label("Start in: -", Constants.buttonSkin);
         timeLabel.setBounds(stage.getWidth() / 1.3f+9, stage.getHeight() - 75, 190, 40);
         stage.addActor(timeLabel);
 
@@ -93,6 +104,10 @@ public class LobbyScreen extends ScreenAdapter {
         lobbyCode = new Label("Lobby ID: ", style);
         lobbyCode.setBounds(stage.getWidth() / 1.2f, 25, 190, 10);
         stage.addActor(lobbyCode);
+
+        readyButton.setBounds(Gdx.graphics.getWidth() / 1.9f-6,(float) Gdx.graphics.getHeight() / 16-5,410,60);
+        readyButton.setColor(StyleGuide.purpleDark);
+        stage.addActor(readyButton);
     }
 
     private void addLobbyID() {
@@ -110,45 +125,34 @@ public class LobbyScreen extends ScreenAdapter {
         addLobbyID();
         chat.update(idList);
         chat.updateScrollBar();
-        if (startTime) startTimer(delta);
-
-        if (idList.size() != lastIDListSize) {
-            if (timerTask != null) timerTask.cancel();
-            time = 11;
-            startTime = false;
-            timeLabel.setColor(Color.WHITE);
-            timeLabel.setText("Start in:  ");
-        }
-
-        if (idList.size() != lastIDListSize && idList.size() > 0) waitTimer(); // muss 1 sein
-
-        lastIDListSize = idList.size();
 
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
-        if(Client.startGame.equals("go")){
-            Client.startGame = "";
-            OGRacerGame.getInstance().setScreen(new ReadyScreen());
+        if(Client.timerStatus){
+            timeLabel.setText("Start in:");
+            Client.timerStatus = false;
+            Client.timer = -1;
         }
-    }
 
-    private void waitTimer() {
+        if(Client.timer != -1){
 
-        timerTask = new Timer.Task() {
-            @Override
-            public void run() {
-                startTime = true;
+            if(Client.timer == 10){
+                timeLabel.setText("Start in: " + Client.timer);
+            }else{
+                timeLabel.setText("Start in:  " + Client.timer);
             }
-        };
+        }
 
-        // Starte den Timer mit einer Verzögerung von 10 Sekunden
-        Timer.schedule(timerTask, 2);  // muss 10
+        if(Client.startGame){
+            OGRacerGame.getInstance().setScreen(new LoadingScreen());
+        }
+
     }
 
     private void buttonListener() {
 
-        lobbyLeaveButton.addListener(new ClickListener() {
+        leaveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
@@ -156,9 +160,7 @@ public class LobbyScreen extends ScreenAdapter {
                 Client.leaveLobby();
                 Client.playerString = "";
                 Client.joinStatus = "";
-                if (timerTask != null) {
-                    timerTask.cancel();
-                }
+                Client.timer = -1;
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(ID));
             }
         });
@@ -176,9 +178,6 @@ public class LobbyScreen extends ScreenAdapter {
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-                if (timerTask != null) {
-                    timerTask.cancel();
-                }
                 OGRacerGame.getInstance().setScreen(new LoginMenu());
             }
         });
@@ -187,45 +186,39 @@ public class LobbyScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
+            }
+        });
 
+        readyButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Constants.clickButton.play(0.2f);
+                if(!ready){
+                    Client.ready();
+                    readyButton.setColor(new Color((int) (0.98611116*255),0,1,1));
+                    readyButton.setText("Bereit");
+                    ready = true;
+                }else{
+                    Client.notReady();
+                    readyButton.setColor(StyleGuide.purpleDark);
+                    readyButton.setText("Nicht Bereit");
+                    ready = false;
+                }
             }
         });
     }
 
-    private void startTimer(float delta) {
-
-
-        if (time > 0f) {
-            time = Math.max(time - delta, 0f);
-        }
-
-        if(time > 10){
-            timeLabel.setText("Start in: " + (int) time);
-        }else if(time > 1){
-            timeLabel.setText("Start in:  " + (int) time);
-        }else{
-            timeLabel.setColor(Color.GREEN);
-            timeLabel.setText("              GO");
-        }
-
-        if(time == 0){
-            Client.ready();
-            startTime = false;
-        }
-
-    }
-
     private void setupButton() {
+
+        leaveButton.setBounds(70, stage.getHeight() / 1.5f, 180, 50);
+        leaveButton.setTransform(true);
+        leaveButton.setRotation(90);
+        stage.addActor(leaveButton);
 
         optionButton.setBounds(70, stage.getHeight() / 2 - 115, 230, 50);
         optionButton.setTransform(true);
         optionButton.setRotation(90);
         stage.addActor(optionButton);
-
-        lobbyLeaveButton.setBounds(70, stage.getHeight() / 1.5f, 180, 50);
-        lobbyLeaveButton.setTransform(true);
-        lobbyLeaveButton.setRotation(90);
-        stage.addActor(lobbyLeaveButton);
 
         logoutButton.setBounds(70, stage.getHeight() / 3f - 170, 170, 50);
         logoutButton.setTransform(true);
@@ -241,10 +234,13 @@ public class LobbyScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
-        timerTask.cancel();
         stage.dispose();
         shapeRenderer.dispose();
         super.dispose();
+    }
+    
+    private void playerReady(){
+
     }
 
     void updateField() {
@@ -253,6 +249,7 @@ public class LobbyScreen extends ScreenAdapter {
         for (int i = 0; i <= 560; i += 80)
             shapeRenderer.rect(100, ((float) Gdx.graphics.getHeight() / 16) + i, 400, 40);
         shapeRenderer.end();
+        
 
         createPlayer();
 
