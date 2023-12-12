@@ -48,6 +48,8 @@ public class Client {
 
     public static String playerString;
 
+    public static String readyString;
+
     public static int timer = -1;
 
     public static boolean timerStatus = false;
@@ -157,10 +159,14 @@ public class Client {
                 lobbyID = (String) obj.get("lobby");
                 //joinMessage = (String) obj.get("message");
                 joinStatus = (String) obj.get("status"); // failed und joined
+                readyString =  (String) obj.get("ready"); // Pascal;Olli
+
+                // TODO readyString
 
                 System.out.println("Managment: " + playerString);
                 System.out.println("Managment: " + lobbyID);
                 System.out.println("Managment: " + joinStatus);
+                System.out.println("Managment: " + readyString);
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -174,21 +180,20 @@ public class Client {
 
         // Wenn der Timer abgebrochen wird, löst es das Event aus
         socket.on("timer_abrupt", args -> {
-            System.out.println("ABRUPT");
             timerStatus = true;
         });
 
         // Zeit die abläuft bis das Spiel startet
         socket.on("timer_countdown", args -> {
-            timer= (int) args[0];
-            System.out.println("Timer gesendet");
+            timer = (int) args[0];
+
         });
 
         // Wenn das Spiel startet wird, löst es das Event aus
         socket.on("load_level", args -> {
             startGame = true;
 
-            ArrayList<RoadPart> road= new ArrayList<>();
+            ArrayList<RoadPart> road = new ArrayList<>();
 
             try {
                 // Erstelle ein JSONArray-Objekt aus dem JSON-String
@@ -202,12 +207,12 @@ public class Client {
                     String key1 = jsonObj.getString("segment_length");
                     String key2 = jsonObj.getString("curve_strength");
                     String key3 = jsonObj.getString("hill_height");
-                    road.add(new RoadPart(key1,key2,key3));
+                    road.add(new RoadPart(key1, key2, key3));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            GameScreen.roadBuilders=road;
+            GameScreen.roadBuilders = road;
         });
 
         // Wird eine Chatnachricht erhalten mit ID udn seine Nachricht

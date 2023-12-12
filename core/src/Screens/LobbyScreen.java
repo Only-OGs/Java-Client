@@ -34,15 +34,18 @@ public class LobbyScreen extends ScreenAdapter {
 
     public static ArrayList<String> idList = new ArrayList<>(8);
 
+    private static String[] playerReady;
+
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     private final String ID;
 
     private Label idLabel, lobbyCode;
 
-    private final Label timeLabel = new Label("Start in", Constants.buttonSkin);
+    private final Label timeLabel = new Label("Start in:", Constants.buttonSkin);
 
     private final Label[] player = new Label[8];
+
 
     private final TextButton leaveButton = new TextButton("Verlassen", Constants.buttonSkin);
 
@@ -157,6 +160,7 @@ public class LobbyScreen extends ScreenAdapter {
                 Client.leaveLobby();
                 Client.playerString = "";
                 Client.joinStatus = "";
+                Client.timer = -1;
                 OGRacerGame.getInstance().setScreen(new LobbyMenu(ID));
             }
         });
@@ -234,6 +238,10 @@ public class LobbyScreen extends ScreenAdapter {
         shapeRenderer.dispose();
         super.dispose();
     }
+    
+    private void playerReady(){
+
+    }
 
     void updateField() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -241,6 +249,7 @@ public class LobbyScreen extends ScreenAdapter {
         for (int i = 0; i <= 560; i += 80)
             shapeRenderer.rect(100, ((float) Gdx.graphics.getHeight() / 16) + i, 400, 40);
         shapeRenderer.end();
+        
 
         createPlayer();
 
