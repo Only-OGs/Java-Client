@@ -20,7 +20,10 @@ public class LoadingScreen extends ScreenAdapter {
 
     private Timer.Task timerTask;
 
-    public LoadingScreen() {
+    private String userID;
+
+    public LoadingScreen(String userID) {
+        this.userID = userID;
         Gdx.input.setInputProcessor(stage);
         Constants.title.setText("Das Spiel startet gleich ...");
         Constants.title.setSize(Gdx.graphics.getWidth(), 100);
@@ -53,7 +56,7 @@ public class LoadingScreen extends ScreenAdapter {
 
         Client.clientReady();
 
-        OGRacerGame.getInstance().setGameScreen(new GameScreen(true));
+        OGRacerGame.getInstance().setGameScreen(new GameScreen(true,userID));
         timerTask = new Timer.Task() {
             @Override
             public void run() {

@@ -26,6 +26,8 @@ import java.util.ArrayList;
 public class GameScreen extends ScreenAdapter implements IInputHandler{
     private boolean multiplayer;
 
+    private String userID = "";
+
     public static ArrayList<RoadPart> roadBuilders = new ArrayList<>();
 
     private Viewport viewport;
@@ -104,7 +106,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
 
         setupHUD(stage);
     }
-    public GameScreen(boolean multiplayer) {
+    public GameScreen(boolean multiplayer, String userID) {
+        this.userID = userID;
         this.multiplayer=multiplayer;
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
@@ -382,4 +385,12 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     public static Segment[] getSegments() {return segments;}
 
     public static int getSegmentLenght() {return segmentLenght;}
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 }
