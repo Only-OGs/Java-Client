@@ -1,8 +1,5 @@
 package Connection;
 
-import OGRacerGame.OGRacerGame;
-import Road.Car;
-import Road.CustomSprite;
 import Road.RoadPart;
 import Screens.GameScreen;
 import Screens.LobbyScreen;
@@ -11,7 +8,6 @@ import io.socket.client.Socket;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONString;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -57,11 +53,20 @@ public class Client {
 
     public static boolean timerStatus = false;
 
+    public static boolean waitGame = false;
+
     public static boolean startGame = false;
+
+    public static boolean updatePos = false;
 
     public static boolean connect = false;
 
+    public static JSONArray jsonArrayStartPos;
+    public static JSONArray jsonArrayUpdatePos;
+
+
     public Client() {
+
     }
 
     /**
@@ -162,7 +167,7 @@ public class Client {
                 lobbyID = (String) obj.get("lobby");
                 //joinMessage = (String) obj.get("message");
                 joinStatus = (String) obj.get("status"); // failed und joined
-                readyString =  (String) obj.get("ready"); // Pascal;Olli
+                readyString = (String) obj.get("ready"); // Pascal;Olli
 
                 // TODO readyString
 
@@ -194,7 +199,7 @@ public class Client {
 
         // Wenn das Spiel startet wird, löst es das Event aus
         socket.on("load_level", args -> {
-            startGame = true;
+            waitGame = true;
 
             ArrayList<RoadPart> road = new ArrayList<>();
 
@@ -220,31 +225,20 @@ public class Client {
 
         //
         socket.on("wait_for_start", args -> {
+            startGame = true;
 
-            ArrayList<Car> cars = new ArrayList<>();
+            // Erstelle ein JSONArray-Objekt aus dem JSON-String
+            jsonArrayStartPos = (JSONArray) args[0];
 
-            try {
-                // Erstelle ein JSONArray-Objekt aus dem JSON-String
-                JSONArray jsonArrayString = (JSONArray) args[0];
-
-                // Iteriere durch jedes JSON-Objekt im Array
-                for (int i = 0; i < jsonArrayString.length(); i++) {
-                    JSONObject jsonObj = jsonArrayString.getJSONObject(i);
-
-                    // Greife auf die Werte der Schlüssel zu
-                    float offset = Float.parseFloat(jsonObj.getString("offset"));
-                    double pos = Double.parseDouble(jsonObj.getString("pos"));
-                    String id = jsonObj.getString("id");
-
-                    CustomSprite sprite = new CustomSprite(offset,pos);
-                    cars.add(new Car(id,sprite));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            OGRacerGame.getInstance().getGameScreen().setNewCars(cars.toArray(Car[]::new));
         });
 
+        socket.on("updated_positions", args -> {
+            updatePos = true;
+
+            // Erstelle ein JSONArray-Objekt aus dem JSON-String
+            jsonArrayUpdatePos = (JSONArray) args[0];
+
+        });
 
         // Wird eine Chatnachricht erhalten mit ID udn seine Nachricht
         socket.on("new_message", args -> {
@@ -353,9 +347,18 @@ public class Client {
         }
     }
 
-    public static void clientReady(){
+    public static void clientReady() {
         if (socket.connected()) {
             socket.emit("client_is_ingame");
+        }
+    }
+
+    public static void ingamePos(float offset, double pos) throws JSONException {
+        if (socket.connected()) {
+            JSONObject obj = new JSONObject();
+            obj.put("offset",offset);
+            obj.put("pos",pos);
+            socket.emit("ingame_pos", obj);
         }
     }
 }
