@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Client {
 
@@ -47,8 +48,6 @@ public class Client {
 
     public static String playerString;
 
-    public static String readyString;
-
     public static int timer = -1;
 
     public static boolean timerStatus = false;
@@ -62,6 +61,7 @@ public class Client {
     public static boolean connect = false;
 
     public static JSONArray jsonArrayStartPos;
+
     public static JSONArray jsonArrayUpdatePos;
 
 
@@ -166,15 +166,11 @@ public class Client {
                 playerString = (String) obj.get("players");
                 lobbyID = (String) obj.get("lobby");
                 //joinMessage = (String) obj.get("message");
-                joinStatus = (String) obj.get("status"); // failed und joined
-                readyString = (String) obj.get("ready"); // Pascal;Olli
-
-                // TODO readyString
+                joinStatus = (String) obj.get("status");
 
                 System.out.println("Managment: " + playerString);
                 System.out.println("Managment: " + lobbyID);
                 System.out.println("Managment: " + joinStatus);
-                System.out.println("Managment: " + readyString);
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);

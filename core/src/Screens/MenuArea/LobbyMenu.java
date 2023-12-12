@@ -164,9 +164,7 @@ public class LobbyMenu extends MultiplayerMenu {
     }
 
     private void createLobby() throws JSONException {
-
-        Client.sendCreateLobby();
-        LobbyScreen.idList.add(ID);
         OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));
+        Client.sendCreateLobby();
     }
 }
