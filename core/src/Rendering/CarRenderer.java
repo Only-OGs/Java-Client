@@ -1,6 +1,7 @@
 package Rendering;
 
 import MathHelpers.Util;
+import OGRacerGame.OGRacerGame;
 import Road.Segment;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -21,17 +22,17 @@ public class CarRenderer {
         Texture t;
         float bounce = (float) ((1.5+Math.random()*speedPercent*resolution)* Util.randomChoice(new int[]{1, -1}));
         if(curr.getP1().getWorld().getY()<curr.getP2().getWorld().getY()){
-            if(Gdx.input.isKeyPressed(Input.Keys.A)){
+            if(Gdx.input.isKeyPressed(Input.Keys.A) && OGRacerGame.getInstance().isRunning){
                 t=tUpL;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.D)){
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && OGRacerGame.getInstance().isRunning){
                 t=tUpR;
             }else {
                 t=tUpS;
             }
         }else{
-            if(Gdx.input.isKeyPressed(Input.Keys.A)){
+            if(Gdx.input.isKeyPressed(Input.Keys.A) && OGRacerGame.getInstance().isRunning){
                 t=tL;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && OGRacerGame.getInstance().isRunning) {
                 t=tR;
             }else {
                 t=tS;
