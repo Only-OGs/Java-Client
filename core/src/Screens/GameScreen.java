@@ -27,6 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -257,6 +258,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
     }
 
     private void setupHUD(Stage stage) {
+        Drawable defaultBackground = exitBackground.getStyle().background;
         Gdx.input.setInputProcessor(stage);
         int spacing = Gdx.graphics.getWidth() / 5;
 
@@ -308,8 +310,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler{
                 exitBackground.setVisible(false);
                 exitResume.setVisible(false);
                 exitLeave.setVisible(false);
+                exitBackground.getStyle().background = null;
+                if (Client.socket != null) Client.socket.disconnect();
                 OGRacerGame.getInstance().setScreen(new MainMenu());
-                //Disconnect bei Multiplayer
             }
         });
         stage.addActor(exitLeave);
