@@ -3,8 +3,18 @@ package Road;
 import Screens.GameScreen;
 
 public class Car {
+
+    private String id;
     private CustomSprite customSprite;  // position und Aussehen des einzelnen Autos
     private Segment segment;  // Wird später berechnet
+
+
+    public Car() {}
+
+    public Car(String id, CustomSprite customSprite) {
+        this.id = id;
+        this.customSprite = customSprite;
+    }
 
     public CustomSprite getCs() {
         return customSprite;

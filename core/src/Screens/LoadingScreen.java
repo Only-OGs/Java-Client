@@ -51,10 +51,13 @@ public class LoadingScreen extends ScreenAdapter {
 
     private void waitTimer() {
 
+        Client.clientReady();
+
+        OGRacerGame.getInstance().setGameScreen(new GameScreen(true));
         timerTask = new Timer.Task() {
             @Override
             public void run() {
-                OGRacerGame.getInstance().setScreen(new GameScreen(true));
+                OGRacerGame.getInstance().setScreen(OGRacerGame.getInstance().getGameScreen());
             }
         };
 

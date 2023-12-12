@@ -1,5 +1,8 @@
 package Connection;
 
+import OGRacerGame.OGRacerGame;
+import Road.Car;
+import Road.CustomSprite;
 import Road.RoadPart;
 import Screens.GameScreen;
 import Screens.LobbyScreen;
@@ -215,6 +218,34 @@ public class Client {
             GameScreen.roadBuilders = road;
         });
 
+        //
+        socket.on("wait_for_start", args -> {
+
+            ArrayList<Car> cars = new ArrayList<>();
+
+            try {
+                // Erstelle ein JSONArray-Objekt aus dem JSON-String
+                JSONArray jsonArrayString = (JSONArray) args[0];
+
+                // Iteriere durch jedes JSON-Objekt im Array
+                for (int i = 0; i < jsonArrayString.length(); i++) {
+                    JSONObject jsonObj = jsonArrayString.getJSONObject(i);
+
+                    // Greife auf die Werte der Schlüssel zu
+                    float offset = Float.parseFloat(jsonObj.getString("offset"));
+                    double pos = Double.parseDouble(jsonObj.getString("pos"));
+                    String id = jsonObj.getString("id");
+
+                    CustomSprite sprite = new CustomSprite(offset,pos);
+                    cars.add(new Car(id,sprite));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            OGRacerGame.getInstance().getGameScreen().setNewCars(cars.toArray(Car[]::new));
+        });
+
+
         // Wird eine Chatnachricht erhalten mit ID udn seine Nachricht
         socket.on("new_message", args -> {
             playerAndMessage = ((String) args[0]).split(";");
@@ -319,6 +350,12 @@ public class Client {
     public static void notReady() {
         if (socket.connected()) {
             socket.emit("not_ready");
+        }
+    }
+
+    public static void clientReady(){
+        if (socket.connected()) {
+            socket.emit("client_is_ingame");
         }
     }
 }
