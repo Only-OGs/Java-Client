@@ -44,7 +44,6 @@ public class OGRacerGame extends Game {
 
 	public void setup(){
 		setScreen(new MainMenu());
-		isRunning = true;
 	}
 
 	public GameScreen getGameScreen() {

@@ -3,6 +3,8 @@ package Screens.MenuArea;
 import Connection.Client;
 import OGRacerGame.OGRacerGame;
 import Screens.Constants;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import org.json.JSONException;
@@ -21,6 +23,15 @@ public class RegisterMenu extends MultiplayerMenu {
 
     @Override
     public void render(float delta) {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            Constants.clickButton.play(0.2f);
+            OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            Constants.clickButton.play(0.2f);
+            checkData();
+        }
 
         if (200 == delay) {
             serverMessage.setText("");
@@ -30,6 +41,25 @@ public class RegisterMenu extends MultiplayerMenu {
             delay++;
         }
         super.render(delta);
+    }
+
+    private void checkData(){
+        user = userField.getText();
+        password = passwordField.getText();
+
+        if (user.length() > 3 && password.length() > 5 && Client.connect) {
+            delay = 0;
+            userField.setText("");
+            passwordField.setText("");
+            Client.registerMessage = "";
+
+            try {
+                Client.sendRegisterData(user, password);
+
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override
@@ -48,22 +78,7 @@ public class RegisterMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-                user = userField.getText();
-                password = passwordField.getText();
-
-                if (user.length() > 3 && password.length() > 5 && Client.connect) {
-                    delay = 0;
-                    userField.setText("");
-                    passwordField.setText("");
-                    Client.registerMessage = "";
-
-                    try {
-                        Client.sendRegisterData(user, password);
-
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+                checkData();
             }
         });
     }
