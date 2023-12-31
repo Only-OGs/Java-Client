@@ -37,7 +37,6 @@ public class LoadingScreen extends ScreenAdapter {
         Constants.title.setAlignment(Align.center);
         stage.addActor(Constants.title);
         OGRacerGame.getInstance().setGameScreen(new GameScreen(true,userID));
-        Client.clientReady();
         waitTimer();
     }
 
@@ -71,11 +70,12 @@ public class LoadingScreen extends ScreenAdapter {
             @Override
             public void run() {
                 OGRacerGame.getInstance().setScreen(OGRacerGame.getInstance().getGameScreen());
+                Client.clientReady();
             }
         };
 
         // Starte den Timer mit einer Verzögerung von 10 Sekunden
-        Timer.schedule(timerTask, 5);  // muss 10
+        Timer.schedule(timerTask, 1);  // muss 1
     }
 
     void setPos(){

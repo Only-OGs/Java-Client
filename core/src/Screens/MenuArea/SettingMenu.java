@@ -3,6 +3,8 @@ package Screens.MenuArea;
 import OGRacerGame.OGRacerGame;
 import Screens.Constants;
 import Screens.MenuScreen;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
@@ -28,18 +30,29 @@ public class SettingMenu extends MenuScreen {
         removeButton();
         addButton("Zurueck", "", "");
         buttonListener();
+
     }
 
     @Override
     protected void buttonListener() {
 
-        buttonLeft.addListener(new ClickListener() {
+
+            buttonLeft.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
                 OGRacerGame.getInstance().setScreen(new MainMenu());
             }
         });
+    }
+
+    @Override
+    public void render(float delta) {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            Constants.clickButton.play(0.2f);
+            OGRacerGame.getInstance().setScreen(new MainMenu());
+        }
+        super.render(delta);
     }
 
     private void addSlider() {

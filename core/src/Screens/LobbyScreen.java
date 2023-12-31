@@ -8,6 +8,7 @@ import Screens.MenuArea.LobbyMenu;
 import Screens.MenuArea.LoginMenu;
 import Screens.MenuArea.MultiplayerMenu;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,7 +16,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -53,7 +56,7 @@ public class LobbyScreen extends ScreenAdapter {
 
     private final TextButton readyButton = new TextButton("Nicht Bereit", Constants.buttonSkin);
 
-    private final Button[] lobbyButton =  {
+    private final Button[] lobbyButton = {
             new TextButton("Verlassen", Constants.buttonSkin),
             new TextButton("Einstellungen", Constants.buttonSkin),
             new TextButton("Abmelden", Constants.buttonSkin),
@@ -84,10 +87,9 @@ public class LobbyScreen extends ScreenAdapter {
 
     private void setupLabel() {
 
-        for (int i = 0; i < player.length; i++)
-            player[i] = new Label("Suchen ", Constants.buttonSkin);
+        for (int i = 0; i < player.length; i++) player[i] = new Label("Suchen ", Constants.buttonSkin);
 
-        timeLabel.setBounds(stage.getWidth() / 1.3f+9, stage.getHeight() - 75, 190, 40);
+        timeLabel.setBounds(stage.getWidth() / 1.3f + 9, stage.getHeight() - 75, 190, 40);
         stage.addActor(timeLabel);
 
         idLabel = new Label("ID: " + ID, Constants.buttonSkin);
@@ -103,7 +105,7 @@ public class LobbyScreen extends ScreenAdapter {
         lobbyCode.setBounds(stage.getWidth() / 1.2f, 25, 190, 10);
         stage.addActor(lobbyCode);
 
-        readyButton.setBounds(Gdx.graphics.getWidth() / 1.9f-6,(float) Gdx.graphics.getHeight() / 16-5,410,60);
+        readyButton.setBounds(Gdx.graphics.getWidth() / 1.9f - 6, (float) Gdx.graphics.getHeight() / 16 - 5, 410, 60);
         readyButton.setColor(StyleGuide.purpleDark);
         stage.addActor(readyButton);
     }
@@ -127,26 +129,25 @@ public class LobbyScreen extends ScreenAdapter {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
-        if(Client.timerStatus){
+        if (Client.timerStatus) {
             timeLabel.setText("Start in:");
             Client.timerStatus = false;
             Client.timer = -1;
         }
 
-        if(Client.timer != -1){
+        if (Client.timer != -1) {
 
-            if(Client.timer == 10){
+            if (Client.timer == 10) {
                 timeLabel.setText("Start in: " + Client.timer);
-            }else{
+            } else {
                 timeLabel.setText("Start in:  " + Client.timer);
             }
         }
 
-        if(Client.waitGame){
+        if (Client.waitGame) {
             Client.waitGame = false;
             OGRacerGame.getInstance().setScreen(new LoadingScreen(ID));
         }
-
 
 
     }
@@ -194,12 +195,12 @@ public class LobbyScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-                if(!ready){
+                if (!ready) {
                     Client.ready();
-                    readyButton.setColor(new Color((int) (0.98611116*255),0,1,1));
+                    readyButton.setColor(new Color((int) (0.98611116 * 255), 0, 1, 1));
                     readyButton.setText("Bereit");
                     ready = true;
-                }else{
+                } else {
                     Client.notReady();
                     readyButton.setColor(StyleGuide.purpleDark);
                     readyButton.setText("Nicht Bereit");
@@ -246,7 +247,7 @@ public class LobbyScreen extends ScreenAdapter {
         for (int i = 0; i <= 560; i += 80)
             shapeRenderer.rect(100, ((float) Gdx.graphics.getHeight() / 16) + i, 400, 40);
         shapeRenderer.end();
-        
+
 
         createPlayer();
 

@@ -13,6 +13,7 @@ public class OGRacerGame extends Game {
 
 
 	public boolean isRunning = false;
+	public static boolean movement = false;
 
 
 	private OGRacerGame(){
@@ -44,7 +45,6 @@ public class OGRacerGame extends Game {
 
 	public void setup(){
 		setScreen(new MainMenu());
-		isRunning = true;
 	}
 
 	public GameScreen getGameScreen() {

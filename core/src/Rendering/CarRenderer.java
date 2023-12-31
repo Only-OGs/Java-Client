@@ -22,17 +22,17 @@ public class CarRenderer {
         Texture t;
         float bounce = (float) ((1.5+Math.random()*speedPercent*resolution)* Util.randomChoice(new int[]{1, -1}));
         if(curr.getP1().getWorld().getY()<curr.getP2().getWorld().getY()){
-            if(Gdx.input.isKeyPressed(Input.Keys.A) && OGRacerGame.getInstance().isRunning){
+            if(Gdx.input.isKeyPressed(Input.Keys.A) && OGRacerGame.getInstance().isRunning && OGRacerGame.movement){
                 t=tUpL;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && OGRacerGame.getInstance().isRunning){
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && OGRacerGame.getInstance().isRunning  && OGRacerGame.movement){
                 t=tUpR;
             }else {
                 t=tUpS;
             }
         }else{
-            if(Gdx.input.isKeyPressed(Input.Keys.A) && OGRacerGame.getInstance().isRunning){
+            if(Gdx.input.isKeyPressed(Input.Keys.A) && OGRacerGame.getInstance().isRunning&& OGRacerGame.movement){
                 t=tL;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && OGRacerGame.getInstance().isRunning) {
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D) && OGRacerGame.getInstance().isRunning&& OGRacerGame.movement) {
                 t=tR;
             }else {
                 t=tS;

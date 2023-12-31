@@ -64,6 +64,9 @@ public class Client {
 
     public static JSONArray jsonArrayUpdatePos;
 
+    public static boolean start = false;
+    public static String timerToStart = "";
+
 
     public Client() {
 
@@ -219,7 +222,7 @@ public class Client {
             GameScreen.roadBuilders = road;
         });
 
-        //
+        // Schickt einmalig die Startposition
         socket.on("wait_for_start", args -> {
             startGame = true;
 
@@ -228,6 +231,7 @@ public class Client {
 
         });
 
+        // Schickt jedesmal etwas, wenn was im Spiel sich bewegt
         socket.on("updated_positions", args -> {
             updatePos = true;
 
@@ -272,6 +276,17 @@ public class Client {
 
             LobbyScreen.idList = new ArrayList<>(Arrays.asList(Client.playerString.split(";")));
         });
+
+        // Wird der Timer gesendet, wann die Spieler fahren dürfen
+        socket.on("start_race_timer", args -> {
+            timerToStart = args[0].toString();
+        });
+
+        // Wird ausgeführt, wenn das Rennen starten darf.
+        socket.on("start_race", args -> {
+            start = true;
+        });
+
 
         // Verbindung herstellen
         socket.connect();
