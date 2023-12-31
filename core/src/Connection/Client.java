@@ -222,7 +222,7 @@ public class Client {
             GameScreen.roadBuilders = road;
         });
 
-        //
+        // Schickt einmalig die Startposition
         socket.on("wait_for_start", args -> {
             startGame = true;
 
@@ -231,6 +231,7 @@ public class Client {
 
         });
 
+        // Schickt jedesmal etwas, wenn was im Spiel sich bewegt
         socket.on("updated_positions", args -> {
             updatePos = true;
 
