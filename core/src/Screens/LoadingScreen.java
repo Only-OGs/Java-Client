@@ -75,7 +75,7 @@ public class LoadingScreen extends ScreenAdapter {
         };
 
         // Starte den Timer mit einer Verzögerung von 10 Sekunden
-        Timer.schedule(timerTask, 2);  // muss 2
+        Timer.schedule(timerTask, 1);  // muss 1
     }
 
     void setPos(){

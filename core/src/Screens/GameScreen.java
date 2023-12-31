@@ -204,7 +204,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         if(runSingleplayer && !multiplayer) timer += delta;
 
 
-        if(playerSpeed < 1) OGRacerGame.movement = false;
+        if(playerSpeed <= 0) OGRacerGame.movement = false;
         else OGRacerGame.movement = true;
 
         stage.draw();
