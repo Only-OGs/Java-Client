@@ -13,6 +13,7 @@ public class OGRacerGame extends Game {
 
 
 	public boolean isRunning = false;
+	public static boolean movement = false;
 
 
 	private OGRacerGame(){

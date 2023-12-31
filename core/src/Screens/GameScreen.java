@@ -112,10 +112,14 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
     private Leaderboard leaderboard;
 
+    private float timerToStart = 6;
+
+    private boolean runSingleplayer = false;
+    private boolean runMultiplayer = false;
+
 
     public GameScreen() {
         multiplayer = false;
-        OGRacerGame.getInstance().isRunning = true;
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
         batch = new SpriteBatch();
@@ -123,6 +127,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         segments = RoadBuilder.resetRoad(segmentsCount, segmentLenght);
         trackLength = segments.length * segmentLenght;
         setNewCars(RoadBuilder.createCarArr(segmentsCount));
+        setupTimerLabel();
+        leaderboard = new Leaderboard(stage);
         setupHUD(stage);
     }
 
@@ -136,6 +142,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         segments = RoadBuilder.resetRoad(roadBuilders.toArray(RoadPart[]::new));
         trackLength = segments.length * segmentLenght;
         leaderboard = new Leaderboard(stage);
+        setupTimerLabel();
         setupHUD(stage);
 
     }
@@ -152,9 +159,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         renderSegments(renderer);
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) leaderboard.show();
 
-        setupTimerLabel();
+        //if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) leaderboard.show();
+
+
 
         if (newCarsToPlace) {
             if (oldCars != null) {
@@ -179,18 +187,29 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         cameraPosition = result;
         updateHUD();
         updatePosition(delta);
-        if (Client.start) {
-            OGRacerGame.getInstance().isRunning = true;
-            Client.start = false;
 
-        }
+
+        if (Client.start && multiplayer && !runMultiplayer) {
+            runMultiplayer = true;
+            timerStartLabel.setText("");
+            OGRacerGame.getInstance().isRunning = true;
+        }else if(!runMultiplayer && multiplayer) timerStartLabel.setText(Client.timerToStart);
+        if(runMultiplayer && multiplayer) timer += delta;
+
+        if(timerToStart <= 0 && !multiplayer && !runSingleplayer){
+            runSingleplayer = true;
+            timerStartLabel.setText("");
+            OGRacerGame.getInstance().isRunning = true;
+        }else if(!runSingleplayer && !multiplayer) startTimer(delta);
+        if(runSingleplayer && !multiplayer) timer += delta;
+
+
+        if(playerSpeed < 1) OGRacerGame.movement = false;
+        else OGRacerGame.movement = true;
 
         stage.draw();
 
-        timer += delta;
-
         if (multiplayer) {
-
             if (camaeraPositionOld != cameraPosition) {
                 try {
                     Client.ingamePos(playerX, cameraPosition);
@@ -199,14 +218,23 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 }
             }
 
+
             camaeraPositionOld = cameraPosition;
 
             if (Client.updatePos) {
                 Client.updatePos = false;
                 updateCars();
             }
-
         }
+    }
+
+    private void startTimer(float delta){
+        timerToStart -= delta;
+        if(timerToStart < 1){
+            timerStartLabel.setBounds(stage.getWidth() / 2 - 60, stage.getHeight() / 2 - 10, 50, 20);
+            timerStartLabel.setText("GO");
+        }
+        else timerStartLabel.setText((int) timerToStart);
     }
 
 
@@ -300,18 +328,14 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
 
     private void setupTimerLabel() {
-
-        if (!Client.start) {
-            timerStartLabel.setText(Client.timerToStart);
-            timerStartLabel.setBounds(stage.getWidth() / 2 - 25, stage.getHeight() / 2 - 10, 50, 20);
-            timerStartLabel.setFontScale(2.0f);
-            stage.addActor(timerStartLabel);
-        } else {
-            Client.timerToStart = "";
-            timerStartLabel.setText("");
-        }
+        timerStartLabel.setBounds(stage.getWidth() / 2 - 25, stage.getHeight() / 2 - 10, 50, 20);
+        timerStartLabel.setFontScale(2.0f);
+        stage.addActor(timerStartLabel);
 
 
+
+
+        //if (Client.start) Client.timerToStart = "";
     }
 
     private void setupHUD(Stage stage) {
@@ -349,7 +373,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         exitResume.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Constants.clickButton.play(0.2f);
                 exitBackground.getStyle().background = null;
 
                 OGRacerGame.getInstance().isRunning = true;
@@ -490,7 +513,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     @Override
     public void checkInput(OGRacerGame game, float dt) {
         // Pausieren/Fortfahren des Spiels
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && runSingleplayer || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && runMultiplayer) {
             exitBackground.getStyle().background = new Image(new Texture("sprites/exitBackground.png")).getDrawable();
 
             game.isRunning = false;
