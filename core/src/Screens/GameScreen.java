@@ -198,10 +198,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         updateHUD();
         updatePosition(delta);
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
-            OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
-        }
-
 
         if (Client.start && multiplayer && !runMultiplayer) {
             runMultiplayer = true;
