@@ -139,6 +139,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     }
 
     public GameScreen(boolean multiplayer, String userID) {
+        OGRacerGame.getInstance().isRunning = false;
         this.userID = userID;
         this.multiplayer = multiplayer;
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -150,7 +151,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         leaderboard = new Leaderboard(stage);
         setupTimerLabel();
         setupHUD(stage);
-
     }
 
 
@@ -198,7 +198,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         updateHUD();
         updatePosition(delta);
 
-
+        if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
+            OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
+        }
         if (Client.start && multiplayer && !runMultiplayer) {
             runMultiplayer = true;
             timerStartLabel.setText("");
