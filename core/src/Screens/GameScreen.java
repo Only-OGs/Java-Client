@@ -162,14 +162,12 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
         renderSegments(renderer);
-
-
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
 
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) leaderboard.show();
+
 
 
 
@@ -197,6 +195,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
         if (!Client.connect && multiplayer) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
 
+        if (Client.startGame) {
+            Client.startGame = false;
+            setPos();
+        }
         updateHUD();
         updatePosition(delta);
 
@@ -524,6 +526,37 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             e.printStackTrace();
         }
         setNewCars(cars.toArray(Car[]::new));
+    }
+
+     private void setPos() {
+        ArrayList<Car> cars = new ArrayList<>();
+
+        try {
+
+            // Iteriere durch jedes JSON-Objekt im Array
+            for (int i = 0; i < Client.jsonArrayStartPos.length(); i++) {
+                JSONObject jsonObj = Client.jsonArrayStartPos.getJSONObject(i);
+
+                // Greife auf die Werte der Schlüssel zu
+                float offset = Float.parseFloat(jsonObj.getString("offset"));
+                double pos = Double.parseDouble(jsonObj.getString("pos"));
+                String id = jsonObj.getString("id");
+
+                System.out.println(userID);
+                if (!id.equals(userID)) {
+
+                    CustomSprite sprite = new CustomSprite(offset, pos);
+                    cars.add(new Car(id, sprite));
+                } else {
+                    OGRacerGame.getInstance().getGameScreen().setPlayerX(offset);
+                    OGRacerGame.getInstance().getGameScreen().setCameraPosition(pos);
+                }
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        OGRacerGame.getInstance().getGameScreen().setNewCars(cars.toArray(Car[]::new));
     }
 
 

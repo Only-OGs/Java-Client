@@ -224,8 +224,8 @@ public class Client {
 
         // Schickt einmalig die Startposition
         socket.on("wait_for_start", args -> {
-            startGame = true;
 
+            startGame = true;
             // Erstelle ein JSONArray-Objekt aus dem JSON-String
             jsonArrayStartPos = (JSONArray) args[0];
 
@@ -259,7 +259,7 @@ public class Client {
 
         // Wird eine Chatnachricht erhalten mit ID udn seine Nachricht
         socket.on("new_message", args -> {
-            System.out.println(args[0]);
+
             playerAndMessage = ((String) args[0]).split(";");
 
         });

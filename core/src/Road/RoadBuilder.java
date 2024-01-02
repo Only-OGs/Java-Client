@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class RoadBuilder {
 
-    private static Texture t = new Texture("sprites/tree1.png");
+    private static Texture t = new Texture("sprites/house.png");
     private static Texture tCar = new Texture("sprites/car01.png");
     /**
      * erstellt die Strecke
