@@ -8,7 +8,9 @@ import Rendering.RenderSegment;
 import Rendering.SpritesRenderer;
 import Rendering.SunShade;
 import Road.*;
+import Root.StyleGuide;
 import Screens.MenuArea.MainMenu;
+import Screens.MenuArea.MultiplayerMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
@@ -119,6 +121,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
 
     public GameScreen() {
+
         multiplayer = false;
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
@@ -130,6 +133,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         setupTimerLabel();
         leaderboard = new Leaderboard(stage);
         setupHUD(stage);
+        renderSegments(renderer);
+
     }
 
     public GameScreen(boolean multiplayer, String userID) {
@@ -156,11 +161,14 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
         renderSegments(renderer);
+
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
-        //if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) leaderboard.show();
+
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) leaderboard.show();
 
 
 
@@ -185,8 +193,13 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             result += trackLength;
         lastCameraPosition = cameraPosition;
         cameraPosition = result;
+
         updateHUD();
         updatePosition(delta);
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
+            OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
+        }
 
 
         if (Client.start && multiplayer && !runMultiplayer) {
@@ -339,28 +352,30 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     }
 
     private void setupHUD(Stage stage) {
-        Gdx.input.setInputProcessor(stage);
         int spacing = Gdx.graphics.getWidth() / 5;
 
-        timeLabel.setBounds(25 + 0 * spacing, Gdx.graphics.getHeight() - 50, 0, 0);
+        timeLabel.setBounds(25 + 0 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
+        timeLabel.setColor(StyleGuide.purpleLight);
         stage.addActor(timeLabel);
 
-        lastLapTimeLabel.setBounds(1 * spacing - 25, Gdx.graphics.getHeight() - 50, 0, 0);
+        lastLapTimeLabel.setBounds(1 * spacing - 25, Gdx.graphics.getHeight() - 25, 0, 0);
+        lastLapTimeLabel.setColor(StyleGuide.purpleLight);
         stage.addActor(lastLapTimeLabel);
 
-        fastestTimeLabel.setBounds(75 + 2 * spacing, Gdx.graphics.getHeight() - 50, 0, 0);
+        fastestTimeLabel.setBounds(75 + 2 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
+        fastestTimeLabel.setColor(StyleGuide.purpleLight);
         stage.addActor(fastestTimeLabel);
 
-        speedLabel.setBounds(175 + 3 * spacing, Gdx.graphics.getHeight() - 50, 0, 0);
+        speedLabel.setBounds(175 + 3 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
+        speedLabel.setColor(StyleGuide.purpleLight);
         stage.addActor(speedLabel);
-
         //Exit Screen
         exitBackground.setSize(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 1.5f);
         exitBackground.setPosition(Gdx.graphics.getWidth() / 2f - exitBackground.getWidth() / 2,
                 Gdx.graphics.getHeight() / 2f - exitBackground.getHeight() / 2);
 
 
-        // TODO BACKGROUND
+        exitBackground.getStyle().background = new Image(new Texture("sprites/exitBackground.png")).getDrawable();
 
 
         exitBackground.setVisible(false);
@@ -373,8 +388,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         exitResume.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                exitBackground.getStyle().background = null;
-
                 OGRacerGame.getInstance().isRunning = true;
 
                 exitBackground.setVisible(false);
@@ -417,6 +430,13 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             lastLapTime = timer;
             timer = 0;
         }
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        renderer.begin(ShapeRenderer.ShapeType.Filled);
+        renderer.setColor(0,0,0,0.3f);
+        renderer.rect(0,stage.getHeight()- 45,stage.getWidth(),45);
+        renderer.end();
+        Gdx.input.setInputProcessor(stage);
 
         timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
         lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
@@ -514,7 +534,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     public void checkInput(OGRacerGame game, float dt) {
         // Pausieren/Fortfahren des Spiels
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && runSingleplayer || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && runMultiplayer) {
-            exitBackground.getStyle().background = new Image(new Texture("sprites/exitBackground.png")).getDrawable();
+
 
             game.isRunning = false;
 
