@@ -61,7 +61,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
     Label timerStartLabel = new Label("", Constants.buttonSkin, "title");
 
-    Label exitBackground = new Label("", Constants.buttonSkin);
+    Image exitBackground = new Image(new Texture("sprites/exitBackground.png"));
     TextButton exitResume = new TextButton("WEITER", Constants.buttonSkin);
     TextButton exitLeave = new TextButton("VERLASSEN", Constants.buttonSkin);
 
@@ -116,12 +116,14 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
     private float timerToStart = 6;
 
-    private boolean runSingleplayer = false;
-    private boolean runMultiplayer = false;
+    private boolean runSingleplayer;
+    private boolean runMultiplayer;
 
 
     public GameScreen() {
-
+        OGRacerGame.getInstance().isRunning = false;
+        runSingleplayer = false;
+        runMultiplayer = false;
         multiplayer = false;
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
@@ -134,7 +136,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         leaderboard = new Leaderboard(stage);
         setupHUD(stage);
         renderSegments(renderer);
-
     }
 
     public GameScreen(boolean multiplayer, String userID) {
@@ -375,9 +376,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 Gdx.graphics.getHeight() / 2f - exitBackground.getHeight() / 2);
 
 
-        exitBackground.getStyle().background = new Image(new Texture("sprites/exitBackground.png")).getDrawable();
-
-
         exitBackground.setVisible(false);
         stage.addActor(exitBackground);
 
@@ -414,7 +412,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 exitBackground.setVisible(false);
                 exitResume.setVisible(false);
                 exitLeave.setVisible(false);
-                exitBackground.getStyle().background = null;
                 if (Client.socket != null) Client.socket.disconnect();
                 OGRacerGame.getInstance().setGameScreen(null);
                 OGRacerGame.getInstance().setScreen(new MainMenu());
