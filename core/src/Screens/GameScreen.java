@@ -195,6 +195,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         lastCameraPosition = cameraPosition;
         cameraPosition = result;
 
+        if (!Client.connect && multiplayer) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
+
         updateHUD();
         updatePosition(delta);
 
