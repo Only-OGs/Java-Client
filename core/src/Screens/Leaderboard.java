@@ -54,6 +54,7 @@ public class Leaderboard {
                 posis.add(new Label(jsonObj.getString("posi"),Constants.buttonSkin));
                 names.add(new Label(jsonObj.getString("name"),Constants.buttonSkin));
                 times.add(new Label(jsonObj.getString("time"),Constants.buttonSkin));
+                System.out.println(times);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -65,7 +66,11 @@ public class Leaderboard {
         // Spiel stoppt
         OGRacerGame.getInstance().isRunning = false;
 
-        if(Client.jsonArrayLeaderboard != null)loadData();
+        if(Client.jsonArrayLeaderboard != null && Client.showLeaderboard){
+            Client.showLeaderboard = false;
+            loadData();
+        }
+
 
         // Fenster gezeichnet
         renderer.begin(ShapeRenderer.ShapeType.Filled);

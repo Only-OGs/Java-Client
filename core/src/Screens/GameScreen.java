@@ -166,9 +166,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
 
-        if (Client.showLeaderboard){
-            leaderboard.show();
-        }
+        if (Client.showLeaderboard) leaderboard.show();
+
 
         if (newCarsToPlace) {
             if (oldCars != null) {
