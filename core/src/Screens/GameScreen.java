@@ -128,6 +128,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     private boolean runSingleplayer;
     private boolean runMultiplayer;
 
+    private int lap = 1;
+
 
     public GameScreen() {
         OGRacerGame.getInstance().isRunning = false;
@@ -442,7 +444,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
     private void updateHUD() {
         if (cameraPosition < lastCameraPosition) {
-
+            lap++;
             fastestLapTime = lastLapTime > 0 ? Math.min(fastestLapTime, timer) : timer;
             lastLapTime = timer;
             timer = 0;
@@ -466,7 +468,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
             fastestTimeLabel.setText("Schnelllste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
             speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
-
+            lapLabel.setText("Runde:\n" + lap);
 
         }else{
             try {
