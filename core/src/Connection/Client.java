@@ -67,7 +67,7 @@ public class Client {
     public static boolean start = false;
     public static String timerToStart = "";
 
-    public static boolean showleaderboard;
+    public static boolean showLeaderboard = false;
 
 
     public Client() {
@@ -131,7 +131,6 @@ public class Client {
             }
         });
 
-
         // Spiel mit Lobby Code suchen
         socket.on("search_lobby", args -> {
             JSONObject obj = (JSONObject) args[0];
@@ -146,7 +145,6 @@ public class Client {
                 throw new RuntimeException(e);
             }
         });
-
 
         // Schnelles Spiel suchen
         socket.on("get_lobby", args -> {
@@ -290,17 +288,13 @@ public class Client {
             start_watch();
         });
 
-
-
         // Sobald das Spiel zuende ist, bekommt man die Spieler Daten Posi, Name und Zeit
         socket.on("get_leaderboard", args -> {
-            showleaderboard = true;
 
             // Erstelle ein JSONArray-Objekt aus dem JSON-String
             jsonArrayLeaderboard = (JSONArray) args[0];
-
+            showLeaderboard = true;
         });
-
 
         // Verbindung herstellen
         socket.connect();
@@ -391,7 +385,6 @@ public class Client {
             socket.emit("start_watch");
         }
     }
-
 
     public static void ingamePos(float offset, double pos) throws JSONException {
         if (socket.connected()) {

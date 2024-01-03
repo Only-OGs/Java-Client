@@ -166,10 +166,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
 
-        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) leaderboard.show();
-
-
-
+        if (Client.showLeaderboard){
+            Client.showLeaderboard = false;
+            leaderboard.show();
+        }
 
         if (newCarsToPlace) {
             if (oldCars != null) {
@@ -347,11 +347,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         timerStartLabel.setBounds(stage.getWidth() / 2 - 25, stage.getHeight() / 2 - 10, 50, 20);
         timerStartLabel.setFontScale(2.0f);
         stage.addActor(timerStartLabel);
-
-
-
-
-        //if (Client.start) Client.timerToStart = "";
     }
 
     private void setupHUD(Stage stage) {
