@@ -410,6 +410,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 if (multiplayer) {
                     OGRacerGame.getInstance().isRunning = false;
                     Client.start = false;
+                    Client.leaveGame();
                 }
                 exitBackground.setVisible(false);
                 exitResume.setVisible(false);
@@ -503,6 +504,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             }
         }
     }
+
+
 
     private void updateCars() {
         ArrayList<Car> cars = new ArrayList<>();

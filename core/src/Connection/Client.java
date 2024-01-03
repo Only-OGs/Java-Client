@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class Client {
 
@@ -63,9 +62,12 @@ public class Client {
     public static JSONArray jsonArrayStartPos;
 
     public static JSONArray jsonArrayUpdatePos;
+    public static JSONArray jsonArrayLeaderboard;
 
     public static boolean start = false;
     public static String timerToStart = "";
+
+    public static boolean showleaderboard;
 
 
     public Client() {
@@ -285,6 +287,18 @@ public class Client {
         // Wird ausgeführt, wenn das Rennen starten darf.
         socket.on("start_race", args -> {
             start = true;
+            start_watch();
+        });
+
+
+
+        // Sobald das Spiel zuende ist, bekommt man die Spieler Daten Posi, Name und Zeit
+        socket.on("get_leaderboard", args -> {
+            showleaderboard = true;
+
+            // Erstelle ein JSONArray-Objekt aus dem JSON-String
+            jsonArrayLeaderboard = (JSONArray) args[0];
+
         });
 
 
@@ -365,6 +379,19 @@ public class Client {
             socket.emit("client_is_ingame");
         }
     }
+
+    public static void leaveGame() {
+        if (socket.connected()) {
+            socket.emit("game_leave");
+        }
+    }
+
+    public static void start_watch(){
+        if (socket.connected()) {
+            socket.emit("start_watch");
+        }
+    }
+
 
     public static void ingamePos(float offset, double pos) throws JSONException {
         if (socket.connected()) {
