@@ -167,7 +167,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
 
         if (Client.showLeaderboard){
-            Client.showLeaderboard = false;
             leaderboard.show();
         }
 

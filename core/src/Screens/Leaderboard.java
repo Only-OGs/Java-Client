@@ -73,13 +73,6 @@ public class Leaderboard {
         renderer.rect(150, 100, gameStage.getWidth() - 300, gameStage.getHeight() - 200);
         renderer.end();
 
-        // Fenster Rand gezeichnet
-        renderer.begin(ShapeRenderer.ShapeType.Line);
-        renderer.setColor((float) 186 / 255, (float) 46 / 255, (float) 151 / 255, 1);
-        renderer.rect(150, 100, gameStage.getWidth() - 300, gameStage.getHeight() - 200);
-        renderer.end();
-
-
         // Spieler Felder gezeichnet
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         renderer.setColor(new Color(0, 0, 0, 0.8f));
