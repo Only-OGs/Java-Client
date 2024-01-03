@@ -34,26 +34,26 @@ public class Leaderboard {
 
     }
 
-    private void testData(){
+    private void testData() {
 
-        posis.add(new Label("1",Constants.buttonSkin));
-        names.add(new Label("donatboy",Constants.buttonSkin));
-        times.add(new Label("01:10:45",Constants.buttonSkin));
-        posis.add(new Label("2",Constants.buttonSkin));
-        names.add(new Label("Olli",Constants.buttonSkin));
-        times.add(new Label("01:23:45",Constants.buttonSkin));
+        posis.add(new Label("1", Constants.buttonSkin));
+        names.add(new Label("donatboy", Constants.buttonSkin));
+        times.add(new Label("01:10:45", Constants.buttonSkin));
+        posis.add(new Label("2", Constants.buttonSkin));
+        names.add(new Label("Olli", Constants.buttonSkin));
+        times.add(new Label("01:23:45", Constants.buttonSkin));
     }
 
-    private void loadData(){
+    private void loadData() {
         try {
             // Iteriere durch jedes JSON-Objekt im Array
             for (int i = 0; i < Client.jsonArrayLeaderboard.length(); i++) {
                 JSONObject jsonObj = Client.jsonArrayLeaderboard.getJSONObject(i);
 
                 // Greife auf die Werte der Schlüssel zu
-                posis.add(new Label(jsonObj.getString("posi"),Constants.buttonSkin));
-                names.add(new Label(jsonObj.getString("name"),Constants.buttonSkin));
-                times.add(new Label(jsonObj.getString("time").replaceAll(";",":"),Constants.buttonSkin));
+                posis.add(new Label(jsonObj.getString("posi"), Constants.buttonSkin));
+                names.add(new Label(jsonObj.getString("name"), Constants.buttonSkin));
+                times.add(new Label(jsonObj.getString("time").replaceAll(";", ":"), Constants.buttonSkin));
                 System.out.println(times);
             }
         } catch (JSONException e) {
@@ -64,8 +64,9 @@ public class Leaderboard {
     public void show() {
 
 
-        if(Client.jsonArrayLeaderboard != null && OGRacerGame.getInstance().isRunning){
+        if (Client.jsonArrayLeaderboard != null) {
             loadData();
+            Client.jsonArrayLeaderboard = null;
         }
 
         // Spiel Stoppt
@@ -82,13 +83,13 @@ public class Leaderboard {
         renderer.setColor(new Color(0, 0, 0, 0.8f));
 
         int counter = 0;
-        for (int i = 200; i <= 620; i += 60){
+        for (int i = 200; i <= 620; i += 60) {
 
 
             if (posis.size() > counter) {
-                posis.get(counter).setBounds(260,gameStage.getHeight() - i-10,100,50);
-                names.get(counter).setBounds(460,gameStage.getHeight() - i-10,100,50);
-                times.get(counter).setBounds(710,gameStage.getHeight() - i-10,100,50);
+                posis.get(counter).setBounds(260, gameStage.getHeight() - i - 10, 100, 50);
+                names.get(counter).setBounds(460, gameStage.getHeight() - i - 10, 100, 50);
+                times.get(counter).setBounds(710, gameStage.getHeight() - i - 10, 100, 50);
                 gameStage.addActor(posis.get(counter));
                 gameStage.addActor(names.get(counter));
                 gameStage.addActor(times.get(counter));
@@ -116,8 +117,6 @@ public class Leaderboard {
         gameStage.addActor(posiTitle);
         gameStage.addActor(idNameTitle);
         gameStage.addActor(totalTimeTitle);
-
-
 
 
     }
