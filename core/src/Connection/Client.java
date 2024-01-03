@@ -139,8 +139,6 @@ public class Client {
                 searchLobbyCodeStatus = (String) obj.get("status"); // success und failed
                 searchLobbyCodeMessage = (String) obj.get("message");// Nachricht vom Server
 
-                System.out.println("Search IDLobby: " + searchLobbyCodeStatus);
-                System.out.println("Search IDLobby: " + searchLobbyCodeMessage);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -154,8 +152,6 @@ public class Client {
                 quickStatus = (String) obj.get("status"); // success und failed
                 quickMessage = (String) obj.get("message");// Nachricht vom Server
 
-                System.out.println("Quick Lobby: " + quickStatus);
-                System.out.println("Quick Lobby: " + quickMessage);
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -170,10 +166,6 @@ public class Client {
                 lobbyID = (String) obj.get("lobby");
                 //joinMessage = (String) obj.get("message");
                 joinStatus = (String) obj.get("status");
-
-                System.out.println("Managment: " + playerString);
-                System.out.println("Managment: " + lobbyID);
-                System.out.println("Managment: " + joinStatus);
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);

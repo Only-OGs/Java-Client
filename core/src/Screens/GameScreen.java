@@ -14,6 +14,7 @@ import Screens.MenuArea.MultiplayerMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -24,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -59,11 +61,18 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     Label fastestTimeLabel = new Label("", Constants.buttonSkin);
     Label speedLabel = new Label("", Constants.buttonSkin);
 
+    Label lapLabel = new Label("", Constants.buttonSkin);
+
+    Label serverStatus = new Label("", Constants.buttonSkin,"title");
+
+
     Label timerStartLabel = new Label("", Constants.buttonSkin, "title");
 
     Image exitBackground = new Image(new Texture("sprites/exitBackground.png"));
     TextButton exitResume = new TextButton("WEITER", Constants.buttonSkin);
     TextButton exitLeave = new TextButton("VERLASSEN", Constants.buttonSkin);
+
+
 
     //TEST Variables
 
@@ -138,10 +147,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         renderSegments(renderer);
     }
 
-    public GameScreen(boolean multiplayer, String userID) {
+    public GameScreen(String userID) {
         OGRacerGame.getInstance().isRunning = false;
         this.userID = userID;
-        this.multiplayer = multiplayer;
+        this.multiplayer = true;
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
         batch = new SpriteBatch();
@@ -191,7 +200,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         lastCameraPosition = cameraPosition;
         cameraPosition = result;
 
-        if (!Client.connect && multiplayer) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
+        if (!Client.connect && multiplayer) serverStatus.setText("Verbindung zum Server\n\nverloren");
 
         if (Client.startGame) {
             Client.startGame = false;
@@ -200,14 +209,14 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         updateHUD();
         updatePosition(delta);
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.Q)){
-            OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
-        }
         if (Client.start && multiplayer && !runMultiplayer) {
             runMultiplayer = true;
             timerStartLabel.setText("");
             OGRacerGame.getInstance().isRunning = true;
-        }else if(!runMultiplayer && multiplayer) timerStartLabel.setText(Client.timerToStart);
+        }else if(!runMultiplayer && multiplayer){
+            timerStartLabel.setText(Client.timerToStart);
+        }
+
         if(runMultiplayer && multiplayer) timer += delta;
 
         if(timerToStart <= 0 && !multiplayer && !runSingleplayer){
@@ -245,7 +254,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     private void startTimer(float delta){
         timerToStart -= delta;
         if(timerToStart < 1){
-            timerStartLabel.setBounds(stage.getWidth() / 2 - 60, stage.getHeight() / 2 - 10, 50, 20);
+            timerStartLabel.setColor(0.3f,1f,0.5f,1f);
             timerStartLabel.setText("GO");
         }
         else timerStartLabel.setText((int) timerToStart);
@@ -342,7 +351,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
 
     private void setupTimerLabel() {
-        timerStartLabel.setBounds(stage.getWidth() / 2 - 25, stage.getHeight() / 2 - 10, 50, 20);
+
+        timerStartLabel.setBounds(0, stage.getHeight()/2.5f,Gdx.graphics.getWidth(), 100);
+        timerStartLabel.setAlignment(Align.center);
         timerStartLabel.setFontScale(2.0f);
         stage.addActor(timerStartLabel);
     }
@@ -358,13 +369,26 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         lastLapTimeLabel.setColor(StyleGuide.purpleLight);
         stage.addActor(lastLapTimeLabel);
 
-        fastestTimeLabel.setBounds(75 + 2 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
+        fastestTimeLabel.setBounds(55 + 2 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
         fastestTimeLabel.setColor(StyleGuide.purpleLight);
         stage.addActor(fastestTimeLabel);
 
-        speedLabel.setBounds(175 + 3 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
+        speedLabel.setBounds(165 + 3 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
         speedLabel.setColor(StyleGuide.purpleLight);
         stage.addActor(speedLabel);
+
+        lapLabel.setBounds(170 + 4 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
+        lapLabel.setColor(StyleGuide.purpleLight);
+        stage.addActor(lapLabel);
+
+        serverStatus.setColor(Color.RED);
+        serverStatus.setBounds(0, stage.getHeight()/2.5f,Gdx.graphics.getWidth(), Gdx.graphics.getHeight()-30);
+        serverStatus.setAlignment(Align.center);
+        serverStatus.setFontScale(0.9f);
+        stage.addActor(serverStatus);
+
+
+
         //Exit Screen
         exitBackground.setSize(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 1.5f);
         exitBackground.setPosition(Gdx.graphics.getWidth() / 2f - exitBackground.getWidth() / 2,
@@ -426,15 +450,41 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
         renderer.begin(ShapeRenderer.ShapeType.Filled);
-        renderer.setColor(0,0,0,0.3f);
-        renderer.rect(0,stage.getHeight()- 45,stage.getWidth(),45);
+
+        // Gradient
+        for (float i = 0; i < 1f; i+=0.02f) {
+            renderer.setColor(0,0,0,1f-i);
+            renderer.rect(0,stage.getHeight()- i*100,stage.getWidth(),2);
+        }
+
         renderer.end();
         Gdx.input.setInputProcessor(stage);
 
-        timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
-        lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
-        fastestTimeLabel.setText("Schnelllste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
-        speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
+        if(!multiplayer){
+
+            timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
+            lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
+            fastestTimeLabel.setText("Schnelllste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
+            speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
+
+
+        }else{
+            try {
+
+                for (int i = 0; i < Client.jsonArrayUpdatePos.length(); i++) {
+                    JSONObject jsonObj = Client.jsonArrayUpdatePos.getJSONObject(i);
+
+                    timeLabel.setText("Zeit:\n" + jsonObj.getString("current_time"));
+                    lastLapTimeLabel.setText("Letzte Runde:\n" + jsonObj.getString("lap_time"));
+                    fastestTimeLabel.setText("Schnelllste Runde:\n" + jsonObj.getString("best_time"));
+                    speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
+                    lapLabel.setText("Runde:\n3/" + jsonObj.getString("lap"));
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private Segment findSegment(double p) {
@@ -504,7 +554,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         ArrayList<Car> cars = new ArrayList<>();
 
         try {
-
             // Iteriere durch jedes JSON-Objekt im Array
             for (int i = 0; i < Client.jsonArrayUpdatePos.length(); i++) {
                 JSONObject jsonObj = Client.jsonArrayUpdatePos.getJSONObject(i);
@@ -513,7 +562,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 float offset = Float.parseFloat(jsonObj.getString("offset"));
                 double pos = Double.parseDouble(jsonObj.getString("pos"));
                 String id = jsonObj.getString("id");
-
 
                 CustomSprite sprite = new CustomSprite(offset, pos);
                 cars.add(new Car(id, sprite));
