@@ -53,7 +53,7 @@ public class Leaderboard {
                 // Greife auf die Werte der Schlüssel zu
                 posis.add(new Label(jsonObj.getString("posi"),Constants.buttonSkin));
                 names.add(new Label(jsonObj.getString("name"),Constants.buttonSkin));
-                times.add(new Label(jsonObj.getString("time"),Constants.buttonSkin));
+                times.add(new Label(jsonObj.getString("time").replaceAll(";",":"),Constants.buttonSkin));
                 System.out.println(times);
             }
         } catch (JSONException e) {
@@ -63,14 +63,13 @@ public class Leaderboard {
 
     public void show() {
 
-        // Spiel stoppt
-        OGRacerGame.getInstance().isRunning = false;
 
-        if(Client.jsonArrayLeaderboard != null && Client.showLeaderboard){
-            Client.showLeaderboard = false;
+        if(Client.jsonArrayLeaderboard != null && OGRacerGame.getInstance().isRunning){
             loadData();
         }
 
+        // Spiel Stoppt
+        OGRacerGame.getInstance().isRunning = false;
 
         // Fenster gezeichnet
         renderer.begin(ShapeRenderer.ShapeType.Filled);
