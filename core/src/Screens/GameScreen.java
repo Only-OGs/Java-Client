@@ -580,7 +580,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                     case "6" -> new CustomSprite("semi.png", offset, pos);
                     default -> new CustomSprite(offset, pos);
                 };
-
                 cars.add(new Car(id, sprite));
             }
         } catch (JSONException e) {
