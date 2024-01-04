@@ -476,12 +476,15 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 for (int i = 0; i < Client.jsonArrayUpdatePos.length(); i++) {
                     JSONObject jsonObj = Client.jsonArrayUpdatePos.getJSONObject(i);
 
-                    timeLabel.setText("Zeit:\n" + jsonObj.getString("current_time").replaceAll(";",":"));
-                    lastLapTimeLabel.setText("Letzte Runde:\n" + jsonObj.getString("lap_time").replaceAll(";",":"));
-                    fastestTimeLabel.setText("Schnellste Runde:\n" + jsonObj.getString("best_time").replaceAll(";",":"));
+                    if(userID.equals( jsonObj.getString("id"))){
+                        timeLabel.setText("Zeit:\n" + jsonObj.getString("current_time").replaceAll(";",":"));
+                        lastLapTimeLabel.setText("Letzte Runde:\n" + jsonObj.getString("lap_time").replaceAll(";",":"));
+                        fastestTimeLabel.setText("Schnellste Runde:\n" + jsonObj.getString("best_time").replaceAll(";",":"));
+                        lapLabel.setText("Runde:\n" + jsonObj.getString("lap") +"/3");
+                    }
                     speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
-                    lapLabel.setText("Runde:\n" + jsonObj.getString("lap") +"\3");
-                    if(!Boolean.parseBoolean(jsonObj.getString("race_finished"))) OGRacerGame.getInstance().isRunning = false;
+
+                   // if(Boolean.parseBoolean(jsonObj.getString("race_finished"))) OGRacerGame.getInstance().isRunning = false;
 
 
 
