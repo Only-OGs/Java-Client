@@ -428,6 +428,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
                 if (multiplayer) {
                     Client.showLeaderboard = false;
+                    Client.timerToStart = "";
                     OGRacerGame.getInstance().isRunning = false;
                     Client.start = false;
                     Client.leaveGame();
