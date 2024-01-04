@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GameScreen extends ScreenAdapter implements IInputHandler {
 
@@ -570,17 +571,30 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 float offset = Float.parseFloat(jsonObj.getString("offset"));
                 double pos = Double.parseDouble(jsonObj.getString("pos"));
                 String id = jsonObj.getString("id");
+                if(newCars==null){
+                    CustomSprite sprite = switch (jsonObj.getString("asset")) {
+                        case "1" -> new CustomSprite("car01.png", offset, pos);
+                        case "2" -> new CustomSprite("car02.png", offset, pos);
+                        case "3" -> new CustomSprite("car03.png", offset, pos);
+                        case "4" -> new CustomSprite("car04.png", offset, pos);
+                        case "5" -> new CustomSprite("truck.png", offset, pos);
+                        case "6" -> new CustomSprite("semi.png", offset, pos);
+                        default -> new CustomSprite(offset, pos);
+                    };
+                    cars.add(new Car(id, sprite));
+                }else{
+                    cars = new ArrayList<>(Arrays.asList(newCars));
+                    if (!id.equals(userID)) {
+                        cars.forEach(c -> {
+                            if(c.getID().equals(id)){
+                                c.setZ(pos);
+                                c.setOffset(offset);
+                                c.setPercent((float) Util.percentRemaining((float) (pos%200),200f));
+                            }
+                        });
+                    }
+                }
 
-                CustomSprite sprite = switch (jsonObj.getString("asset")) {
-                    case "1" -> new CustomSprite("car01.png", offset, pos);
-                    case "2" -> new CustomSprite("car02.png", offset, pos);
-                    case "3" -> new CustomSprite("car03.png", offset, pos);
-                    case "4" -> new CustomSprite("car04.png", offset, pos);
-                    case "5" -> new CustomSprite("truck.png", offset, pos);
-                    case "6" -> new CustomSprite("semi.png", offset, pos);
-                    default -> new CustomSprite(offset, pos);
-                };
-                cars.add(new Car(id, sprite));
             }
         } catch (JSONException e) {
             e.printStackTrace();
