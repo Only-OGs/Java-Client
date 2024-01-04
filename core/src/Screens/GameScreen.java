@@ -10,7 +10,6 @@ import Rendering.SunShade;
 import Road.*;
 import Root.StyleGuide;
 import Screens.MenuArea.MainMenu;
-import Screens.MenuArea.MultiplayerMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
@@ -63,7 +62,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
     Label lapLabel = new Label("", Constants.buttonSkin);
 
-    Label serverStatus = new Label("", Constants.buttonSkin,"title");
+    Label serverStatus = new Label("", Constants.buttonSkin, "title");
 
 
     Label timerStartLabel = new Label("", Constants.buttonSkin, "title");
@@ -71,7 +70,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     Image exitBackground = new Image(new Texture("sprites/exitBackground.png"));
     TextButton exitResume = new TextButton("WEITER", Constants.buttonSkin);
     TextButton exitLeave = new TextButton("VERLASSEN", Constants.buttonSkin);
-
 
 
     //TEST Variables
@@ -130,6 +128,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
     private int lap = 1;
 
+    private boolean menuOpen = false;
+
 
     public GameScreen() {
         OGRacerGame.getInstance().isRunning = false;
@@ -169,7 +169,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         Gdx.gl.glClearColor(0, 0, 0, 0);
-
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -214,22 +213,26 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         if (Client.start && multiplayer && !runMultiplayer) {
             runMultiplayer = true;
             timerStartLabel.setText("");
-            OGRacerGame.getInstance().isRunning = true;
-        }else if(!runMultiplayer && multiplayer){
+
+            if(!menuOpen) OGRacerGame.getInstance().isRunning = true;
+
+        } else if (!runMultiplayer && multiplayer) {
             timerStartLabel.setText(Client.timerToStart);
         }
 
-        if(runMultiplayer && multiplayer) timer += delta;
+        if (runMultiplayer && multiplayer) timer += delta;
 
-        if(timerToStart <= 0 && !multiplayer && !runSingleplayer){
+        if (timerToStart <= 0 && !multiplayer && !runSingleplayer) {
             runSingleplayer = true;
             timerStartLabel.setText("");
-            OGRacerGame.getInstance().isRunning = true;
-        }else if(!runSingleplayer && !multiplayer) startTimer(delta);
-        if(runSingleplayer && !multiplayer) timer += delta;
+
+            if(!menuOpen) OGRacerGame.getInstance().isRunning = true;
+
+        } else if (!runSingleplayer && !multiplayer) startTimer(delta);
+        if (runSingleplayer && !multiplayer) timer += delta;
 
 
-        if(playerSpeed <= 0) OGRacerGame.movement = false;
+        if (playerSpeed <= 0) OGRacerGame.movement = false;
         else OGRacerGame.movement = true;
 
         stage.draw();
@@ -243,7 +246,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 }
             }
 
-
             camaeraPositionOld = cameraPosition;
 
             if (Client.updatePos) {
@@ -253,13 +255,12 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         }
     }
 
-    private void startTimer(float delta){
+    private void startTimer(float delta) {
         timerToStart -= delta;
-        if(timerToStart < 1){
-            timerStartLabel.setColor(0.3f,1f,0.5f,1f);
+        if (timerToStart < 1) {
+            timerStartLabel.setColor(0.3f, 1f, 0.5f, 1f);
             timerStartLabel.setText("GO");
-        }
-        else timerStartLabel.setText((int) timerToStart);
+        } else timerStartLabel.setText((int) timerToStart);
     }
 
 
@@ -340,7 +341,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                     double spriteScale = s.getP1().getScreen().getScale();
                     float spriteX = (float) (s.getP1().getScreen().getX() + (spriteScale * cs.getOffset() * roadWidth * Gdx.graphics.getWidth() / 2));
                     float spriteY = s.getP1().getScreen().getY();
-                    SpritesRenderer.render(batch, resolution, roadWidth, cs.getT(), spriteScale, spriteX, spriteY, (cs.getOffset() < 0 ? -1f : 0f), -1f, s.getClip());
+                    SpritesRenderer.render(batch, resolution, roadWidth, cs.getT(), spriteScale, spriteX, spriteY, (cs.getOffset() < 0 ? -2f : 2f), -1f, s.getClip());
                 }
             }
             if (s == playerSegment) {
@@ -354,7 +355,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
     private void setupTimerLabel() {
 
-        timerStartLabel.setBounds(0, stage.getHeight()/2.5f,Gdx.graphics.getWidth(), 100);
+        timerStartLabel.setBounds(0, stage.getHeight() / 2.5f, Gdx.graphics.getWidth(), 100);
         timerStartLabel.setAlignment(Align.center);
         timerStartLabel.setFontScale(2.0f);
         stage.addActor(timerStartLabel);
@@ -384,11 +385,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         stage.addActor(lapLabel);
 
         serverStatus.setColor(Color.RED);
-        serverStatus.setBounds(0, stage.getHeight()/2.5f,Gdx.graphics.getWidth(), Gdx.graphics.getHeight()-30);
+        serverStatus.setBounds(0, stage.getHeight() / 2.5f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() - 30);
         serverStatus.setAlignment(Align.center);
         serverStatus.setFontScale(0.9f);
         stage.addActor(serverStatus);
-
 
 
         //Exit Screen
@@ -407,7 +407,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         exitResume.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                OGRacerGame.getInstance().isRunning = true;
+                menuOpen = false;
+                if (!runMultiplayer&& runSingleplayer) OGRacerGame.getInstance().isRunning = true;
+                if (runMultiplayer && Client.start) OGRacerGame.getInstance().isRunning = true;
 
                 exitBackground.setVisible(false);
                 exitResume.setVisible(false);
@@ -424,7 +426,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-
+                menuOpen = false;
 
                 if (multiplayer) {
                     Client.showLeaderboard = false;
@@ -456,15 +458,15 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         renderer.begin(ShapeRenderer.ShapeType.Filled);
 
         // Gradient
-        for (float i = 0; i < 1f; i+=0.02f) {
-            renderer.setColor(0,0,0,1f-i);
-            renderer.rect(0,stage.getHeight()- i*100,stage.getWidth(),2);
+        for (float i = 0; i < 1f; i += 0.02f) {
+            renderer.setColor(0, 0, 0, 1f - i);
+            renderer.rect(0, stage.getHeight() - i * 100, stage.getWidth(), 2);
         }
 
         renderer.end();
         Gdx.input.setInputProcessor(stage);
 
-        if(!multiplayer){
+        if (!multiplayer) {
 
             timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
             lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
@@ -472,22 +474,20 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
             lapLabel.setText("Runde:\n" + lap);
 
-        }else if(Client.jsonArrayUpdatePos != null){
+        } else if (Client.jsonArrayUpdatePos != null) {
             try {
                 for (int i = 0; i < Client.jsonArrayUpdatePos.length(); i++) {
                     JSONObject jsonObj = Client.jsonArrayUpdatePos.getJSONObject(i);
 
-                    if(userID.equals( jsonObj.getString("id"))){
-                        timeLabel.setText("Zeit:\n" + jsonObj.getString("current_time").replaceAll(";",":"));
-                        lastLapTimeLabel.setText("Letzte Runde:\n" + jsonObj.getString("lap_time").replaceAll(";",":"));
-                        fastestTimeLabel.setText("Schnellste Runde:\n" + jsonObj.getString("best_time").replaceAll(";",":"));
-                        if(Boolean.parseBoolean(jsonObj.getString("race_finished"))) OGRacerGame.getInstance().isRunning = false;
-                        lapLabel.setText("Runde:\n" + jsonObj.getString("lap") +"/3");
+                    if (userID.equals(jsonObj.getString("id"))) {
+                        timeLabel.setText("Zeit:\n" + jsonObj.getString("current_time").replaceAll(";", ":"));
+                        lastLapTimeLabel.setText("Letzte Runde:\n" + jsonObj.getString("lap_time").replaceAll(";", ":"));
+                        fastestTimeLabel.setText("Schnellste Runde:\n" + jsonObj.getString("best_time").replaceAll(";", ":"));
+                        if (Boolean.parseBoolean(jsonObj.getString("race_finished")))
+                            OGRacerGame.getInstance().isRunning = false;
+                        lapLabel.setText("Runde:\n" + jsonObj.getString("lap") + "/3");
                     }
                     speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
-
-
-
 
                 }
             } catch (JSONException e) {
@@ -589,7 +589,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         setNewCars(cars.toArray(Car[]::new));
     }
 
-     private void setPos() {
+    private void setPos() {
         ArrayList<Car> cars = new ArrayList<>();
 
         try {
@@ -624,11 +624,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     @Override
     public void checkInput(OGRacerGame game, float dt) {
         // Pausieren/Fortfahren des Spiels
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && runSingleplayer || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && runMultiplayer) {
-
-
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            menuOpen = true;
             game.isRunning = false;
-
             //Menü anzeigen
             exitBackground.setVisible(true);
             exitResume.setVisible(true);
