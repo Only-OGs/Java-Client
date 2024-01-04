@@ -466,19 +466,18 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
             timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
             lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
-            fastestTimeLabel.setText("Schnelllste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
+            fastestTimeLabel.setText("Schnellste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
             speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
             lapLabel.setText("Runde:\n" + lap);
 
-        }else{
+        }else if(Client.jsonArrayUpdatePos != null){
             try {
-
                 for (int i = 0; i < Client.jsonArrayUpdatePos.length(); i++) {
                     JSONObject jsonObj = Client.jsonArrayUpdatePos.getJSONObject(i);
 
                     timeLabel.setText("Zeit:\n" + jsonObj.getString("current_time"));
                     lastLapTimeLabel.setText("Letzte Runde:\n" + jsonObj.getString("lap_time"));
-                    fastestTimeLabel.setText("Schnelllste Runde:\n" + jsonObj.getString("best_time"));
+                    fastestTimeLabel.setText("Schnellste Runde:\n" + jsonObj.getString("best_time"));
                     speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
                     lapLabel.setText("Runde:\n3/" + jsonObj.getString("lap"));
 
