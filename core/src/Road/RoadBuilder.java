@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public class RoadBuilder {
 
-    private static Texture t = new Texture("sprites/house1.png");
     private static Texture tCar = new Texture("sprites/car01.png");
     /**
      * erstellt die Strecke
@@ -149,7 +148,7 @@ public class RoadBuilder {
     private static CustomSprite[] createSpriteArr(int l){
         CustomSprite[] cs= new CustomSprite[l/4];
         for(int i=0;i<l/4;i++){
-            CustomSprite s = new CustomSprite(t,i%4==0?-1:1,i*4*1000);
+            CustomSprite s = new CustomSprite("23",i%4==0?-2:2,i*4*1000);
             cs[i]=s;
         }
         return cs;

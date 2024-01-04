@@ -1,10 +1,13 @@
 package Screens;
 
 import Connection.Client;
+import Screens.MenuArea.SettingMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
@@ -27,21 +30,29 @@ public abstract class MenuScreen extends ScreenAdapter {
 
     protected TextButton buttonLeft, buttonMiddle, buttonRight;
 
+private ShapeRenderer shapeRenderer = new ShapeRenderer();
+
     public MenuScreen() {
         batch = new SpriteBatch();
         backgroundTexture = new Texture("Background/BackgroundOGRacerGame.png");
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
-        if (Constants.music != null) {
+        if (Constants.music != null&& SettingMenu.musicCheck) {
             Constants.music.setLooping(true);
             Constants.music.setVolume(0.01f);
-           // Constants.music.play();
+            System.out.println(SettingMenu.musicCheck);
+            Constants.music.play();
+
+
         }
         Constants.title.setSize(Gdx.graphics.getWidth(), 100);
         Constants.title.setPosition(0, stage.getHeight() - 100);
         Constants.title.setAlignment(Align.center);
         stage.addActor(Constants.title);
+
+
+
     }
 
     @Override
@@ -53,10 +64,11 @@ public abstract class MenuScreen extends ScreenAdapter {
         batch.draw(backgroundTexture, 0, 0, stage.getWidth(), stage.getHeight());
         batch.end();
 
+
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
-        super.render(delta);
+
     }
 
     @Override

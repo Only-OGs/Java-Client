@@ -353,7 +353,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                     double spriteScale = s.getP1().getScreen().getScale();
                     float spriteX = (float) (s.getP1().getScreen().getX() + (spriteScale * cs.getOffset() * roadWidth * Gdx.graphics.getWidth() / 2));
                     float spriteY = s.getP1().getScreen().getY();
-                    SpritesRenderer.render(batch, resolution, roadWidth, cs.getT(), spriteScale, spriteX, spriteY, (cs.getOffset() < 0 ? -1f : 0f), -1f, s.getClip());
+                    SpritesRenderer.render(batch, resolution, roadWidth, cs.getT(), spriteScale, spriteX, spriteY, cs.getOffset(), -1f, s.getClip());
                 }
             }
             if (s == playerSegment) {
