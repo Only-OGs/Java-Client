@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public class RoadBuilder {
 
-    private static Texture t = new Texture("sprites/house.png");
     private static Texture tCar = new Texture("sprites/car01.png");
     /**
      * erstellt die Strecke
@@ -33,16 +32,18 @@ public class RoadBuilder {
         }
         segments.add(buildfinsih(segmentLenght,l-1));
         Segment[] s = segments.toArray(Segment[]::new);
-        addSprites(s,arr,200);
+        addSprites(s,arr);
         return (s);
     }
     public static Segment[] resetRoad(RoadPart[] road){
         int segmentLenght = GameScreen.getSegmentLenght();
         ArrayList<Segment> segments= new ArrayList<>();
-        int index=0;
+        segments.add(buildStart(segmentLenght));
+        int index=1;
         for(RoadPart rp:road){
             index+=addRoad(segments,segmentLenght,index,rp.getLenght(),rp.getCurve(),rp.getHill());
-        }
+        }segments.remove(segments.size()-1);
+        segments.add(buildfinsih(segmentLenght,index-1));
         Segment[] s = segments.toArray(Segment[]::new);
         return (s);
     }
@@ -135,9 +136,9 @@ public class RoadBuilder {
             return road.get(index-1).getP2().getWorld().getY();
         }
     }
-    private static void addSprites(Segment[] segments,CustomSprite [] cs,int segmentlenght){
+    public static void addSprites(Segment[] segments,CustomSprite [] cs){
         for (CustomSprite c: cs) {
-            Segment s = findSegment(segments,c.getZ(),segmentlenght);
+            Segment s = findSegment(segments,c.getZ(),GameScreen.getSegmentLenght());
             s.addSprite(c);
         }
     }
@@ -147,7 +148,7 @@ public class RoadBuilder {
     private static CustomSprite[] createSpriteArr(int l){
         CustomSprite[] cs= new CustomSprite[l/4];
         for(int i=0;i<l/4;i++){
-            CustomSprite s = new CustomSprite(t,i%4==0?-1:1,i*4*1000);
+            CustomSprite s = new CustomSprite("23",i%4==0?-2:2,i*4*1000);
             cs[i]=s;
         }
         return cs;

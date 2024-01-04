@@ -36,7 +36,7 @@ public class LoadingScreen extends ScreenAdapter {
         Constants.title.setPosition(0, stage.getHeight() - 100);
         Constants.title.setAlignment(Align.center);
         stage.addActor(Constants.title);
-        OGRacerGame.getInstance().setGameScreen(new GameScreen(true, userID));
+        OGRacerGame.getInstance().setGameScreen(new GameScreen(userID));
         waitTimer();
     }
 

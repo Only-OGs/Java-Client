@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class Client {
 
@@ -59,13 +58,15 @@ public class Client {
     public static boolean updatePos = false;
 
     public static boolean connect = false;
-
-    public static JSONArray jsonArrayStartPos;
+    public static JSONArray jsonArrayAssets;
 
     public static JSONArray jsonArrayUpdatePos;
+    public static JSONArray jsonArrayLeaderboard;
 
     public static boolean start = false;
     public static String timerToStart = "";
+
+    public static boolean showLeaderboard = false;
 
 
     public Client() {
@@ -129,7 +130,6 @@ public class Client {
             }
         });
 
-
         // Spiel mit Lobby Code suchen
         socket.on("search_lobby", args -> {
             JSONObject obj = (JSONObject) args[0];
@@ -138,13 +138,10 @@ public class Client {
                 searchLobbyCodeStatus = (String) obj.get("status"); // success und failed
                 searchLobbyCodeMessage = (String) obj.get("message");// Nachricht vom Server
 
-                System.out.println("Search IDLobby: " + searchLobbyCodeStatus);
-                System.out.println("Search IDLobby: " + searchLobbyCodeMessage);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
         });
-
 
         // Schnelles Spiel suchen
         socket.on("get_lobby", args -> {
@@ -154,8 +151,6 @@ public class Client {
                 quickStatus = (String) obj.get("status"); // success und failed
                 quickMessage = (String) obj.get("message");// Nachricht vom Server
 
-                System.out.println("Quick Lobby: " + quickStatus);
-                System.out.println("Quick Lobby: " + quickMessage);
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -170,10 +165,6 @@ public class Client {
                 lobbyID = (String) obj.get("lobby");
                 //joinMessage = (String) obj.get("message");
                 joinStatus = (String) obj.get("status");
-
-                System.out.println("Managment: " + playerString);
-                System.out.println("Managment: " + lobbyID);
-                System.out.println("Managment: " + joinStatus);
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -222,12 +213,21 @@ public class Client {
             GameScreen.roadBuilders = road;
         });
 
+        // Bekomme ich alle Sprites für die Umgebung geschickt.
+        socket.on("load_assets", args -> {
+
+
+            // Erstelle ein JSONArray-Objekt aus dem JSON-String
+            jsonArrayAssets = (JSONArray) args[0];
+
+        });
+
         // Schickt einmalig die Startposition
         socket.on("wait_for_start", args -> {
 
             startGame = true;
             // Erstelle ein JSONArray-Objekt aus dem JSON-String
-            jsonArrayStartPos = (JSONArray) args[0];
+            jsonArrayUpdatePos = (JSONArray) args[0];
 
         });
 
@@ -285,8 +285,16 @@ public class Client {
         // Wird ausgeführt, wenn das Rennen starten darf.
         socket.on("start_race", args -> {
             start = true;
+            start_watch();
         });
 
+        // Sobald das Spiel zuende ist, bekommt man die Spieler Daten Posi, Name und Zeit
+        socket.on("get_leaderboard", args -> {
+
+            // Erstelle ein JSONArray-Objekt aus dem JSON-String
+            jsonArrayLeaderboard = (JSONArray) args[0];
+            showLeaderboard = true;
+        });
 
         // Verbindung herstellen
         socket.connect();
@@ -363,6 +371,18 @@ public class Client {
     public static void clientReady() {
         if (socket.connected()) {
             socket.emit("client_is_ingame");
+        }
+    }
+
+    public static void leaveGame() {
+        if (socket.connected()) {
+            socket.emit("game_leave");
+        }
+    }
+
+    public static void start_watch(){
+        if (socket.connected()) {
+            socket.emit("start_watch");
         }
     }
 
