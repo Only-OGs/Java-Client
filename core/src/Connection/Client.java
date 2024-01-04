@@ -60,6 +60,7 @@ public class Client {
     public static boolean connect = false;
 
     public static JSONArray jsonArrayStartPos;
+    public static JSONArray jsonArrayAssets;
 
     public static JSONArray jsonArrayUpdatePos;
     public static JSONArray jsonArrayLeaderboard;
@@ -212,6 +213,15 @@ public class Client {
                 e.printStackTrace();
             }
             GameScreen.roadBuilders = road;
+        });
+
+        // Bekomme ich alle Sprites für die Umgebung geschickt.
+        socket.on("load_assets", args -> {
+
+
+            // Erstelle ein JSONArray-Objekt aus dem JSON-String
+            jsonArrayAssets = (JSONArray) args[0];
+
         });
 
         // Schickt einmalig die Startposition

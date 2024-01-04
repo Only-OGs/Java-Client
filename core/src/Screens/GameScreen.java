@@ -558,7 +558,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     }
 
 
-
     private void updateCars() {
         ArrayList<Car> cars = new ArrayList<>();
 
@@ -572,7 +571,16 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 double pos = Double.parseDouble(jsonObj.getString("pos"));
                 String id = jsonObj.getString("id");
 
-                CustomSprite sprite = new CustomSprite(offset, pos);
+                CustomSprite sprite = switch (jsonObj.getString("asset")) {
+                    case "1" -> new CustomSprite("car01.png", offset, pos);
+                    case "2" -> new CustomSprite("car02.png", offset, pos);
+                    case "3" -> new CustomSprite("car03.png", offset, pos);
+                    case "4" -> new CustomSprite("car04.png", offset, pos);
+                    case "5" -> new CustomSprite("truck.png", offset, pos);
+                    case "6" -> new CustomSprite("semi.png", offset, pos);
+                    default -> new CustomSprite(offset, pos);
+                };
+
                 cars.add(new Car(id, sprite));
             }
         } catch (JSONException e) {
