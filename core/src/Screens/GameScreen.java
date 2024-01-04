@@ -207,6 +207,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         if (Client.startGame) {
             Client.startGame = false;
             setPos();
+            placeSprites();
         }
         updateHUD();
         updatePosition(delta);
@@ -342,7 +343,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                     double spriteScale = s.getP1().getScreen().getScale();
                     float spriteX = (float) (s.getP1().getScreen().getX() + (spriteScale * cs.getOffset() * roadWidth * Gdx.graphics.getWidth() / 2));
                     float spriteY = s.getP1().getScreen().getY();
-                    SpritesRenderer.render(batch, resolution, roadWidth, cs.getT(), spriteScale, spriteX, spriteY, (cs.getOffset() < 0 ? -2f : 2f), -1f, s.getClip());
+                    SpritesRenderer.render(batch, resolution, roadWidth, cs.getT(), spriteScale, spriteX, spriteY, (cs.getOffset() < 0 ? -1f : 0f), -1f, s.getClip());
                 }
             }
             if (s == playerSegment) {
@@ -557,7 +558,25 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             }
         }
     }
+    private void placeSprites(){
+        ArrayList<CustomSprite> sprites = new ArrayList<>();
+        try {
+            // Iteriere durch jedes JSON-Objekt im Array
+            for (int i = 0; i < Client.jsonArrayAssets.length(); i++) {
+                JSONObject jsonObj = Client.jsonArrayAssets.getJSONObject(i);
 
+                // Greife auf die Werte der Schlüssel zu
+                float offset = Float.parseFloat(jsonObj.getString("side"));
+                double pos = Double.parseDouble(jsonObj.getString("pos"));
+                String texture = jsonObj.getString("model");
+                CustomSprite cs = new CustomSprite(texture,offset,pos);
+                sprites.add(cs);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        RoadBuilder.addSprites(segments,sprites.toArray(sprites.toArray(CustomSprite[]::new)));
+    }
 
     private void updateCars() {
         ArrayList<Car> cars = new ArrayList<>();

@@ -5,7 +5,7 @@ public class RoadPart {
     public RoadPart(String lenght, String curve, String hill) {
         this.lenght = Integer.parseInt(lenght);
         this.curve = Integer.parseInt(curve);
-        this.hill = Integer.parseInt(hill);
+        this.hill = (int)Float.parseFloat(hill);
     }
 
     private int lenght;

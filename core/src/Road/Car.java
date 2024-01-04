@@ -7,6 +7,8 @@ public class Car {
     private String id;
     private CustomSprite customSprite;  // position und Aussehen des einzelnen Autos
     private Segment segment;  // Wird später berechnet
+    private float percent=0;
+    private int speed;
 
 
     public Car() {}
@@ -45,8 +47,30 @@ public class Car {
         return segments[(int) (Math.floor(p / segmentLenght) % segments.length)];
     }
     public void setZ(double z){
+        remove();
         customSprite.setZ(z);
         segment.removeCar(this);
         place();
+    }
+    public void setOffset(float offset){
+        customSprite.setOffset(offset);
+    }
+    public String getID(){
+        return id;
+    }
+
+    public float getPercent() {
+        return percent;
+    }
+
+    public void setPercent(float percent) {
+        this.percent = percent;
+    }
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 }

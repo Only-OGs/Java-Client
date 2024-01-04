@@ -33,7 +33,7 @@ public class RoadBuilder {
         }
         segments.add(buildfinsih(segmentLenght,l-1));
         Segment[] s = segments.toArray(Segment[]::new);
-        addSprites(s,arr,200);
+        addSprites(s,arr);
         return (s);
     }
     public static Segment[] resetRoad(RoadPart[] road){
@@ -135,9 +135,9 @@ public class RoadBuilder {
             return road.get(index-1).getP2().getWorld().getY();
         }
     }
-    private static void addSprites(Segment[] segments,CustomSprite [] cs,int segmentlenght){
+    public static void addSprites(Segment[] segments,CustomSprite [] cs){
         for (CustomSprite c: cs) {
-            Segment s = findSegment(segments,c.getZ(),segmentlenght);
+            Segment s = findSegment(segments,c.getZ(),GameScreen.getSegmentLenght());
             s.addSprite(c);
         }
     }
