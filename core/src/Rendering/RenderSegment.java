@@ -46,7 +46,7 @@ public class RenderSegment {
             }
         }
         shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.setColor(new Color( 63f/255f, 171f/255f, 162f/255f, (float) fog));
+        shape.setColor(new Color( 0f/255f, 81f/255f, 8f/255f, (float) fog));
         shape.rect(0, libgdxY1, Gdx.graphics.getWidth(),libgdxY2-libgdxY1);
         shape.end();
     }

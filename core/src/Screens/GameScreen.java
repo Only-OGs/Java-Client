@@ -16,6 +16,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -49,12 +50,11 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     private SpriteBatch batch;
 
     private ShapeRenderer renderer;
-
+    private Texture txtSky = new Texture("background/sky.png");
+    private Texture txtHills = new Texture("background/hills.png");
+    private Texture txtTrees = new Texture("background/trees.png");
 
     private static Segment[] segments;
-    private int backgroundWitdh = 500;
-
-    private int backgroundHeight = 500;
 
     Label timeLabel = new Label("", Constants.buttonSkin);
     Label lastLapTimeLabel = new Label("", Constants.buttonSkin);
@@ -171,6 +171,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         ScreenUtils.clear(0, 0, 0, 1);
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        renderBackground();
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         renderSegments(renderer);
@@ -257,6 +258,15 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         }
     }
 
+    private void renderBackground() {
+        SpriteBatch sB = new SpriteBatch();
+        sB.begin();
+        sB.draw(txtSky,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        sB.draw(txtHills,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        sB.draw(txtTrees,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        sB.end();
+    }
+
     private void startTimer(float delta) {
         timerToStart -= delta;
         if (timerToStart < 1) {
@@ -323,7 +333,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             );
             maxy = segment.getP1().getScreen().getY();
         }
-        SunShade.sun(r, batch, sunOffset, maxy);
+        //SunShade.sun(r, batch, sunOffset, maxy);
         Segment s;
         for (int n = (drawDistance - 1); n > 0; n--) {
             s = segments[((baseSegment.getIndex() + n) % segments.length)];
