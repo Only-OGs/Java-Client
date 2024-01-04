@@ -39,10 +39,12 @@ public class RoadBuilder {
     public static Segment[] resetRoad(RoadPart[] road){
         int segmentLenght = GameScreen.getSegmentLenght();
         ArrayList<Segment> segments= new ArrayList<>();
-        int index=0;
+        segments.add(buildStart(segmentLenght));
+        int index=1;
         for(RoadPart rp:road){
             index+=addRoad(segments,segmentLenght,index,rp.getLenght(),rp.getCurve(),rp.getHill());
-        }
+        }segments.remove(segments.size()-1);
+        segments.add(buildfinsih(segmentLenght,index-1));
         Segment[] s = segments.toArray(Segment[]::new);
         return (s);
     }
