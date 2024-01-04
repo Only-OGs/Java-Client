@@ -484,7 +484,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                     }
                     speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
 
-                   // if(Boolean.parseBoolean(jsonObj.getString("race_finished"))) OGRacerGame.getInstance().isRunning = false;
+                    if(Boolean.parseBoolean(jsonObj.getString("race_finished"))) OGRacerGame.getInstance().isRunning = false;
 
 
 
