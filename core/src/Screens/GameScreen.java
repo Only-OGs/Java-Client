@@ -493,10 +493,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             double scale = playerSegment.getP1().getScreen().getScale();
 
             CustomSprite sprite = playerSegment.getSprites()[i];
-            double spriteW = sprite.getT().getWidth() * scale;
-            double playerW = CarRenderer.tS.getWidth() * scale;
-            if (Util.overlap(playerX, playerW, sprite.getOffset(), spriteW * 4, 0.5f) ||
-                    Util.overlap(playerX, playerW, sprite.getOffset() - spriteW * 4, spriteW * 4, 0.5f)) {
+            double spriteW = (sprite.getT().getWidth() * scale) * 3;
+            double playerW = (CarRenderer.tS.getWidth() * scale) /2;
+            if (Util.overlap(playerX, playerW, sprite.getOffset(), spriteW, 0.5f) ||
+                    Util.overlap(playerX, playerW, sprite.getOffset() - spriteW, spriteW , 0.5f)) {
                 playerSpeed = playerMaxSpeed / 5;
                 cameraPosition = Util.increase(playerSegment.getP1().getWorld().getZ(), (int) -playerZ, trackLength);
                 break;
