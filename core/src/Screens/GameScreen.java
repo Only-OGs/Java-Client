@@ -206,7 +206,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
         if (Client.startGame) {
             Client.startGame = false;
-            setPos();
+            updateCars();
             placeSprites();
         }
         updateHUD();
@@ -514,7 +514,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 playerSpeed = (int) Util.limit(playerSpeed, 0, playerMaxSpeed);
             }
             checkSpriteCollision(playerSegment);
-
         }
 
         double scale = playerSegment.getP1().getScreen().getScale();
@@ -620,38 +619,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         }
         setNewCars(cars.toArray(Car[]::new));
     }
-
-    private void setPos() {
-        ArrayList<Car> cars = new ArrayList<>();
-
-        try {
-
-            // Iteriere durch jedes JSON-Objekt im Array
-            for (int i = 0; i < Client.jsonArrayStartPos.length(); i++) {
-                JSONObject jsonObj = Client.jsonArrayStartPos.getJSONObject(i);
-
-                // Greife auf die Werte der Schlüssel zu
-                float offset = Float.parseFloat(jsonObj.getString("offset"));
-                double pos = Double.parseDouble(jsonObj.getString("pos"));
-                String id = jsonObj.getString("id");
-
-                System.out.println(userID);
-                if (!id.equals(userID)) {
-
-                    CustomSprite sprite = new CustomSprite(offset, pos);
-                    cars.add(new Car(id, sprite));
-                } else {
-                    OGRacerGame.getInstance().getGameScreen().setPlayerX(offset);
-                    OGRacerGame.getInstance().getGameScreen().setCameraPosition(pos);
-                }
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        OGRacerGame.getInstance().getGameScreen().setNewCars(cars.toArray(Car[]::new));
-    }
-
 
     @Override
     public void checkInput(OGRacerGame game, float dt) {
