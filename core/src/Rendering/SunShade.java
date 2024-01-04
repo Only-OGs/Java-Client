@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class SunShade {
-    static Texture t =  new Texture("Background/Moon.png");
+    static Texture t =  new Texture("background/Moon.png");
     public static void sunShade(ShapeRenderer r, float sunOffset, int maxy, float renderedCounter){
         r.begin(ShapeRenderer.ShapeType.Filled);
         float centerX=Gdx.graphics.getWidth()/2+sunOffset*3;

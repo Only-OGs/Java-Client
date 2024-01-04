@@ -34,7 +34,7 @@ private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     public MenuScreen() {
         batch = new SpriteBatch();
-        backgroundTexture = new Texture("Background/BackgroundOGRacerGame.png");
+        backgroundTexture = new Texture("background/BackgroundOGRacerGame.png");
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
