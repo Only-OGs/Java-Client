@@ -480,11 +480,11 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                         timeLabel.setText("Zeit:\n" + jsonObj.getString("current_time").replaceAll(";",":"));
                         lastLapTimeLabel.setText("Letzte Runde:\n" + jsonObj.getString("lap_time").replaceAll(";",":"));
                         fastestTimeLabel.setText("Schnellste Runde:\n" + jsonObj.getString("best_time").replaceAll(";",":"));
+                        if(Boolean.parseBoolean(jsonObj.getString("race_finished"))) OGRacerGame.getInstance().isRunning = false;
                         lapLabel.setText("Runde:\n" + jsonObj.getString("lap") +"/3");
                     }
                     speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
 
-                    if(Boolean.parseBoolean(jsonObj.getString("race_finished"))) OGRacerGame.getInstance().isRunning = false;
 
 
 
