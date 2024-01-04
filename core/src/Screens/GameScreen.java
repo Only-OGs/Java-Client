@@ -427,6 +427,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
 
                 if (multiplayer) {
+                    Client.showLeaderboard = false;
                     OGRacerGame.getInstance().isRunning = false;
                     Client.start = false;
                     Client.leaveGame();
@@ -479,7 +480,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                     lastLapTimeLabel.setText("Letzte Runde:\n" + jsonObj.getString("lap_time").replaceAll(";",":"));
                     fastestTimeLabel.setText("Schnellste Runde:\n" + jsonObj.getString("best_time").replaceAll(";",":"));
                     speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
-                    lapLabel.setText("Runde:\n3/" + jsonObj.getString("lap"));
+                    lapLabel.setText("Runde:\n" + jsonObj.getString("lap") +"\3");
+                    if(!Boolean.parseBoolean(jsonObj.getString("race_finished"))) OGRacerGame.getInstance().isRunning = false;
+
+
 
                 }
             } catch (JSONException e) {
