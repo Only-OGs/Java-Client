@@ -6,7 +6,6 @@ import OGRacerGame.OGRacerGame;
 import Rendering.CarRenderer;
 import Rendering.RenderSegment;
 import Rendering.SpritesRenderer;
-import Rendering.SunShade;
 import Road.*;
 import Root.StyleGuide;
 import Screens.MenuArea.MainMenu;
@@ -16,7 +15,6 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -34,6 +32,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GameScreen extends ScreenAdapter implements IInputHandler {
 
@@ -588,6 +587,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     }
 
     private void updateCars() {
+        AtomicBoolean b = new AtomicBoolean(true);
         ArrayList<Car> cars = new ArrayList<>();
 
         try {
@@ -618,8 +618,21 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                                 c.setZ(pos);
                                 c.setOffset(offset);
                                 c.setPercent((float) Util.percentRemaining((float) (pos%200),200f));
+                                b.set(false);
                             }
                         });
+                    }
+                    if(b.get()){
+                        CustomSprite sprite = switch (jsonObj.getString("asset")) {
+                            case "1" -> new CustomSprite("car01.png", offset, pos);
+                            case "2" -> new CustomSprite("car02.png", offset, pos);
+                            case "3" -> new CustomSprite("car03.png", offset, pos);
+                            case "4" -> new CustomSprite("car04.png", offset, pos);
+                            case "5" -> new CustomSprite("truck.png", offset, pos);
+                            case "6" -> new CustomSprite("semi.png", offset, pos);
+                            default -> new CustomSprite(offset, pos);
+                        };
+                        cars.add(new Car(id, sprite));
                     }
                 }
 

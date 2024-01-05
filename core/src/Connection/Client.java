@@ -39,8 +39,6 @@ public class Client {
 
     public static String joinStatus;
 
-    public static String joinMessage;
-
     public static String lobbyID;
 
     public static String[] playerAndMessage;
