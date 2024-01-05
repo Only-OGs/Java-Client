@@ -207,7 +207,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
         if (Client.startGame) {
             Client.startGame = false;
-            updateCars();
+            startPosition();
             placeSprites();
         }
         updateHUD();
@@ -586,6 +586,26 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             e.printStackTrace();
         }
         RoadBuilder.addSprites(segments,sprites.toArray(sprites.toArray(CustomSprite[]::new)));
+    }
+
+    private void startPosition(){
+        try {
+            // Iteriere durch jedes JSON-Objekt im Array
+            for (int i = 0; i < Client.jsonArrayStartPos.length(); i++) {
+                JSONObject jsonObj = Client.jsonArrayStartPos.getJSONObject(i);
+
+                // Greife auf die Werte der Schlüssel zu
+                float offset = Float.parseFloat(jsonObj.getString("offset"));
+                double pos = Double.parseDouble(jsonObj.getString("pos"));
+                String id = jsonObj.getString("id");
+                if (id.equals(userID)) {
+                    playerX = offset;
+                    cameraPosition=pos;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateCars() {
