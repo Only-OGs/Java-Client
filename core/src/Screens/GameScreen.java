@@ -544,8 +544,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         }
         //Beschleunigen | Bremsen | Nach Links | Nach Rechts
         checkInput(OGRacerGame.getInstance(), delta);
-
-
     }
 
     private void checkSpriteCollision(Segment playerSegment) {
@@ -555,14 +553,12 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         for (int i = 0; i < playerSegment.getSprites().length; i++) {
 
             double scale = playerSegment.getP1().getScreen().getScale();
-
             CustomSprite sprite = playerSegment.getSprites()[i];
             double spriteX = sprite.getOffset() < 0 ? sprite.getOffset() : sprite.getOffset() + 0.25;
             double spriteW = (sprite.getT().getWidth() * scale) * 2;
             double _playerX = playerX - 0.5;
             double playerW = (CarRenderer.tS.getWidth() * scale);
 
-            System.out.println("P:" + playerX + "   S:" + spriteX);
             if ((sprite.getOffset() >= 0 && Util.overlap(_playerX, playerW, spriteX + 0.125f, spriteW-0.125f, 0.5f)) ||
                     (sprite.getOffset() < 0 && Util.overlap(playerX, playerW, spriteX-spriteW-0.25, spriteW , 0.5f))) {
                 playerSpeed = playerMaxSpeed / 5;
@@ -725,6 +721,4 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     public void setPlayerX(float playerX) {
         this.playerX = playerX;
     }
-
-
 }

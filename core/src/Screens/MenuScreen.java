@@ -41,7 +41,6 @@ private ShapeRenderer shapeRenderer = new ShapeRenderer();
         if (Constants.music != null&& SettingMenu.musicCheck) {
             Constants.music.setLooping(true);
             Constants.music.setVolume(0.01f);
-            System.out.println(SettingMenu.musicCheck);
             Constants.music.play();
 
 
