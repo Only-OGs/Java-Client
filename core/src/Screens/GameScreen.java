@@ -162,6 +162,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         leaderboard = new Leaderboard(stage);
         setupTimerLabel();
         setupHUD(stage);
+        startPosition();
     }
 
 
@@ -621,18 +622,18 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                                 b.set(false);
                             }
                         });
-                    }
-                    if(b.get()){
-                        CustomSprite sprite = switch (jsonObj.getString("asset")) {
-                            case "1" -> new CustomSprite("car01.png", offset, pos);
-                            case "2" -> new CustomSprite("car02.png", offset, pos);
-                            case "3" -> new CustomSprite("car03.png", offset, pos);
-                            case "4" -> new CustomSprite("car04.png", offset, pos);
-                            case "5" -> new CustomSprite("truck.png", offset, pos);
-                            case "6" -> new CustomSprite("semi.png", offset, pos);
-                            default -> new CustomSprite(offset, pos);
-                        };
-                        cars.add(new Car(id, sprite));
+                        if(b.get()){
+                            CustomSprite sprite = switch (jsonObj.getString("asset")) {
+                                case "1" -> new CustomSprite("car01.png", offset, pos);
+                                case "2" -> new CustomSprite("car02.png", offset, pos);
+                                case "3" -> new CustomSprite("car03.png", offset, pos);
+                                case "4" -> new CustomSprite("car04.png", offset, pos);
+                                case "5" -> new CustomSprite("truck.png", offset, pos);
+                                case "6" -> new CustomSprite("semi.png", offset, pos);
+                                default -> new CustomSprite(offset, pos);
+                            };
+                            cars.add(new Car(id, sprite));
+                        }
                     }
                 }
 
@@ -641,6 +642,26 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             e.printStackTrace();
         }
         setNewCars(cars.toArray(Car[]::new));
+    }
+
+    private void startPosition(){
+        try {
+            // Iteriere durch jedes JSON-Objekt im Array
+            for (int i = 0; i < Client.jsonArrayUpdatePos.length(); i++) {
+                JSONObject jsonObj = Client.jsonArrayUpdatePos.getJSONObject(i);
+
+                // Greife auf die Werte der Schlüssel zu
+                float offset = Float.parseFloat(jsonObj.getString("offset"));
+                double pos = Double.parseDouble(jsonObj.getString("pos"));
+                String id = jsonObj.getString("id");
+                if (id.equals(userID)) {
+                    playerX = offset;
+                    cameraPosition=pos;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

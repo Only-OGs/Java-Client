@@ -59,6 +59,7 @@ public class Client {
     public static JSONArray jsonArrayAssets;
 
     public static JSONArray jsonArrayUpdatePos;
+    public static JSONArray jsonArrayStartPos;
     public static JSONArray jsonArrayLeaderboard;
 
     public static boolean start = false;
@@ -225,7 +226,7 @@ public class Client {
 
             startGame = true;
             // Erstelle ein JSONArray-Objekt aus dem JSON-String
-            jsonArrayUpdatePos = (JSONArray) args[0];
+            jsonArrayStartPos = (JSONArray) args[0];
 
         });
 
