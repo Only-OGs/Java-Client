@@ -162,7 +162,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         leaderboard = new Leaderboard(stage);
         setupTimerLabel();
         setupHUD(stage);
-        startPosition();
     }
 
 
@@ -207,7 +206,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
         if (Client.startGame) {
             Client.startGame = false;
-            updateCars();
+            startPosition();
             placeSprites();
         }
         updateHUD();
