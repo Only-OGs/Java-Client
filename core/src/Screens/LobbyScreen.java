@@ -7,6 +7,7 @@ import Root.StyleGuide;
 import Screens.MenuArea.LobbyMenu;
 import Screens.MenuArea.LoginMenu;
 import Screens.MenuArea.MultiplayerMenu;
+import Screens.MenuArea.SettingMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
@@ -56,16 +57,14 @@ public class LobbyScreen extends ScreenAdapter {
 
     private final TextButton readyButton = new TextButton("Nicht Bereit", Constants.buttonSkin);
 
-    private final Button[] lobbyButton = {
-            new TextButton("Verlassen", Constants.buttonSkin),
-            new TextButton("Einstellungen", Constants.buttonSkin),
-            new TextButton("Abmelden", Constants.buttonSkin),
-            new TextButton("Nicht Bereit", Constants.buttonSkin)
-    };
+    private TextButton fullScreen = new TextButton(SettingMenu.fullScreenString, Constants.buttonSkin);
+    private Label fullscreenLabel = new Label("Vollbildmodus", Constants.buttonSkin);
 
     private final MessageChat chat;
 
     private boolean ready = false;
+
+    private boolean settingsActive = false;
 
 
     public LobbyScreen(String ID) {
@@ -118,6 +117,7 @@ public class LobbyScreen extends ScreenAdapter {
     public void render(float delta) {
         ScreenUtils.clear(20 / 255f, 21 / 255f, 44 / 255f, 1.0f);
         Gdx.gl.glEnable(GL20.GL_BLEND);
+        if(settingsActive) showSettings();
 
         if (!Client.connect) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
 
@@ -148,6 +148,7 @@ public class LobbyScreen extends ScreenAdapter {
             Client.waitGame = false;
             OGRacerGame.getInstance().setScreen(new LoadingScreen(ID));
         }
+
 
 
     }
@@ -188,6 +189,8 @@ public class LobbyScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
+                if(!settingsActive) settingsActive = true;
+                else settingsActive = false;
             }
         });
 
@@ -208,6 +211,15 @@ public class LobbyScreen extends ScreenAdapter {
                 }
             }
         });
+    }
+
+    private void showSettings(){
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(new Color(0,0,0,0.5f));
+        shapeRenderer.rect(stage.getWidth()/2-125,stage.getHeight()/2-125,250,250);
+        shapeRenderer.end();
+
     }
 
     private void setupButton() {

@@ -148,7 +148,7 @@ public class RoadBuilder {
     private static CustomSprite[] createSpriteArr(int l){
         CustomSprite[] cs= new CustomSprite[l/4];
         for(int i=0;i<l/4;i++){
-            CustomSprite s = new CustomSprite("23",i%4==0?-2:2,i*4*1000);
+            CustomSprite s = new CustomSprite("22",i%4==0?-2:2,i*4*1000);
             cs[i]=s;
         }
         return cs;
