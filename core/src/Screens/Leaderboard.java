@@ -19,7 +19,6 @@ public class Leaderboard {
     private ArrayList<Label> posis = new ArrayList<>();
     private ArrayList<Label> names = new ArrayList<>();
     private ArrayList<Label> times = new ArrayList<>();
-
     private ShapeRenderer renderer = new ShapeRenderer();
 
     private Label
@@ -30,18 +29,6 @@ public class Leaderboard {
 
     public Leaderboard(Stage gameStage) {
         this.gameStage = gameStage;
-        //testData();
-
-    }
-
-    private void testData() {
-
-        posis.add(new Label("1", Constants.buttonSkin));
-        names.add(new Label("donatboy", Constants.buttonSkin));
-        times.add(new Label("01:10:45", Constants.buttonSkin));
-        posis.add(new Label("2", Constants.buttonSkin));
-        names.add(new Label("Olli", Constants.buttonSkin));
-        times.add(new Label("01:23:45", Constants.buttonSkin));
     }
 
     private void loadData() {
@@ -62,7 +49,6 @@ public class Leaderboard {
     }
 
     public void show() {
-
 
         if (Client.jsonArrayLeaderboard != null) {
             loadData();
@@ -117,7 +103,5 @@ public class Leaderboard {
         gameStage.addActor(posiTitle);
         gameStage.addActor(idNameTitle);
         gameStage.addActor(totalTimeTitle);
-
-
     }
 }

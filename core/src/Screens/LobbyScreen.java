@@ -66,7 +66,6 @@ public class LobbyScreen extends ScreenAdapter {
 
     private boolean settingsActive = false;
 
-
     public LobbyScreen(String ID) {
         this.ID = ID;
         chat = new MessageChat(ID, stage);
@@ -148,9 +147,6 @@ public class LobbyScreen extends ScreenAdapter {
             Client.waitGame = false;
             OGRacerGame.getInstance().setScreen(new LoadingScreen(ID));
         }
-
-
-
     }
 
     private void buttonListener() {
@@ -219,7 +215,6 @@ public class LobbyScreen extends ScreenAdapter {
         shapeRenderer.setColor(new Color(0,0,0,0.5f));
         shapeRenderer.rect(stage.getWidth()/2-125,stage.getHeight()/2-125,250,250);
         shapeRenderer.end();
-
     }
 
     private void setupButton() {
@@ -259,7 +254,6 @@ public class LobbyScreen extends ScreenAdapter {
         for (int i = 0; i <= 560; i += 80)
             shapeRenderer.rect(100, ((float) Gdx.graphics.getHeight() / 16) + i, 400, 40);
         shapeRenderer.end();
-
 
         createPlayer();
 

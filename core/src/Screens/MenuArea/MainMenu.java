@@ -14,7 +14,6 @@ public class MainMenu extends MenuScreen {
         removeButton();
         addButton("Einzelspieler","Einstellungen","Mehrspieler");
         buttonListener();
-
     }
 
     @Override

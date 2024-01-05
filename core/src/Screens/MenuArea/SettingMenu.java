@@ -29,17 +29,16 @@ public class SettingMenu extends MenuScreen {
     public static String musicString = "AN";
 
     public static boolean musicCheck = true;
-    private Slider musicSlider;
 
     protected ShapeRenderer shapeRenderer = new ShapeRenderer();
 
-
     private TextButton fullScreen = new TextButton(fullScreenString, Constants.buttonSkin);
+
     private Label fullscreenLabel = new Label("Vollbildmodus", Constants.buttonSkin);
 
     private TextButton music = new TextButton(musicString, Constants.buttonSkin);
-    private Label musicLabel = new Label("Musik", Constants.buttonSkin);
 
+    private Label musicLabel = new Label("Musik", Constants.buttonSkin);
 
     public SettingMenu() {
         Constants.title.setText("Einstellungen");
@@ -47,7 +46,6 @@ public class SettingMenu extends MenuScreen {
         addButton("Zurueck", "", "");
         setup();
         buttonListener();
-
     }
 
     private void setup() {
@@ -56,7 +54,6 @@ public class SettingMenu extends MenuScreen {
         fullscreenLabel.setFontScale(1.4f);
         fullscreenLabel.setBounds(stage.getWidth()/2 -50,stage.getHeight()/2 -20,100,50);
         fullScreen.setBounds(stage.getWidth()/2 -50 +280, stage.getHeight()/2 -20, 100, 40);
-
 
         musicLabel.setColor(StyleGuide.white);
         musicLabel.setFontScale(1.4f);
@@ -67,7 +64,6 @@ public class SettingMenu extends MenuScreen {
         stage.addActor(fullscreenLabel);
         stage.addActor(music);
         stage.addActor(musicLabel);
-
     }
 
 
@@ -99,7 +95,6 @@ public class SettingMenu extends MenuScreen {
                     fullScreen.setText(fullScreenString);
                     Gdx.graphics.setWindowedMode(1329,886);
                     OGRacerGame.getInstance().setScreen(new SettingMenu());
-
                 }
             }
         });
@@ -118,16 +113,12 @@ public class SettingMenu extends MenuScreen {
                     music.setText(musicString);
                     Constants.music.setVolume(0f);
                 }
-
             }
         });
-
-
     }
 
     @Override
     public void render(float delta) {
-
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Constants.clickButton.play(0.2f);
@@ -139,24 +130,6 @@ public class SettingMenu extends MenuScreen {
         shapeRenderer.rect(0, 0,200,800);
         shapeRenderer.end();
 
-
         super.render(delta);
     }
-
-    private void addSlider() {
-        musicSlider = new Slider(0.0f, 0.7f, 0.01f, false, Constants.buttonSkin);
-        musicSlider.setValue(Constants.music.getVolume());
-        musicSlider.setPosition(stage.getWidth() / 1.3f, 20);
-        musicSlider.setSize(200, 10);
-
-        musicSlider.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
-                float volume = musicSlider.getValue();
-                Constants.music.setVolume(volume);
-            }
-        });
-        stage.addActor(musicSlider);
-    }
-
 }

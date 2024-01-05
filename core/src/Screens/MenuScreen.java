@@ -30,8 +30,6 @@ public abstract class MenuScreen extends ScreenAdapter {
 
     protected TextButton buttonLeft, buttonMiddle, buttonRight;
 
-private ShapeRenderer shapeRenderer = new ShapeRenderer();
-
     public MenuScreen() {
         batch = new SpriteBatch();
         backgroundTexture = new Texture("background/BackgroundOGRacerGame.png");
@@ -42,16 +40,11 @@ private ShapeRenderer shapeRenderer = new ShapeRenderer();
             Constants.music.setLooping(true);
             Constants.music.setVolume(0.01f);
             Constants.music.play();
-
-
         }
         Constants.title.setSize(Gdx.graphics.getWidth(), 100);
         Constants.title.setPosition(0, stage.getHeight() - 100);
         Constants.title.setAlignment(Align.center);
         stage.addActor(Constants.title);
-
-
-
     }
 
     @Override
@@ -62,12 +55,8 @@ private ShapeRenderer shapeRenderer = new ShapeRenderer();
         batch.begin();
         batch.draw(backgroundTexture, 0, 0, stage.getWidth(), stage.getHeight());
         batch.end();
-
-
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-
-
     }
 
     @Override

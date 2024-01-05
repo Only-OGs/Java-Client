@@ -90,7 +90,6 @@ public class LoginMenu extends MultiplayerMenu {
             }
             Client.loginMessage = "";
         }
-
     }
 
     @Override

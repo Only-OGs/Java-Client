@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 
 public class StyleGuide {
 
-
     public final static com.badlogic.gdx.graphics.Color purpleLight = new com.badlogic.gdx.graphics.Color((float) 255 / 255, (float) 6 / 255, (float) 193 / 255, 1);
     public final static com.badlogic.gdx.graphics.Color purpleDark = new com.badlogic.gdx.graphics.Color((float) 186 / 255, (float) 46 / 255, (float) 151 / 255, 1);
     public final static com.badlogic.gdx.graphics.Color turquoiseLight = new com.badlogic.gdx.graphics.Color((float) 0, (float) 255 / 255, (float) 234 / 255, 1);
@@ -16,5 +15,4 @@ public class StyleGuide {
     public final static com.badlogic.gdx.graphics.Color white = new com.badlogic.gdx.graphics.Color((float) 255, (float) 255, (float) 255, 1);
     public final static com.badlogic.gdx.graphics.Color blueDark = new com.badlogic.gdx.graphics.Color((float) 20 / 255, (float) 21 / 255, (float) 44 / 255, 1);
     public final static Color[] colors = {purpleLight, purpleDark, turquoiseLight, turquoiseDark, yellowLight, yellowDark, orangeLight, orangeDark};
-
 }
