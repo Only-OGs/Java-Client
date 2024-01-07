@@ -89,13 +89,11 @@ public class Client {
         // Überprüft, ob wir Verbunden sind.
         socket.on(Socket.EVENT_CONNECT, args -> {
             connect = true;
-            System.out.println("Verbindung zum Server");
         });
 
         // Überprüft ob wir nicht mehr verbunden sind.
         socket.on(Socket.EVENT_DISCONNECT, args -> {
             connect = false;
-            System.out.println("Verbindung zum Server verloren");
         });
 
         // Bekommt man Login Informationen

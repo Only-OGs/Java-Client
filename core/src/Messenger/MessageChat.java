@@ -81,13 +81,14 @@ public class MessageChat {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (textfield.getText().length() > 0) {
-                    Client.sendMessage(convertMessage(textfield.getText()));
+                    Client.sendMessage(textfield.getText());
                 }
             }
         });
     }
 
     public void update(ArrayList<String> idList) {
+
         if (Client.playerAndMessage != null) {
             Label playerColor = new Label("", Constants.buttonSkin);
             if (ID.equals(Client.playerAndMessage[0])) {
@@ -99,7 +100,7 @@ public class MessageChat {
                 }
 
                 chatWindow.add(playerColor).right().row();
-                chatWindow.add((Client.playerAndMessage[1]) + "\n").right().row();
+                chatWindow.add((convertMessage(Client.playerAndMessage[1])) + "\n").right().row();
                 textfield.setText("");
                 Client.playerAndMessage = null;
 
@@ -114,7 +115,7 @@ public class MessageChat {
                 }
 
                 chatWindow.add(playerColor).left().row();
-                chatWindow.add(Client.playerAndMessage[1] + "\n").left().row();
+                chatWindow.add(convertMessage(Client.playerAndMessage[1]) + "\n").left().row();
                 Client.playerAndMessage = null;
                 Constants.messageReceived.play(0.05f);
             }
@@ -145,10 +146,10 @@ public class MessageChat {
                 break;
             }
 
-            int nextSpace = input.lastIndexOf(" ", index + 24);
-            if (nextSpace <= index || nextSpace >= index + 24) {
-                sb.append(input, index, index + 24).append("-\n");
-                index += 24;
+            int nextSpace = input.lastIndexOf(" ", index + 23);
+            if (nextSpace <= index || nextSpace >= index + 23) {
+                sb.append(input, index, index + 23).append("-\n");
+                index += 23;
             } else {
                 sb.append(input, index, nextSpace).append("\n");
                 index = nextSpace + 1;

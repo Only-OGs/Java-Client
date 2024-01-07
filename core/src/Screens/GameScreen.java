@@ -232,7 +232,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         else OGRacerGame.movement = true;
 
         stage.draw();
-        System.out.println(Gdx.graphics.getFramesPerSecond());
 
         if (multiplayer) {
             if (camaeraPositionOld != cameraPosition) {
