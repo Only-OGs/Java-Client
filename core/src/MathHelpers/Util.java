@@ -78,8 +78,8 @@ public class Util {
         return 1 / (Math.pow(Math.E, (distance * distance * density)));
     }
 
-    public static int increase(int start, int increment, int max) {
-        int result = start + increment;
+    public static double increase(double start, double increment, double max) {
+        double result = start + increment;
         while (result >= max)
             result -= max;
         while (result < 0)

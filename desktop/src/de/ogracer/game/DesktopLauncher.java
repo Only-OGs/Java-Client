@@ -9,7 +9,7 @@ public class DesktopLauncher {
 
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setForegroundFPS(60);
+		config.useVsync(true);
 		config.setTitle("OG Racer");
 		config.setWindowedMode(1329,886);
 		config.setResizable(false);

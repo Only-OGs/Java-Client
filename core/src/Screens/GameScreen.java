@@ -37,6 +37,11 @@ import java.util.Arrays;
 
 public class GameScreen extends ScreenAdapter implements IInputHandler {
 
+    private float skyOffset=0;
+    private float hillOffset=0;
+    private float treeOffset=0;
+
+
     private boolean multiplayer;
 
     private String userID = "";
@@ -95,10 +100,12 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
     private float playerX = 0;
 
+    private float playerY = 0;
+
     private float playerZ = cameraHeight * cameraDepth;
 
     private float playerSpeed = 0;
-    private final float playerMaxSpeed = segmentLenght;
+    private final float playerMaxSpeed = segmentLenght*60;
     private final float accel = playerMaxSpeed / 5;
     private final float offRoadDecel = -playerMaxSpeed / 2;
     private final float offRoadLimit = playerMaxSpeed / 4;
@@ -112,7 +119,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     private double fogDensity = drawDistance / 20;
     private boolean newCarsToPlace = false;
     private Car[] newCars;
-    private Car[] oldCars;
 
     private float timer = 0;
     private float lastLapTime = 0;
@@ -171,35 +177,26 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         ScreenUtils.clear(0, 0, 0, 1);
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        renderBackground();
+        batch.begin();
+        renderBackground(batch,txtSky, skyOffset, (int) (playerY*0.001f*resolution));
+        renderBackground(batch,txtHills, hillOffset, (int) (playerY*0.002f*resolution));
+        renderBackground(batch,txtTrees, treeOffset, (int) (playerY*0.003f*resolution));
+        batch.end();
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         renderSegments(renderer);
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
-
         if (Client.showLeaderboard) leaderboard.show();
 
-
         if (newCarsToPlace) {
-            if (oldCars != null) {
-                for (Car c : oldCars) {
-                    c.remove();
-                }
-            }
-            if (newCars != null) {
-                for (Car c : newCars) {
-                    c.place();
-                }
-                oldCars = newCars;
-            }
+            if (newCars != null) for (Car c : newCars) c.place();
             newCarsToPlace = false;
         }
-        double result = cameraPosition + playerSpeed;
-        while (result >= trackLength)
-            result -= trackLength;
-        while (result < 0)
-            result += trackLength;
+
+        double result = cameraPosition + playerSpeed*Gdx.graphics.getDeltaTime();
+        while (result >= trackLength) result -= trackLength;
+        while (result < 0) result += trackLength;
         lastCameraPosition = cameraPosition;
         cameraPosition = result;
 
@@ -213,32 +210,29 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         updateHUD();
         updatePosition(delta);
 
+        // Sorgt dafür das man erst fahren kann, wenn der Timer abgelaufen ist im Multiplayer
         if (Client.start && multiplayer && !runMultiplayer) {
             runMultiplayer = true;
             timerStartLabel.setText("");
-
             if(!menuOpen) OGRacerGame.getInstance().isRunning = true;
 
-        } else if (!runMultiplayer && multiplayer) {
-            timerStartLabel.setText(Client.timerToStart);
-        }
-
+        } else if (!runMultiplayer && multiplayer) timerStartLabel.setText(Client.timerToStart);
         if (runMultiplayer && multiplayer) timer += delta;
 
+        // Sorgt dafür das man erst fahren kann, wenn der Timer abgelaufen ist im Einzelspieler
         if (timerToStart <= 0 && !multiplayer && !runSingleplayer) {
             runSingleplayer = true;
             timerStartLabel.setText("");
-
             if(!menuOpen) OGRacerGame.getInstance().isRunning = true;
 
         } else if (!runSingleplayer && !multiplayer) startTimer(delta);
         if (runSingleplayer && !multiplayer) timer += delta;
 
-
         if (playerSpeed <= 0) OGRacerGame.movement = false;
         else OGRacerGame.movement = true;
 
         stage.draw();
+        System.out.println(Gdx.graphics.getFramesPerSecond());
 
         if (multiplayer) {
             if (camaeraPositionOld != cameraPosition) {
@@ -255,16 +249,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 Client.updatePos = false;
                 updateCars();
             }
-        }
-    }
-
-    private void renderBackground() {
-        SpriteBatch sB = new SpriteBatch();
-        sB.begin();
-        sB.draw(txtSky,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        sB.draw(txtHills,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        sB.draw(txtTrees,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        sB.end();
+        }else for (Car c:newCars) CarsKi.kiMoveBot(c);
     }
 
     private void startTimer(float delta) {
@@ -275,6 +260,17 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         } else timerStartLabel.setText((int) timerToStart);
     }
 
+    private void renderBackground(SpriteBatch sB,Texture txt,float offset,int lift) {
+        int sourceX = (int) Math.floor(txt.getWidth()*offset);
+        int sourceW = Math.min(txt.getWidth(),txt.getWidth()-sourceX);
+
+        int destW = (int) Math.floor(Gdx.graphics.getWidth()*(sourceW/(txt.getWidth()/2f)));
+
+        sB.draw(txt,0,lift,destW,Gdx.graphics.getHeight(),sourceX,0,sourceW,txt.getHeight(),false,false);
+        if(sourceW<txt.getWidth()){
+            sB.draw(txt,destW-1,lift,Gdx.graphics.getWidth()-destW,Gdx.graphics.getHeight(),0,0,txt.getWidth()/2-sourceW,txt.getHeight(),false,false);
+        }
+    }
 
     @Override
     public void dispose() {
@@ -290,8 +286,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         float basePercent = (float) Util.percentRemaining((float) cameraPosition, segmentLenght);
         float playerPercent = (float) Util.percentRemaining((float) cameraPosition + playerZ, segmentLenght);
         int playerY = (int) Util.interpolate(playerSegment.getP1().getWorld().getY(), playerSegment.getP2().getWorld().getY(), playerPercent);
-        float x = 0;                                                                                                    //Akkumulierter seitlicher versatz der Segmente
-        float dx = 0f - (baseSegment.getCurve() * basePercent);                                                            // hilft die Versätzung zu speichern und berechnen
+        float x = 0; //Akkumulierter seitlicher versatz der Segmente
+        float dx = 0f - (baseSegment.getCurve() * basePercent); // hilft die Versätzung zu speichern und berechnen
         sunOffset += dx * speedPercent;
 
         Segment segment;
@@ -362,6 +358,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
             }
         }
+        skyOffset  = (float) Util.increase( skyOffset, (0.001f   * playerSegment.getCurve() * (cameraPosition-lastCameraPosition)/segmentLenght), 1);
+        hillOffset  = (float) Util.increase(skyOffset,  (0.002f  * playerSegment.getCurve() * (cameraPosition-lastCameraPosition)/segmentLenght), 1);
+        treeOffset  = (float) Util.increase(skyOffset,  (0.003f  * playerSegment.getCurve() * (cameraPosition-lastCameraPosition)/segmentLenght), 1);
     }
 
 
@@ -483,7 +482,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
             lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
             fastestTimeLabel.setText("Schnellste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
-            speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
+            speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed/100, playerMaxSpeed));
             lapLabel.setText("Runde:\n" + lap);
 
         } else if (Client.jsonArrayUpdatePos != null) {
@@ -495,11 +494,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                         timeLabel.setText("Zeit:\n" + jsonObj.getString("current_time").replaceAll(";", ":"));
                         lastLapTimeLabel.setText("Letzte Runde:\n" + jsonObj.getString("lap_time").replaceAll(";", ":"));
                         fastestTimeLabel.setText("Schnellste Runde:\n" + jsonObj.getString("best_time").replaceAll(";", ":"));
-                        if (Boolean.parseBoolean(jsonObj.getString("race_finished")))
-                            OGRacerGame.getInstance().isRunning = false;
+                        if (Boolean.parseBoolean(jsonObj.getString("race_finished"))) OGRacerGame.getInstance().isRunning = false;
                         lapLabel.setText("Runde:\n" + jsonObj.getString("lap") + "/3");
                     }
-                    speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed, playerMaxSpeed));
+                    speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed/100, playerMaxSpeed));
 
                 }
             } catch (JSONException e) {

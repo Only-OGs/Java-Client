@@ -78,7 +78,7 @@ public class LoginMenu extends MultiplayerMenu {
         user = userField.getText();
         password = passwordField.getText();
 
-        if (user.length() > 3 && password.length() > 5 && Client.connect) {
+        if (user.length() >= 3 && password.length() >= 6 && Client.connect) {
             delay = 0;
             userField.setText("");
             passwordField.setText("");

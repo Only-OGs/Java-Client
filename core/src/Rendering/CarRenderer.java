@@ -20,7 +20,7 @@ public class CarRenderer {
 
     public static void renderPlayerCar(SpriteBatch batch, Segment curr,float resolution, int roadwidth,float speedPercent,float scale,int destX, int destY){
         Texture t;
-        float bounce = (float) ((1.5+Math.random()*speedPercent*resolution)* Util.randomChoice(new int[]{1, -1}));
+        float bounce = (float) ((1.5+Math.random()*speedPercent*resolution)* Util.randomChoice(new int[]{1, -1}))*speedPercent;
         if(curr.getP1().getWorld().getY()<curr.getP2().getWorld().getY()){
             if(Gdx.input.isKeyPressed(Input.Keys.A) && OGRacerGame.getInstance().isRunning && OGRacerGame.movement){
                 t=tUpL;

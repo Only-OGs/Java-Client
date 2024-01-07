@@ -43,8 +43,8 @@ public class Car {
         }
     }
 
-    private Segment findSegment(double p,Segment[] segments,int segmentLenght) {
-        return segments[(int) (Math.floor(p / segmentLenght) % segments.length)];
+    private Segment findSegment(double p,Segment[] segments,int segmentLength) {
+        return segments[(int) (Math.floor(p / segmentLength) % segments.length)];
     }
     public void setZ(double z){
         remove();

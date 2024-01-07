@@ -154,15 +154,16 @@ public class RoadBuilder {
         return cs;
     }
     public static Car[] createCarArr(int l){
-        CustomSprite[] cs= new CustomSprite[l/10];
-        for(int i=0;i<l/10;i++){
-            CustomSprite s = new CustomSprite(tCar,i%4==0?-0.5f:0.5f,i*10*500);
+        CustomSprite[] cs= new CustomSprite[l/40];
+        for(int i=0;i<l/40;i++){
+            CustomSprite s = new CustomSprite(tCar,i%4==0?-0.5f:0.5f,i*40*500);
             cs[i]=s;
         }
-        Car[] cars = new Car[l/10];
-        for(int i = 0;i<l/10;i++){
+        Car[] cars = new Car[l/40];
+        for(int i = 0;i<l/40;i++){
             Car temp = new Car();
             temp.setCs(cs[i]);
+            temp.setSpeed(Util.randomInt(100,200)*60);
             cars[i]= temp;
         }
         return  cars;
