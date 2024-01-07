@@ -141,7 +141,7 @@ public class MessageChat {
         int index = 0;
 
         while (index < length) {
-            if (index + 24 >= length) {
+            if (index + 23 >= length) {
                 sb.append(input.substring(index));
                 break;
             }
