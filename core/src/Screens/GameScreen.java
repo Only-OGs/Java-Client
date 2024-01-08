@@ -588,8 +588,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     private void startPosition(){
         try {
             // Iteriere durch jedes JSON-Objekt im Array
-            for (int i = 0; i < Client.jsonArrayStartPos.length(); i++) {
-                JSONObject jsonObj = Client.jsonArrayStartPos.getJSONObject(i);
+            for (int i = 0; i < Client.jsonArrayUpdatePos.length(); i++) {
+                JSONObject jsonObj = Client.jsonArrayUpdatePos.getJSONObject(i);
 
                 // Greife auf die Werte der Schlüssel zu
                 float offset = Float.parseFloat(jsonObj.getString("offset"));
