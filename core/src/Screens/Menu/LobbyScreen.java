@@ -30,9 +30,9 @@ import java.util.ArrayList;
 
 public class LobbyScreen extends ScreenAdapter {
 
-    private FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    private final FitViewport viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-    private Stage stage = new Stage(viewport);
+    private final Stage stage = new Stage(viewport);
 
     private int searchCounter = 0;
 
@@ -47,7 +47,6 @@ public class LobbyScreen extends ScreenAdapter {
     private final Label timeLabel = new Label("Start in:", Constants.buttonSkin);
 
     private final Label[] player = new Label[8];
-
 
     private final TextButton leaveButton = new TextButton("Verlassen", Constants.buttonSkin);
 
@@ -83,6 +82,7 @@ public class LobbyScreen extends ScreenAdapter {
         chat.build();
     }
 
+    // Setup der Labels im Screen.
     private void setupLabel() {
 
         for (int i = 0; i < player.length; i++) player[i] = new Label("Suchen ", Constants.buttonSkin);
@@ -102,12 +102,9 @@ public class LobbyScreen extends ScreenAdapter {
         lobbyCode = new Label("Lobby ID: ", style);
         lobbyCode.setBounds(stage.getWidth() / 1.2f, 25, 190, 10);
         stage.addActor(lobbyCode);
-
-        readyButton.setBounds(Gdx.graphics.getWidth() / 1.9f - 6, (float) Gdx.graphics.getHeight() / 16 - 5, 410, 60);
-        readyButton.setColor(StyleGuide.purpleDark);
-        stage.addActor(readyButton);
     }
 
+    // Setzt die Lobby ID.
     private void addLobbyID() {
         lobbyCode.setText("Lobby ID: " + Client.lobbyID);
     }
@@ -149,6 +146,7 @@ public class LobbyScreen extends ScreenAdapter {
         }
     }
 
+    // Hier wird auf Button Ereignisse reagiert.
     private void buttonListener() {
 
         leaveButton.addListener(new ClickListener() {
@@ -209,6 +207,7 @@ public class LobbyScreen extends ScreenAdapter {
         });
     }
 
+    // Zeigt die Einstellungsmöglichkeiten
     private void showSettings(){
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -217,6 +216,7 @@ public class LobbyScreen extends ScreenAdapter {
         shapeRenderer.end();
     }
 
+    // Setup der Buttons im Screen.
     private void setupButton() {
 
         leaveButton.setBounds(70, stage.getHeight() / 1.5f, 180, 50);
@@ -233,22 +233,20 @@ public class LobbyScreen extends ScreenAdapter {
         logoutButton.setTransform(true);
         logoutButton.setRotation(90);
         stage.addActor(logoutButton);
+
+        readyButton.setBounds(Gdx.graphics.getWidth() / 1.9f - 6, (float) Gdx.graphics.getHeight() / 16 - 5, 410, 60);
+        readyButton.setColor(StyleGuide.purpleDark);
+        stage.addActor(readyButton);
     }
 
-    @Override
-    public void resize(int width, int height) {
-        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-        super.resize(width, height);
-    }
+    /*
+     * Erstellt 8 Felder und je nachdem wie viele Spieler der Lobby beitreten,
+     * werden die Suchen Felder mit Spielern gefüllt.
+     * Die Felder aktualisieren sich, wenn Spieler der Lobby beitreten sowie verlassen.
+     * Jeder Spieler erhält eine einzigartige Farbe, die sich im MessageChat wieder spiegelt.
+     */
+    private void updateField() {
 
-    @Override
-    public void dispose() {
-        stage.dispose();
-        shapeRenderer.dispose();
-        super.dispose();
-    }
-
-    void updateField() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(new Color(255, 255, 255, 0.08f));
         for (int i = 0; i <= 560; i += 80)
@@ -282,7 +280,8 @@ public class LobbyScreen extends ScreenAdapter {
         }
     }
 
-    void createPlayer() {
+    // Setzt für die Spieler eine Position/farbe wo sie angezeigt werden in der Suchen Liste.
+    private void createPlayer() {
         int yOffset = 560;
         for (int i = 0; i < player.length; i++) {
             player[i].setPosition(120, ((float) Gdx.graphics.getHeight() / 16) + yOffset);
@@ -290,5 +289,18 @@ public class LobbyScreen extends ScreenAdapter {
             stage.addActor(player[i]);
             yOffset -= 80;
         }
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        super.resize(width, height);
+    }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
+        shapeRenderer.dispose();
+        super.dispose();
     }
 }

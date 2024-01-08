@@ -31,9 +31,7 @@ public class Leaderboard {
         this.gameStage = gameStage;
     }
 
-    /**
-     * Holt sich die Daten für das Leaderboard.
-     */
+    // Holt sich die Daten für das Leaderboard.
     private void loadData() {
         try {
             // Iteriere durch jedes JSON-Objekt im Array

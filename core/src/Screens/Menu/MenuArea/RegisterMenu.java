@@ -43,6 +43,7 @@ public class RegisterMenu extends MultiplayerMenu {
         super.render(delta);
     }
 
+    // Überprüft, ob die Mindestlängen der Eingaben korrekt sind.
     private void checkData(){
         user = userField.getText();
         password = passwordField.getText();

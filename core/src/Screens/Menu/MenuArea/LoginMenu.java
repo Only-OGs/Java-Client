@@ -21,6 +21,7 @@ public class LoginMenu extends MultiplayerMenu {
         createInputField(0);
     }
 
+    // Zeigt die Logoutnachricht vom Server für eine bestimmte Zeit an.
     private void logoutMessage() {
 
         if (200 == delay) {
@@ -34,6 +35,7 @@ public class LoginMenu extends MultiplayerMenu {
         }
     }
 
+    // Zeigt die Login-Nachricht vom Server für eine bestimmte Zeit an.
     private void loginMessage() {
 
         if (200 == delay) {
@@ -49,6 +51,7 @@ public class LoginMenu extends MultiplayerMenu {
 
     @Override
     public void render(float delta) {
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             Constants.clickButton.play(0.2f);
             OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
@@ -56,7 +59,7 @@ public class LoginMenu extends MultiplayerMenu {
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             Constants.clickButton.play(0.2f);
-            checkdata();
+            checkData();
         }
         if ("login_failed".equals(Client.loginStatus)) {
             loginMessage();
@@ -69,12 +72,13 @@ public class LoginMenu extends MultiplayerMenu {
         if ("login_success".equals(Client.loginStatus)) {
             statusOnOff = false;
             OGRacerGame.getInstance().setScreen(new LobbyMenu(user));
-
         }
         super.render(delta);
     }
 
-    private void checkdata() {
+    // Überprüft, ob die Mindestlängen der Eingaben korrekt sind.
+    private void checkData() {
+
         user = userField.getText();
         password = passwordField.getText();
 
@@ -98,8 +102,7 @@ public class LoginMenu extends MultiplayerMenu {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Constants.clickButton.play(0.2f);
-                checkdata();
-
+                checkData();
             }
         });
 

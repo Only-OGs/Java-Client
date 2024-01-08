@@ -39,7 +39,7 @@ public class MessageChat {
         buttonListener();
     }
 
-    /**
+    /*
      * Hier wird ein Label für das Chatfenster erstellt.
      */
     private void addChatLable() {
@@ -82,7 +82,7 @@ public class MessageChat {
         stage.addActor(textfield);
     }
 
-    /**
+    /*
      * Durch Ausführen der Methode wird ein Listener angestoßen, der überprüft, ob der Senden-Button geklickt wurde.
      */
     private void buttonListener() {
@@ -154,7 +154,7 @@ public class MessageChat {
         return MathUtils.isEqual(scrollY, maxY);
     }
 
-    /**
+    /*
      *  Sorgt dafür das eine Chat Nachricht so bearbeitet wird, das sie passend im Chat angezeigt wird.
      */
     private String convertMessage(String input) {

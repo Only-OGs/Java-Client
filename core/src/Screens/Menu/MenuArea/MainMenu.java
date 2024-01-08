@@ -33,7 +33,6 @@ public class MainMenu extends MenuScreen {
                 Constants.clickButton.play(0.2f);
                 removeButton();
                 OGRacerGame.getInstance().setScreen(new SettingMenu());
-
             }
         });
 

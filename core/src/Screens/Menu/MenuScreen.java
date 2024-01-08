@@ -74,6 +74,13 @@ public abstract class MenuScreen extends ScreenAdapter {
         Constants.messageReceived.dispose();
     }
 
+    /**
+     * Fügt je nach Bedarf 1 - 3 Button dem Screen hinzu.
+     *
+     * @param btn1
+     * @param btn2
+     * @param btn3
+     */
     protected void addButton(String btn1, String btn2, String btn3) {
 
         if (!Objects.equals(btn1, "")) {
@@ -98,11 +105,17 @@ public abstract class MenuScreen extends ScreenAdapter {
         }
     }
 
+    /**
+     * Löscht alle Buttons auf dem Screen, wodurch sie nicht mehr angezeigt werden.
+     */
     protected void removeButton() {
         if (buttonLeft != null) buttonLeft.remove();
         if (buttonMiddle != null) buttonMiddle.remove();
         if (buttonRight != null) buttonRight.remove();
     }
 
+    /**
+     * Kann jede untere Klasse implementieren, um Click Listener hinzuzufügen.
+     */
     protected abstract void buttonListener();
 }

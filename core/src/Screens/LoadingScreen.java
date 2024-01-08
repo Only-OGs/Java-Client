@@ -50,7 +50,7 @@ public class LoadingScreen extends ScreenAdapter {
         super.resize(width, height);
     }
 
-    /**
+    /*
      * Startet einen Thread wo für 1 Sekunde gewartet wird, um sicherzustellen,
      * dass alle notwendigen Daten vom Server empfangen wurden.
      * Danach wird zum GameScreen gewechselt.
