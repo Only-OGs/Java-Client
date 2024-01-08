@@ -1,10 +1,10 @@
-package Screens.MenuArea;
+package Screens.Menu.MenuArea;
 
 import Connection.Client;
 import OGRacerGame.OGRacerGame;
-import Screens.Constants;
-import Screens.LobbyScreen;
-import Screens.SearchScreen;
+import Helpers.Constants;
+import Screens.Menu.LobbyScreen;
+import Screens.Menu.SearchScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -87,6 +87,9 @@ public class LobbyMenu extends MultiplayerMenu {
         stage.addActor(idLabel);
     }
 
+    /**
+     * Hier wird auf Button Ereignisse reagiert.
+     */
     protected void lobbyButtonListener() {
         createButton.addListener(new ClickListener() {
             @Override
@@ -135,6 +138,7 @@ public class LobbyMenu extends MultiplayerMenu {
         });
     }
 
+    // Erstellt die Textbuttons für die Auswahl der einzelnen Auswahlmöglichkeiten.
     private void lobbySelectionButton() {
 
         createButton = new TextButton("Lobby erstellen", Constants.buttonSkin);
@@ -163,6 +167,7 @@ public class LobbyMenu extends MultiplayerMenu {
         Gdx.input.setInputProcessor(stage);
     }
 
+    // Sorgt dafür das zum Lobby-Screen gewechselt wird, mit der dazugehörigen ID.
     private void createLobby() throws JSONException {
         LobbyScreen.idList = new ArrayList<>(8);
         OGRacerGame.getInstance().setScreen(new LobbyScreen(ID));

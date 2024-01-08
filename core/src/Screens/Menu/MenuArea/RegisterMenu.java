@@ -1,8 +1,8 @@
-package Screens.MenuArea;
+package Screens.Menu.MenuArea;
 
 import Connection.Client;
 import OGRacerGame.OGRacerGame;
-import Screens.Constants;
+import Helpers.Constants;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -43,6 +43,7 @@ public class RegisterMenu extends MultiplayerMenu {
         super.render(delta);
     }
 
+    // Überprüft, ob die Mindestlängen der Eingaben korrekt sind.
     private void checkData(){
         user = userField.getText();
         password = passwordField.getText();

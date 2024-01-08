@@ -1,13 +1,11 @@
-package Screens;
+package Screens.Menu;
 
-import Connection.Client;
-import Screens.MenuArea.SettingMenu;
+import Helpers.Constants;
+import Screens.Menu.MenuArea.SettingMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
@@ -76,6 +74,13 @@ public abstract class MenuScreen extends ScreenAdapter {
         Constants.messageReceived.dispose();
     }
 
+    /**
+     * Fügt je nach Bedarf 1 - 3 Button dem Screen hinzu.
+     *
+     * @param btn1
+     * @param btn2
+     * @param btn3
+     */
     protected void addButton(String btn1, String btn2, String btn3) {
 
         if (!Objects.equals(btn1, "")) {
@@ -100,11 +105,17 @@ public abstract class MenuScreen extends ScreenAdapter {
         }
     }
 
+    /**
+     * Löscht alle Buttons auf dem Screen, wodurch sie nicht mehr angezeigt werden.
+     */
     protected void removeButton() {
         if (buttonLeft != null) buttonLeft.remove();
         if (buttonMiddle != null) buttonMiddle.remove();
         if (buttonRight != null) buttonRight.remove();
     }
 
+    /**
+     * Kann jede untere Klasse implementieren, um Click Listener hinzuzufügen.
+     */
     protected abstract void buttonListener();
 }

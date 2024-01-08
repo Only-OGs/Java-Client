@@ -1,24 +1,16 @@
-package Screens.MenuArea;
+package Screens.Menu.MenuArea;
 
 import OGRacerGame.OGRacerGame;
 import Root.StyleGuide;
-import Screens.Constants;
-import Screens.MenuScreen;
+import Helpers.Constants;
+import Screens.Menu.MenuScreen;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.ScreenUtils;
-
-import javax.swing.*;
 
 public class SettingMenu extends MenuScreen {
 
@@ -32,23 +24,24 @@ public class SettingMenu extends MenuScreen {
 
     protected ShapeRenderer shapeRenderer = new ShapeRenderer();
 
-    private TextButton fullScreen = new TextButton(fullScreenString, Constants.buttonSkin);
+    private final TextButton fullScreen = new TextButton(fullScreenString, Constants.buttonSkin);
 
-    private Label fullscreenLabel = new Label("Vollbildmodus", Constants.buttonSkin);
+    private final Label fullscreenLabel = new Label("Vollbildmodus", Constants.buttonSkin);
 
     private TextButton music = new TextButton(musicString, Constants.buttonSkin);
 
-    private Label musicLabel = new Label("Musik", Constants.buttonSkin);
+    private final Label musicLabel = new Label("Musik", Constants.buttonSkin);
 
     public SettingMenu() {
         Constants.title.setText("Einstellungen");
         removeButton();
         addButton("Zurueck", "", "");
-        setup();
+        setupLabel();
         buttonListener();
     }
 
-    private void setup() {
+    // Setzt Farbe, Größe und Position von Labels.
+    private void setupLabel() {
 
         fullscreenLabel.setColor(StyleGuide.white);
         fullscreenLabel.setFontScale(1.4f);
@@ -65,7 +58,6 @@ public class SettingMenu extends MenuScreen {
         stage.addActor(music);
         stage.addActor(musicLabel);
     }
-
 
     @Override
     protected void buttonListener() {

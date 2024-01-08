@@ -1,7 +1,7 @@
 package Road;
 
 
-import MathHelpers.Util;
+import Helpers.Util;
 import Screens.GameScreen;
 import com.badlogic.gdx.Gdx;
 

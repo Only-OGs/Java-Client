@@ -1,9 +1,10 @@
-package Screens;
+package Screens.Menu;
 
 import Connection.Client;
 import OGRacerGame.OGRacerGame;
-import Screens.MenuArea.LobbyMenu;
-import Screens.MenuArea.MultiplayerMenu;
+import Helpers.Constants;
+import Screens.Menu.MenuArea.LobbyMenu;
+import Screens.Menu.MenuArea.MultiplayerMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
@@ -32,20 +33,23 @@ public class SearchScreen extends ScreenAdapter {
     private final Stage stage = new Stage(viewport);
 
     private final Label serverMessage = new Label("", Constants.buttonSkin);
+
     private final Label lobbyCodeTitle = new Label("Lobby ID Eingabe", Constants.buttonSkin);
+
     private final String ID;
+
     private Label idLabel;
+
     private int count = 0;
 
     public SearchScreen(String ID) {
         this.ID = ID;
-
         Gdx.input.setInputProcessor(stage);
-
         setup();
         buttonListener();
     }
 
+    // Setzt die Größen der Buttons und des Eingabefelds.
     private void setup(){
         messageField.setBounds((float) Gdx.graphics.getWidth() / 2 - (75), (float) Gdx.graphics.getHeight() / 2, 150, 22);
         sendButton.setBounds((float) Gdx.graphics.getWidth() / 2 - (75), (float) Gdx.graphics.getHeight() / 2 - 60, 150, 50);
@@ -58,6 +62,7 @@ public class SearchScreen extends ScreenAdapter {
         setupLabel();
     }
 
+    // Setzt alle Labels für den Screen.
     private void setupLabel(){
 
         idLabel = new Label("ID: " + ID, Constants.buttonSkin);
@@ -78,6 +83,7 @@ public class SearchScreen extends ScreenAdapter {
         stage.addActor(serverMessage);
     }
 
+    // Hier wird auf Button Ereignisse reagiert.
     private void buttonListener() {
         sendButton.addListener(new ClickListener() {
             @Override

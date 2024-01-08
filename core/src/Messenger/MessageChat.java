@@ -2,7 +2,7 @@ package Messenger;
 
 import Connection.Client;
 import Root.StyleGuide;
-import Screens.Constants;
+import Helpers.Constants;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -39,12 +39,18 @@ public class MessageChat {
         buttonListener();
     }
 
+    /*
+     * Hier wird ein Label für das Chatfenster erstellt.
+     */
     private void addChatLable() {
         chatLable = new Label("Chat: ", Constants.buttonSkin);
         chatLable.setBounds(scrollChat.getX(), scrollChat.getY() + scrollChat.getHeight(), 190, 40);
         stage.addActor(chatLable);
     }
 
+    /**
+     * Hier wird das Chatfenster gebaut, sowie das Eingabefeld mit dme dazugehörigen Senden Button.
+     */
     public void build() {
         Pixmap backgroundPixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         backgroundPixmap.setColor(new Color(255, 255, 255, 0.08f)); // Hier setzt du die Hintergrundfarbe auf Rot
@@ -76,6 +82,9 @@ public class MessageChat {
         stage.addActor(textfield);
     }
 
+    /*
+     * Durch Ausführen der Methode wird ein Listener angestoßen, der überprüft, ob der Senden-Button geklickt wurde.
+     */
     private void buttonListener() {
         sendButton.addListener(new ClickListener() {
             @Override
@@ -87,6 +96,9 @@ public class MessageChat {
         });
     }
 
+    /**
+     * Hier wird überprüft, von wem eine Nachricht hereinkam und zeigt sie dementsprechend anders an.
+     */
     public void update(ArrayList<String> idList) {
 
         if (Client.playerAndMessage != null) {
@@ -122,6 +134,10 @@ public class MessageChat {
         }
     }
 
+    /**
+     * Sorgt dafür, dass wenn man eine Nachricht erhält das Nachrichtenfenster nach unten scrollt,
+     * wenn man sich unten befindet.
+     */
     public void updateScrollBar() {
         if (isScrollBarAtBottom()) {
             scrollChat.layout(); // Das Layout aktualisieren, bevor wir scrollen
@@ -129,12 +145,18 @@ public class MessageChat {
         }
     }
 
+    /**
+     * Sorgt dafür das automatisch gescrollt wird.
+     */
     public boolean isScrollBarAtBottom() {
         float scrollY = scrollChat.getScrollY();
         float maxY = scrollChat.getActor().getHeight() - scrollChat.getHeight();
         return MathUtils.isEqual(scrollY, maxY);
     }
 
+    /*
+     *  Sorgt dafür das eine Chat Nachricht so bearbeitet wird, das sie passend im Chat angezeigt wird.
+     */
     private String convertMessage(String input) {
         StringBuilder sb = new StringBuilder();
         int length = input.length();
@@ -155,7 +177,6 @@ public class MessageChat {
                 index = nextSpace + 1;
             }
         }
-
         return sb.toString();
     }
 }

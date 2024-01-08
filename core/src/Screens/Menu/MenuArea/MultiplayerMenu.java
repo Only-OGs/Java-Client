@@ -1,11 +1,9 @@
-package Screens.MenuArea;
+package Screens.Menu.MenuArea;
 
 import Connection.Client;
+import Helpers.Constants;
 import OGRacerGame.OGRacerGame;
-import Screens.Constants;
-import Screens.MenuScreen;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import Screens.Menu.MenuScreen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -28,7 +26,7 @@ public class MultiplayerMenu extends MenuScreen {
         buttonListener();
         addConnectionStatuslabel();
         addServerMessageLabel();
-        if(!Client.connect) Client.connect();
+        if (!Client.connect) Client.connect();
     }
 
     @Override
@@ -38,13 +36,13 @@ public class MultiplayerMenu extends MenuScreen {
             status.remove();
             status = new Label("ONLINE", Constants.buttonSkin, "status1");
             status.setSize(190, 40);
-            status.setPosition( stage.getWidth() / 30f,  stage.getHeight() - 85);
+            status.setPosition(stage.getWidth() / 30f, stage.getHeight() - 85);
             stage.addActor(status);
         } else if (!Client.connect && Client.socket != null && statusOnOff) {
             status.remove();
             status = new Label("OFFLINE", Constants.buttonSkin, "status2");
             status.setSize(190, 40);
-            status.setPosition( stage.getWidth() / 30f,  stage.getHeight() - 85);
+            status.setPosition(stage.getWidth() / 30f, stage.getHeight() - 85);
             stage.addActor(status);
         }
         super.render(delta);
@@ -76,21 +74,25 @@ public class MultiplayerMenu extends MenuScreen {
                 OGRacerGame.getInstance().setScreen(new RegisterMenu());
             }
         });
-
     }
+
+    // Setzt ein Label was anzeigt, wie der Status des Servers ist.
     private void addConnectionStatuslabel() {
         statusTitle = new Label("Server Status", Constants.buttonSkin);
         statusTitle.setSize(190, 40);
-        statusTitle.setPosition( stage.getWidth() / 30f,  stage.getHeight() - 65);
+        statusTitle.setPosition(stage.getWidth() / 30f, stage.getHeight() - 65);
 
         status = new Label("OFFLINE", Constants.buttonSkin, "status2");
         status.setSize(190, 40);
-        status.setPosition( stage.getWidth() / 30f,  stage.getHeight() - 85);
+        status.setPosition(stage.getWidth() / 30f, stage.getHeight() - 85);
 
         stage.addActor(statusTitle);
         stage.addActor(status);
     }
 
+    /**
+     * Erstellt die Felder zur Eingabe des Benutzernamens und Passworts
+     */
     protected void createInputField(int mode) {
         userField = new TextField("", Constants.buttonSkin);
         passwordField = new TextField("", Constants.buttonSkin);
@@ -100,21 +102,21 @@ public class MultiplayerMenu extends MenuScreen {
         passwordField.setPasswordCharacter('*');
         passwordField.setPasswordMode(true);
 
-        userLabel = new Label("Benutzername",Constants. buttonSkin);
+        userLabel = new Label("Benutzername", Constants.buttonSkin);
         passwordLabel = new Label("Passwort", Constants.buttonSkin);
 
-         if (mode == 0) {
-            userLabel.setBounds(buttonLeft.getX() + 28, buttonLeft.getY()-80,50,30);
-            userField.setBounds(buttonLeft.getX() + 28, buttonLeft.getY()-120,190,40);
+        if (mode == 0) {
+            userLabel.setBounds(buttonLeft.getX() + 28, buttonLeft.getY() - 80, 50, 30);
+            userField.setBounds(buttonLeft.getX() + 28, buttonLeft.getY() - 120, 190, 40);
 
-            passwordLabel.setBounds(buttonLeft.getX() + 28, buttonLeft.getY()-180,50,30);
-            passwordField.setBounds(buttonLeft.getX() + 28, buttonLeft.getY()-220,190,40);
+            passwordLabel.setBounds(buttonLeft.getX() + 28, buttonLeft.getY() - 180, 50, 30);
+            passwordField.setBounds(buttonLeft.getX() + 28, buttonLeft.getY() - 220, 190, 40);
 
-        } else if(mode == 1) {
-            userLabel.setBounds(buttonRight.getX() + 28, buttonRight.getY()-80,50,30);
-            userField.setBounds(buttonRight.getX() + 28, buttonRight.getY()-120,190,40);
-            passwordLabel.setBounds(buttonRight.getX() + 28, buttonRight.getY()-180,50,30);
-            passwordField.setBounds(buttonRight.getX() + 28, buttonRight.getY()-220,190,40);
+        } else if (mode == 1) {
+            userLabel.setBounds(buttonRight.getX() + 28, buttonRight.getY() - 80, 50, 30);
+            userField.setBounds(buttonRight.getX() + 28, buttonRight.getY() - 120, 190, 40);
+            passwordLabel.setBounds(buttonRight.getX() + 28, buttonRight.getY() - 180, 50, 30);
+            passwordField.setBounds(buttonRight.getX() + 28, buttonRight.getY() - 220, 190, 40);
         }
 
         stage.addActor(userLabel);
@@ -123,9 +125,12 @@ public class MultiplayerMenu extends MenuScreen {
         stage.addActor(passwordField);
     }
 
+    /**
+     * Erstellt ein Feld wo man Server Nachrichten anzeigen lassen kann.
+     */
     protected void addServerMessageLabel() {
-        serverMessage = new Label("",Constants.buttonSkin);
-        serverMessage.setBounds(stage.getWidth() / 30f, 10,190, 40);
+        serverMessage = new Label("", Constants.buttonSkin);
+        serverMessage.setBounds(stage.getWidth() / 30f, 10, 190, 40);
         stage.addActor(serverMessage);
     }
 }

@@ -1,6 +1,7 @@
 package Screens;
 
 import Connection.Client;
+import Helpers.Constants;
 import OGRacerGame.OGRacerGame;
 import Root.StyleGuide;
 import com.badlogic.gdx.graphics.Color;
@@ -14,12 +15,11 @@ import java.util.ArrayList;
 
 public class Leaderboard {
 
-    private Stage gameStage;
-
-    private ArrayList<Label> posis = new ArrayList<>();
-    private ArrayList<Label> names = new ArrayList<>();
-    private ArrayList<Label> times = new ArrayList<>();
-    private ShapeRenderer renderer = new ShapeRenderer();
+    private final Stage gameStage;
+    private final ArrayList<Label> posis = new ArrayList<>();
+    private final ArrayList<Label> names = new ArrayList<>();
+    private final ArrayList<Label> times = new ArrayList<>();
+    private final ShapeRenderer renderer = new ShapeRenderer();
 
     private Label
             title = new Label("Leaderboard", Constants.buttonSkin, "title"),
@@ -31,6 +31,7 @@ public class Leaderboard {
         this.gameStage = gameStage;
     }
 
+    // Holt sich die Daten für das Leaderboard.
     private void loadData() {
         try {
             // Iteriere durch jedes JSON-Objekt im Array
@@ -48,6 +49,10 @@ public class Leaderboard {
         }
     }
 
+    /**
+     * baut das Leaderboard und sorgt dafür das, das Leaderboard auf dem Screen angezeigt wird,
+     * mit den erhalten Daten vom Server.
+     */
     public void show() {
 
         if (Client.jsonArrayLeaderboard != null) {
@@ -71,7 +76,6 @@ public class Leaderboard {
         int counter = 0;
         for (int i = 200; i <= 620; i += 60) {
 
-
             if (posis.size() > counter) {
                 posis.get(counter).setBounds(260, gameStage.getHeight() - i - 10, 100, 50);
                 names.get(counter).setBounds(460, gameStage.getHeight() - i - 10, 100, 50);
@@ -82,9 +86,7 @@ public class Leaderboard {
 
                 counter++;
             }
-
-            renderer.rect(255
-                    , gameStage.getHeight() - i, 800, 30);
+            renderer.rect(255, gameStage.getHeight() - i, 800, 30);
         }
         renderer.end();
 
@@ -99,6 +101,7 @@ public class Leaderboard {
         posiTitle.setBounds(260, gameStage.getHeight() - 150, 100, 20);
         idNameTitle.setBounds(460, gameStage.getHeight() - 150, 100, 20);
         totalTimeTitle.setBounds(710, gameStage.getHeight() - 150, 100, 20);
+
         gameStage.addActor(title);
         gameStage.addActor(posiTitle);
         gameStage.addActor(idNameTitle);

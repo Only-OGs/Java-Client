@@ -2,7 +2,7 @@ package Connection;
 
 import Road.RoadPart;
 import Screens.GameScreen;
-import Screens.LobbyScreen;
+import Screens.Menu.LobbyScreen;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import org.json.JSONArray;
@@ -16,114 +16,95 @@ import java.util.Arrays;
 public class Client {
 
     public static Socket socket;
-
     public static String loginStatus;
-
     public static String loginMessage;
-
     public static String logoutStatus;
-
     public static String logoutMessage;
-
     public static String registerStatus;
-
     public static String registerMessage;
-
     public static String searchLobbyCodeStatus;
-
     public static String searchLobbyCodeMessage;
-
     public static String quickStatus;
-
     public static String quickMessage;
-
     public static String joinStatus;
-
-    public static String joinMessage;
-
     public static String lobbyID;
-
     public static String[] playerAndMessage;
-
     public static String playerString;
-
     public static int timer = -1;
-
     public static boolean timerStatus = false;
-
     public static boolean waitGame = false;
-
     public static boolean startGame = false;
-
     public static boolean updatePos = false;
-
     public static boolean connect = false;
     public static JSONArray jsonArrayAssets;
-
-    public static JSONArray jsonArrayStartPos;
     public static JSONArray jsonArrayUpdatePos;
     public static JSONArray jsonArrayLeaderboard;
-
     public static boolean start = false;
     public static String timerToStart = "";
-
     public static boolean showLeaderboard = false;
 
-
-    public Client() {
-
-    }
-
     /**
-     * Stellt die Verbindung zum Server her und sorgt dafür, das wir dauerhaft Daten empfangen können.
-     * Checkt gleichzeititg ob der Server Online oder Offline ist.
+     * Stellt die Verbindung zum Server her und sorgt dafür, dass wir dauerhaft Daten empfangen können.
+     * Checkt gleichzeitig ob der Server Online oder Offline ist.
      */
     public static void connect() {
 
         try {
+            // IP-Adresse vom Server
             socket = IO.socket("http://89.58.1.158:8080");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
 
         // Überprüft, ob wir Verbunden sind.
-        socket.on(Socket.EVENT_CONNECT, args -> {
-            connect = true;
-        });
+        socket.on(Socket.EVENT_CONNECT, args -> connect = true);
 
-        // Überprüft ob wir nicht mehr verbunden sind.
-        socket.on(Socket.EVENT_DISCONNECT, args -> {
-            connect = false;
-        });
+        // Überprüft, ob wir nicht mehr verbunden sind.
+        socket.on(Socket.EVENT_DISCONNECT, args -> connect = false);
 
-        // Bekommt man Login Informationen
+        // Bekommt man Login Informationen.
         socket.on("login", args -> {
+
             JSONObject obj = (JSONObject) args[0];
             try {
-                loginStatus = (String) obj.get("status"); // login_success und login_failed
-                loginMessage = (String) obj.get("message"); // Nachricht vom Server wie Benutzer nicht vorhanden oder Passwort falsch
+
+                // login_success oder login_failed
+                loginStatus = (String) obj.get("status");
+
+                // Nachricht vom Server
+                loginMessage = (String) obj.get("message");
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
         });
 
-        // Bekommt man Logout Informationen
+        // Bekommt man Logout Informationen.
         socket.on("logout", args -> {
+
             JSONObject obj = (JSONObject) args[0];
             try {
-                logoutStatus = (String) obj.get("status"); // logout_success und logout_failed
-                logoutMessage = (String) obj.get("message"); // Nachricht vom Server Benutzer abgemeldet
+
+                // logout_success und logout_failed
+                logoutStatus = (String) obj.get("status");
+
+                // Nachricht vom Server: Benutzer abgemeldet.
+                logoutMessage = (String) obj.get("message");
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
         });
 
-        // Bekommt man Informationen über den Registrierungsvorgang
+        // Bekommt man Informationen über den Registrierungsvorgang.
         socket.on("register", args -> {
+
             JSONObject obj = (JSONObject) args[0];
             try {
-                registerStatus = (String) obj.get("status"); // register_success und register_failed
-                registerMessage = (String) obj.get("message"); // Nachricht vom Server wie Benutzer schon vorhanden
+
+                // register_success und register_failed
+                registerStatus = (String) obj.get("status");
+
+                // Nachricht vom Server: Benutzer schon vorhanden.
+                registerMessage = (String) obj.get("message");
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
@@ -131,11 +112,15 @@ public class Client {
 
         // Spiel mit Lobby Code suchen
         socket.on("search_lobby", args -> {
+
             JSONObject obj = (JSONObject) args[0];
             try {
 
-                searchLobbyCodeStatus = (String) obj.get("status"); // success und failed
-                searchLobbyCodeMessage = (String) obj.get("message");// Nachricht vom Server
+                // success und failed
+                searchLobbyCodeStatus = (String) obj.get("status");
+
+                // Nachricht vom Server
+                searchLobbyCodeMessage = (String) obj.get("message");
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -144,25 +129,29 @@ public class Client {
 
         // Schnelles Spiel suchen
         socket.on("get_lobby", args -> {
+
             JSONObject obj = (JSONObject) args[0];
             try {
 
-                quickStatus = (String) obj.get("status"); // success und failed
-                quickMessage = (String) obj.get("message");// Nachricht vom Server
+                // success und failed
+                quickStatus = (String) obj.get("status");
 
+                // Nachricht vom Server
+                quickMessage = (String) obj.get("message");
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
         });
 
-        // Hier werden Lobby Information an den Client geschickt
+        // Hier werden Lobby Information an den Client geschickt.
         socket.on("lobby_management", args -> {
+
             JSONObject obj = (JSONObject) args[0];
             try {
+
                 playerString = (String) obj.get("players");
                 lobbyID = (String) obj.get("lobby");
-                //joinMessage = (String) obj.get("message");
                 joinStatus = (String) obj.get("status");
 
             } catch (JSONException e) {
@@ -175,21 +164,16 @@ public class Client {
 
         });
 
-        // Wenn der Timer abgebrochen wird, löst es das Event aus
-        socket.on("timer_abrupt", args -> {
-            timerStatus = true;
-        });
+        // Wenn der Timer abgebrochen wird, löst es das Event aus.
+        socket.on("timer_abrupt", args -> timerStatus = true);
 
-        // Zeit die abläuft bis das Spiel startet
-        socket.on("timer_countdown", args -> {
-            timer = (int) args[0];
+        // Zeit die abläuft bis das Spiel startet.
+        socket.on("timer_countdown", args -> timer = (int) args[0]);
 
-        });
-
-        // Wenn das Spiel startet wird, löst es das Event aus
+        // Wenn das Spiel startet wird, löst es das Event aus.
         socket.on("load_level", args -> {
-            waitGame = true;
 
+            waitGame = true;
             ArrayList<RoadPart> road = new ArrayList<>();
 
             try {
@@ -213,38 +197,26 @@ public class Client {
         });
 
         // Bekomme ich alle Sprites für die Umgebung geschickt.
-        socket.on("load_assets", args -> {
+        socket.on("load_assets", args -> jsonArrayAssets = (JSONArray) args[0]);
 
-
-            // Erstelle ein JSONArray-Objekt aus dem JSON-String
-            jsonArrayAssets = (JSONArray) args[0];
-
-        });
-
-        // Schickt einmalig die Startposition
+        // Schickt einmalig die Startposition der Spieler Autos.
         socket.on("wait_for_start", args -> {
 
             startGame = true;
-            // Erstelle ein JSONArray-Objekt aus dem JSON-String
-            jsonArrayStartPos = (JSONArray) args[0];
-
-        });
-
-        // Schickt jedesmal etwas, wenn was im Spiel sich bewegt
-        socket.on("updated_positions", args -> {
-            updatePos = true;
-
-            // Erstelle ein JSONArray-Objekt aus dem JSON-String
             jsonArrayUpdatePos = (JSONArray) args[0];
-
         });
 
-        // Wird eine Chatnachricht erhalten mit ID udn seine Nachricht
-        socket.on("new_message", args -> {
-            playerAndMessage = ((String) args[0]).split(";");
+        // Schickt alle Daten rund um die AI autos, Spieler Autos, GameHUD sowie Sprite Information.
+        socket.on("updated_positions", args -> {
+
+            updatePos = true;
+            jsonArrayUpdatePos = (JSONArray) args[0];
         });
 
-        // Wenn eine Lobby erstellt wird, bekommt man eine Lobby ID zurück
+        // Wird eine Chatnachricht erhalten mit ID und seine Nachricht.
+        socket.on("new_message", args -> playerAndMessage = ((String) args[0]).split(";"));
+
+        // Wenn eine Lobby erstellt wird, bekommt man eine Lobby ID zurück.
         socket.on("lobby_created", args -> {
             JSONObject obj = (JSONObject) args[0];
 
@@ -256,15 +228,9 @@ public class Client {
             }
         });
 
-        // Wird eine Chatnachricht erhalten mit ID udn seine Nachricht
-        socket.on("new_message", args -> {
-
-            playerAndMessage = ((String) args[0]).split(";");
-
-        });
-
-        // Wenn ein Spieler die Lobby verlässt, wird eie neue Liste gesendet mit dn aktuellen Spielern
+        // Wenn ein Spieler die Lobby verlässt, wird eine neue Liste gesendet mit den aktuellen Spielern.
         socket.on("player_leave", args -> {
+
             JSONObject obj = (JSONObject) args[0];
             try {
                 playerString = (String) obj.get("message");
@@ -276,21 +242,19 @@ public class Client {
             LobbyScreen.idList = new ArrayList<>(Arrays.asList(Client.playerString.split(";")));
         });
 
-        // Wird der Timer gesendet, wann die Spieler fahren dürfen
-        socket.on("start_race_timer", args -> {
-            timerToStart = args[0].toString();
-        });
+        // Wird der Timer gesendet, wann die Spieler fahren dürfen.
+        socket.on("start_race_timer", args -> timerToStart = args[0].toString());
 
         // Wird ausgeführt, wenn das Rennen starten darf.
         socket.on("start_race", args -> {
+
             start = true;
             start_watch();
         });
 
-        // Sobald das Spiel zuende ist, bekommt man die Spieler Daten Posi, Name und Zeit
+        // Sobald das Spiel zu Ende ist, bekommt man die Spieler Daten Position, Name und Zeit.
         socket.on("get_leaderboard", args -> {
 
-            // Erstelle ein JSONArray-Objekt aus dem JSON-String
             jsonArrayLeaderboard = (JSONArray) args[0];
             showLeaderboard = true;
         });
@@ -318,15 +282,11 @@ public class Client {
     }
 
     public static void sendLogOut() throws JSONException {
-        if (socket.connected()) {
-            socket.emit("logout");
-        }
+        if (socket.connected()) socket.emit("logout");
     }
 
     public static void sendCreateLobby() {
-        if (socket.connected()) {
-            socket.emit("create_lobby");
-        }
+        if (socket.connected()) socket.emit("create_lobby");
     }
 
     public static void joinLobby(String lobbyCode) throws JSONException {
@@ -338,53 +298,44 @@ public class Client {
     }
 
     public static void sendMessage(String message) {
-        if (socket.connected()) {
-            socket.emit("sent_message", message);
-        }
+        if (socket.connected()) socket.emit("sent_message", message);
     }
 
     public static void leaveLobby() {
-        if (socket.connected()) {
-            socket.emit("leave_lobby");
-        }
+        if (socket.connected()) socket.emit("leave_lobby");
     }
 
     public static void getLobby() {
-        if (socket.connected()) {
-            socket.emit("get_lobby");
-        }
+        if (socket.connected()) socket.emit("get_lobby");
     }
 
     public static void ready() {
-        if (socket.connected()) {
-            socket.emit("is_ready");
-        }
+        if (socket.connected()) socket.emit("is_ready");
     }
 
     public static void notReady() {
-        if (socket.connected()) {
-            socket.emit("not_ready");
-        }
+        if (socket.connected()) socket.emit("not_ready");
     }
 
     public static void clientReady() {
-        if (socket.connected()) {
-            socket.emit("client_is_ingame");
-        }
+        if (socket.connected()) socket.emit("client_is_ingame");
     }
 
     public static void leaveGame() {
-        if (socket.connected()) {
-            socket.emit("game_leave");
-        }
+        if (socket.connected()) socket.emit("game_leave");
     }
 
     public static void start_watch(){
-        if (socket.connected()) {
-            socket.emit("start_watch");
-        }
+        if (socket.connected()) socket.emit("start_watch");
     }
 
+    /**
+     * Schickt dem Server immer die aktuelle Position des Spieler-Autos
+     *
+     * @param offset
+     * @param pos
+     * @throws JSONException
+     */
     public static void ingamePos(float offset, double pos) throws JSONException {
         if (socket.connected()) {
             JSONObject obj = new JSONObject();

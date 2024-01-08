@@ -1,6 +1,6 @@
 package Road;
 
-import MathHelpers.Util;
+import Helpers.Util;
 import Rendering.ColorThemes;
 import Screens.GameScreen;
 import com.badlogic.gdx.graphics.Color;
