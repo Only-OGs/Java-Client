@@ -1,29 +1,25 @@
 package OGRacerGame;
 
-
 import Screens.GameScreen;
-import Screens.LobbyScreen;
-import Screens.MenuArea.MainMenu;
+import Screens.Menu.MenuArea.MainMenu;
+
 import com.badlogic.gdx.Game;
 
 public class OGRacerGame extends Game {
+
 	private static OGRacerGame instance;
 
 	private GameScreen gameScreen;
 
-
 	public boolean isRunning = false;
+
 	public static boolean movement = false;
 
-
-	private OGRacerGame(){
-
-	}
+	private OGRacerGame(){}
 
 	public static OGRacerGame getInstance() {
-		if (instance == null) {
-			instance = new OGRacerGame();
-		}
+
+		if (instance == null) instance = new OGRacerGame();
 		return instance;
 	}
 	@Override
@@ -31,11 +27,9 @@ public class OGRacerGame extends Game {
 		setup();
 	}
 
-
 	@Override
 	public void render() {
 		super.render();
-
 	}
 
 	@Override

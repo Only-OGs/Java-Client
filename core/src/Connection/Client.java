@@ -2,7 +2,7 @@ package Connection;
 
 import Road.RoadPart;
 import Screens.GameScreen;
-import Screens.LobbyScreen;
+import Screens.Menu.LobbyScreen;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import org.json.JSONArray;

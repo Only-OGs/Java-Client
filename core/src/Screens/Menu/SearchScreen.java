@@ -1,9 +1,10 @@
-package Screens;
+package Screens.Menu;
 
 import Connection.Client;
 import OGRacerGame.OGRacerGame;
-import Screens.MenuArea.LobbyMenu;
-import Screens.MenuArea.MultiplayerMenu;
+import Helpers.Constants;
+import Screens.Menu.MenuArea.LobbyMenu;
+import Screens.Menu.MenuArea.MultiplayerMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;

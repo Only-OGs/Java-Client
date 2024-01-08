@@ -1,22 +1,21 @@
 package Screens;
 
 import Connection.Client;
-import MathHelpers.Util;
+import Helpers.Constants;
+import Helpers.Util;
 import OGRacerGame.OGRacerGame;
 import Rendering.CarRenderer;
 import Rendering.RenderSegment;
 import Rendering.SpritesRenderer;
-import Rendering.SunShade;
 import Road.*;
 import Root.StyleGuide;
-import Screens.MenuArea.MainMenu;
+import Screens.Menu.MenuArea.MainMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -37,27 +36,21 @@ import java.util.Arrays;
 
 public class GameScreen extends ScreenAdapter implements IInputHandler {
 
-    private float skyOffset=0;
-    private float hillOffset=0;
-    private float treeOffset=0;
-
-
-    private boolean multiplayer;
-
+    private float skyOffset = 0;
+    private float hillOffset = 0;
+    private float treeOffset = 0;
+    private final boolean multiplayer;
     private String userID = "";
-
     public static ArrayList<RoadPart> roadBuilders = new ArrayList<>();
-
-    private Viewport viewport;
+    private final Viewport viewport;
 
     protected Stage stage;
+    private final SpriteBatch batch;
 
-    private SpriteBatch batch;
-
-    private ShapeRenderer renderer;
-    private Texture txtSky = new Texture("background/sky.png");
-    private Texture txtHills = new Texture("background/hills.png");
-    private Texture txtTrees = new Texture("background/trees.png");
+    private final ShapeRenderer renderer;
+    private final Texture txtSky = new Texture("background/sky.png");
+    private final Texture txtHills = new Texture("background/hills.png");
+    private final Texture txtTrees = new Texture("background/trees.png");
 
     private static Segment[] segments;
 
@@ -105,7 +98,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     private float playerZ = cameraHeight * cameraDepth;
 
     private float playerSpeed = 0;
-    private final float playerMaxSpeed = segmentLenght*60;
+    private final float playerMaxSpeed = segmentLenght * 60;
     private final float accel = playerMaxSpeed / 5;
     private final float offRoadDecel = -playerMaxSpeed / 2;
     private final float offRoadLimit = playerMaxSpeed / 4;
@@ -178,9 +171,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        renderBackground(batch,txtSky, skyOffset, (int) (playerY*0.001f*resolution));
-        renderBackground(batch,txtHills, hillOffset, (int) (playerY*0.002f*resolution));
-        renderBackground(batch,txtTrees, treeOffset, (int) (playerY*0.003f*resolution));
+        renderBackground(batch, txtSky, skyOffset, (int) (playerY * 0.001f * resolution));
+        renderBackground(batch, txtHills, hillOffset, (int) (playerY * 0.002f * resolution));
+        renderBackground(batch, txtTrees, treeOffset, (int) (playerY * 0.003f * resolution));
         batch.end();
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -194,7 +187,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             newCarsToPlace = false;
         }
 
-        double result = cameraPosition + playerSpeed*Gdx.graphics.getDeltaTime();
+        double result = cameraPosition + playerSpeed * Gdx.graphics.getDeltaTime();
         while (result >= trackLength) result -= trackLength;
         while (result < 0) result += trackLength;
         lastCameraPosition = cameraPosition;
@@ -214,7 +207,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         if (Client.start && multiplayer && !runMultiplayer) {
             runMultiplayer = true;
             timerStartLabel.setText("");
-            if(!menuOpen) OGRacerGame.getInstance().isRunning = true;
+            if (!menuOpen) OGRacerGame.getInstance().isRunning = true;
 
         } else if (!runMultiplayer && multiplayer) timerStartLabel.setText(Client.timerToStart);
         if (runMultiplayer && multiplayer) timer += delta;
@@ -223,7 +216,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         if (timerToStart <= 0 && !multiplayer && !runSingleplayer) {
             runSingleplayer = true;
             timerStartLabel.setText("");
-            if(!menuOpen) OGRacerGame.getInstance().isRunning = true;
+            if (!menuOpen) OGRacerGame.getInstance().isRunning = true;
 
         } else if (!runSingleplayer && !multiplayer) startTimer(delta);
         if (runSingleplayer && !multiplayer) timer += delta;
@@ -248,7 +241,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 Client.updatePos = false;
                 updateCars();
             }
-        }else for (Car c:newCars) CarsKi.kiMoveBot(c);
+        } else for (Car c : newCars) CarsKi.kiMoveBot(c);
     }
 
     private void startTimer(float delta) {
@@ -259,15 +252,15 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         } else timerStartLabel.setText((int) timerToStart);
     }
 
-    private void renderBackground(SpriteBatch sB,Texture txt,float offset,int lift) {
-        int sourceX = (int) Math.floor(txt.getWidth()*offset);
-        int sourceW = Math.min(txt.getWidth(),txt.getWidth()-sourceX);
+    private void renderBackground(SpriteBatch sB, Texture txt, float offset, int lift) {
+        int sourceX = (int) Math.floor(txt.getWidth() * offset);
+        int sourceW = Math.min(txt.getWidth(), txt.getWidth() - sourceX);
 
-        int destW = (int) Math.floor(Gdx.graphics.getWidth()*(sourceW/(txt.getWidth()/2f)));
+        int destW = (int) Math.floor(Gdx.graphics.getWidth() * (sourceW / (txt.getWidth() / 2f)));
 
-        sB.draw(txt,0,lift,destW,Gdx.graphics.getHeight(),sourceX,0,sourceW,txt.getHeight(),false,false);
-        if(sourceW<txt.getWidth()){
-            sB.draw(txt,destW-1,lift,Gdx.graphics.getWidth()-destW,Gdx.graphics.getHeight(),0,0,txt.getWidth()/2-sourceW,txt.getHeight(),false,false);
+        sB.draw(txt, 0, lift, destW, Gdx.graphics.getHeight(), sourceX, 0, sourceW, txt.getHeight(), false, false);
+        if (sourceW < txt.getWidth()) {
+            sB.draw(txt, destW - 1, lift, Gdx.graphics.getWidth() - destW, Gdx.graphics.getHeight(), 0, 0, txt.getWidth() / 2 - sourceW, txt.getHeight(), false, false);
         }
     }
 
@@ -357,9 +350,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
             }
         }
-        skyOffset  = (float) Util.increase( skyOffset, (0.001f   * playerSegment.getCurve() * (cameraPosition-lastCameraPosition)/segmentLenght), 1);
-        hillOffset  = (float) Util.increase(skyOffset,  (0.002f  * playerSegment.getCurve() * (cameraPosition-lastCameraPosition)/segmentLenght), 1);
-        treeOffset  = (float) Util.increase(skyOffset,  (0.003f  * playerSegment.getCurve() * (cameraPosition-lastCameraPosition)/segmentLenght), 1);
+        skyOffset = (float) Util.increase(skyOffset, (0.001f * playerSegment.getCurve() * (cameraPosition - lastCameraPosition) / segmentLenght), 1);
+        hillOffset = (float) Util.increase(skyOffset, (0.002f * playerSegment.getCurve() * (cameraPosition - lastCameraPosition) / segmentLenght), 1);
+        treeOffset = (float) Util.increase(skyOffset, (0.003f * playerSegment.getCurve() * (cameraPosition - lastCameraPosition) / segmentLenght), 1);
     }
 
 
@@ -418,7 +411,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 menuOpen = false;
-                if (!runMultiplayer&& runSingleplayer) OGRacerGame.getInstance().isRunning = true;
+                if (!runMultiplayer && runSingleplayer) OGRacerGame.getInstance().isRunning = true;
                 if (runMultiplayer && Client.start) OGRacerGame.getInstance().isRunning = true;
 
                 exitBackground.setVisible(false);
@@ -481,7 +474,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
             lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
             fastestTimeLabel.setText("Schnellste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
-            speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed/100, playerMaxSpeed));
+            speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed));
             lapLabel.setText("Runde:\n" + lap);
 
         } else if (Client.jsonArrayUpdatePos != null) {
@@ -493,10 +486,11 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                         timeLabel.setText("Zeit:\n" + jsonObj.getString("current_time").replaceAll(";", ":"));
                         lastLapTimeLabel.setText("Letzte Runde:\n" + jsonObj.getString("lap_time").replaceAll(";", ":"));
                         fastestTimeLabel.setText("Schnellste Runde:\n" + jsonObj.getString("best_time").replaceAll(";", ":"));
-                        if (Boolean.parseBoolean(jsonObj.getString("race_finished"))) OGRacerGame.getInstance().isRunning = false;
+                        if (Boolean.parseBoolean(jsonObj.getString("race_finished")))
+                            OGRacerGame.getInstance().isRunning = false;
                         lapLabel.setText("Runde:\n" + jsonObj.getString("lap") + "/3");
                     }
-                    speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed/100, playerMaxSpeed));
+                    speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed));
 
                 }
             } catch (JSONException e) {
@@ -556,8 +550,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             double _playerX = playerX - 0.5;
             double playerW = (CarRenderer.tS.getWidth() * scale);
 
-            if ((sprite.getOffset() >= 0 && Util.overlap(_playerX, playerW, spriteX + 0.125f, spriteW-0.125f, 0.5f)) ||
-                    (sprite.getOffset() < 0 && Util.overlap(playerX, playerW, spriteX-spriteW-0.25, spriteW , 0.5f))) {
+            if ((sprite.getOffset() >= 0 && Util.overlap(_playerX, playerW, spriteX + 0.125f, spriteW - 0.125f, 0.5f)) ||
+                    (sprite.getOffset() < 0 && Util.overlap(playerX, playerW, spriteX - spriteW - 0.25, spriteW, 0.5f))) {
                 playerSpeed = playerMaxSpeed / 5;
                 cameraPosition = Util.increase(playerSegment.getP1().getWorld().getZ(), (int) -playerZ, trackLength);
                 break;
@@ -565,7 +559,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         }
     }
 
-    private void placeSprites(){
+    private void placeSprites() {
         ArrayList<CustomSprite> sprites = new ArrayList<>();
         try {
             // Iteriere durch jedes JSON-Objekt im Array
@@ -576,16 +570,16 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 float offset = Float.parseFloat(jsonObj.getString("side"));
                 double pos = Double.parseDouble(jsonObj.getString("pos"));
                 String texture = jsonObj.getString("model");
-                CustomSprite cs = new CustomSprite(texture,offset,pos);
+                CustomSprite cs = new CustomSprite(texture, offset, pos);
                 sprites.add(cs);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        RoadBuilder.addSprites(segments,sprites.toArray(sprites.toArray(CustomSprite[]::new)));
+        RoadBuilder.addSprites(segments, sprites.toArray(sprites.toArray(CustomSprite[]::new)));
     }
 
-    private void startPosition(){
+    private void startPosition() {
         try {
             // Iteriere durch jedes JSON-Objekt im Array
             for (int i = 0; i < Client.jsonArrayUpdatePos.length(); i++) {
@@ -597,7 +591,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 String id = jsonObj.getString("id");
                 if (id.equals(userID)) {
                     playerX = offset;
-                    cameraPosition=pos;
+                    cameraPosition = pos;
                 }
             }
         } catch (JSONException e) {
@@ -617,7 +611,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                 float offset = Float.parseFloat(jsonObj.getString("offset"));
                 double pos = Double.parseDouble(jsonObj.getString("pos"));
                 String id = jsonObj.getString("id");
-                if(newCars==null){
+                if (newCars == null) {
                     CustomSprite sprite = switch (jsonObj.getString("asset")) {
                         case "1" -> new CustomSprite("car01.png", offset, pos);
                         case "2" -> new CustomSprite("car02.png", offset, pos);
@@ -628,14 +622,14 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                         default -> new CustomSprite(offset, pos);
                     };
                     cars.add(new Car(id, sprite));
-                }else{
+                } else {
                     cars = new ArrayList<>(Arrays.asList(newCars));
                     if (!id.equals(userID)) {
                         cars.forEach(c -> {
-                            if(c.getID().equals(id)){
+                            if (c.getID().equals(id)) {
                                 c.setZ(pos);
                                 c.setOffset(offset);
-                                c.setPercent((float) Util.percentRemaining((float) (pos%200),200f));
+                                c.setPercent((float) Util.percentRemaining((float) (pos % 200), 200f));
                             }
                         });
                     }
@@ -659,7 +653,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             exitResume.setVisible(true);
             exitLeave.setVisible(true);
         }
-        // Wenn das Spiel pausiert ist, sollen keine Eingaben zum steuern des Autos abgefragt werden
+        // Wenn das Spiel pausiert ist, sollen keine Eingaben zum Steuern des Autos abgefragt werden
         if (!game.isRunning) {
             playerSpeed = playerSpeed + (-accel * dt);
             playerSpeed = (int) Util.limit(playerSpeed, 0, playerMaxSpeed);
@@ -670,7 +664,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
 		/*	Durch die Struktur ist es unmöglich
 			gleichzeitig zu bremsen und zu beschleunigen bzw.
-			gleichzeitig nach Links und nach Rechts zu fahren
+			gleichzeitig nach Links und nach rechts zu fahren
 		*/
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             //Beschleunigen
@@ -697,7 +691,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             playerX = Util.limit(playerX, -2, 2);
         }
 
-        //Centrifugal
+        //Centrifugal Kraft
         playerX = playerX - (dx * playerSpeed / playerMaxSpeed * findSegment(cameraPosition + playerZ).getCurve() * centrifugal);
         playerX = Util.limit(playerX, -2, 2);
     }

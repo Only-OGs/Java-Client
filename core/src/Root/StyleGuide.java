@@ -2,6 +2,9 @@ package Root;
 
 import com.badlogic.gdx.graphics.Color;
 
+/**
+ * Speichert alle Farben, die man für das Menü verwenden sollte.
+ */
 public class StyleGuide {
 
     public final static com.badlogic.gdx.graphics.Color purpleLight = new com.badlogic.gdx.graphics.Color((float) 255 / 255, (float) 6 / 255, (float) 193 / 255, 1);

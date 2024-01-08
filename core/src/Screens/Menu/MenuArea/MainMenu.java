@@ -1,9 +1,9 @@
-package Screens.MenuArea;
+package Screens.Menu.MenuArea;
 
 import OGRacerGame.OGRacerGame;
-import Screens.Constants;
+import Helpers.Constants;
 import Screens.GameScreen;
-import Screens.MenuScreen;
+import Screens.Menu.MenuScreen;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 

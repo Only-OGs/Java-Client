@@ -1,10 +1,10 @@
-package Screens.MenuArea;
+package Screens.Menu.MenuArea;
 
 import Connection.Client;
 import OGRacerGame.OGRacerGame;
-import Screens.Constants;
-import Screens.LobbyScreen;
-import Screens.SearchScreen;
+import Helpers.Constants;
+import Screens.Menu.LobbyScreen;
+import Screens.Menu.SearchScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
