@@ -4,9 +4,9 @@ import Connection.Client;
 import Helpers.Constants;
 import Helpers.Util;
 import OGRacerGame.OGRacerGame;
-import Rendering.*;
+import Rendering.AssetData;
+import Rendering.Render;
 import Road.*;
-import Road.Multiplayerfunktions;
 import Road.Helper.Segment;
 import Root.StyleGuide;
 import Screens.Menu.MenuArea.MainMenu;
@@ -44,7 +44,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
     private final ShapeRenderer renderer;
     private final Render fullRenderer;
-    private final Multiplayerfunktions multiplayerfunktions;
+    private final Multiplayerfunktions multiplayerFunctions;
     private static Segment[] segments;
 
     Label timeLabel = new Label("", Constants.buttonSkin);
@@ -87,7 +87,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     private final float offRoadDecel = -playerMaxSpeed / 2;
     private final float offRoadLimit = playerMaxSpeed / 4;
     private static final float centrifugal = 0.3f;
-    private float dx ;
+    private float dx;
     private double cameraPosition;
     private static double lastCameraPosition = 0;
     private boolean newCarsToPlace = false;
@@ -126,8 +126,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         setupTimerLabel();
         leaderboard = new Leaderboard(stage);
         setupHUD(stage);
-        fullRenderer= new Render(segments,batch,renderer,this);
-        multiplayerfunktions=new Multiplayerfunktions(this);
+        fullRenderer = new Render(segments, batch, renderer, this);
+        multiplayerFunctions = new Multiplayerfunktions(this);
     }
 
     public GameScreen(String userID) {
@@ -143,10 +143,43 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         leaderboard = new Leaderboard(stage);
         setupTimerLabel();
         setupHUD(stage);
-        fullRenderer= new Render(segments,batch,renderer,this);
-        multiplayerfunktions=new Multiplayerfunktions(this);
+        fullRenderer = new Render(segments, batch, renderer, this);
+        multiplayerFunctions = new Multiplayerfunktions(this);
     }
 
+
+    /* Überprüft, ob wir im Mehrspieler oder Einzelspieler.
+     * Wird ein Timer gesetzt und startet, das man sich bewegen kann.
+     */
+    private void startRace(float delta) {
+
+        // Sorgt dafür das man erst fahren kann, wenn der Timer abgelaufen ist im Multiplayer
+        if (Client.start && multiplayer && !runMultiplayer) {
+            runMultiplayer = true;
+            timerStartLabel.setText("");
+            if (!menuOpen) OGRacerGame.getInstance().isRunning = true;
+
+        } else if (!runMultiplayer && multiplayer) timerStartLabel.setText(Client.timerToStart);
+        if (runMultiplayer && multiplayer) timer += delta;
+
+        // Sorgt dafür das man erst fahren kann, wenn der Timer abgelaufen ist im Einzelspieler
+        if (timerToStart <= 0 && !multiplayer && !runSingleplayer) {
+            runSingleplayer = true;
+            timerStartLabel.setText("");
+            if (!menuOpen) OGRacerGame.getInstance().isRunning = true;
+
+        } else if (!runSingleplayer && !multiplayer) startTimer(delta);
+        if (runSingleplayer && !multiplayer) timer += delta;
+    }
+
+    // Setzt unsere Startpostion sowie die Sprites
+    private void setupPositionData() {
+        if (Client.startGame) {
+            Client.startGame = false;
+            multiplayerFunctions.startPosition();
+            multiplayerFunctions.placeSprites();
+        }
+    }
 
     @Override
     public void render(float delta) {
@@ -173,41 +206,19 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
         if (!Client.connect && multiplayer) serverStatus.setText("Verbindung zum Server\n\nverloren");
 
-        if (Client.startGame) {
-            Client.startGame = false;
-            multiplayerfunktions.startPosition();
-            multiplayerfunktions.placeSprites();
-        }
+        setupPositionData();
         updateHUD();
         updatePosition(delta);
+        startRace(delta);
 
-        // Sorgt dafür das man erst fahren kann, wenn der Timer abgelaufen ist im Multiplayer
-        if (Client.start && multiplayer && !runMultiplayer) {
-            runMultiplayer = true;
-            timerStartLabel.setText("");
-            if (!menuOpen) OGRacerGame.getInstance().isRunning = true;
-
-        } else if (!runMultiplayer && multiplayer) timerStartLabel.setText(Client.timerToStart);
-        if (runMultiplayer && multiplayer) timer += delta;
-
-        // Sorgt dafür das man erst fahren kann, wenn der Timer abgelaufen ist im Einzelspieler
-        if (timerToStart <= 0 && !multiplayer && !runSingleplayer) {
-            runSingleplayer = true;
-            timerStartLabel.setText("");
-            if (!menuOpen) OGRacerGame.getInstance().isRunning = true;
-
-        } else if (!runSingleplayer && !multiplayer) startTimer(delta);
-        if (runSingleplayer && !multiplayer) timer += delta;
-
-        if (playerSpeed <= 0) OGRacerGame.movement = false;
-        else OGRacerGame.movement = true;
+        OGRacerGame.movement = !(playerSpeed <= 0);
 
         stage.draw();
 
         if (multiplayer) {
             if (camaeraPositionOld != cameraPosition) {
                 try {
-                    Client.ingamePos(playerX, cameraPosition+playerZ);
+                    Client.ingamePos(playerX, cameraPosition + playerZ);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -217,7 +228,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
             if (Client.updatePos) {
                 Client.updatePos = false;
-                multiplayerfunktions.updateCars(newCars);
+                multiplayerFunctions.updateCars(newCars);
             }
         } else CarController.kiMoveBot(newCars);
     }
@@ -229,7 +240,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             timerStartLabel.setText("GO");
         } else timerStartLabel.setText((int) timerToStart);
     }
-
 
     @Override
     public void dispose() {
@@ -356,7 +366,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
             lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
             fastestTimeLabel.setText("Schnellste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
-            speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed)+" km/h");
+            speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed) + " km/h");
             lapLabel.setText("Runde:\n" + lap);
 
         } else if (Client.jsonArrayUpdatePos != null) {
@@ -372,7 +382,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                             OGRacerGame.getInstance().isRunning = false;
                         lapLabel.setText("Runde:\n" + jsonObj.getString("lap") + "/3");
                     }
-                    speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed)+" km/h");
+                    speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed) + " km/h");
 
                 }
             } catch (JSONException e) {
@@ -441,7 +451,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     }
 
 
-
     @Override
     public void checkInput(OGRacerGame game, float dt) {
         // Pausieren/Fortfahren des Spiels
@@ -500,7 +509,10 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         newCars = cars;
         newCarsToPlace = true;
     }
-    public static Segment[] getSegments() {return segments;}
+
+    public static Segment[] getSegments() {
+        return segments;
+    }
 
     public static int getSegmentLength() {
         return segmentLength;
@@ -529,9 +541,16 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     public void setPlayerX(float playerX) {
         this.playerX = playerX;
     }
-    public int getTrackLength() {return trackLength;}
 
-    public float getPlayerSpeed() {return playerSpeed;}
+    public int getTrackLength() {
+        return trackLength;
+    }
 
-    public double getLastCameraPosition() {return lastCameraPosition;}
+    public float getPlayerSpeed() {
+        return playerSpeed;
+    }
+
+    public double getLastCameraPosition() {
+        return lastCameraPosition;
+    }
 }

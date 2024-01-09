@@ -50,20 +50,13 @@ public class LobbyScreen extends ScreenAdapter {
 
     private final TextButton leaveButton = new TextButton("Verlassen", Constants.buttonSkin);
 
-    private final TextButton optionButton = new TextButton("Einstellungen", Constants.buttonSkin);
-
     private final TextButton logoutButton = new TextButton("Abmelden", Constants.buttonSkin);
 
     private final TextButton readyButton = new TextButton("Nicht Bereit", Constants.buttonSkin);
 
-    private TextButton fullScreen = new TextButton(SettingMenu.fullScreenString, Constants.buttonSkin);
-    private Label fullscreenLabel = new Label("Vollbildmodus", Constants.buttonSkin);
-
     private final MessageChat chat;
 
     private boolean ready = false;
-
-    private boolean settingsActive = false;
 
     public LobbyScreen(String ID) {
         this.ID = ID;
@@ -78,7 +71,6 @@ public class LobbyScreen extends ScreenAdapter {
         setupLabel();
         setupButton();
         buttonListener();
-
         chat.build();
     }
 
@@ -113,7 +105,6 @@ public class LobbyScreen extends ScreenAdapter {
     public void render(float delta) {
         ScreenUtils.clear(20 / 255f, 21 / 255f, 44 / 255f, 1.0f);
         Gdx.gl.glEnable(GL20.GL_BLEND);
-        if(settingsActive) showSettings();
 
         if (!Client.connect) OGRacerGame.getInstance().setScreen(new MultiplayerMenu());
 
@@ -179,15 +170,6 @@ public class LobbyScreen extends ScreenAdapter {
             }
         });
 
-        optionButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Constants.clickButton.play(0.2f);
-                if(!settingsActive) settingsActive = true;
-                else settingsActive = false;
-            }
-        });
-
         readyButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -207,15 +189,6 @@ public class LobbyScreen extends ScreenAdapter {
         });
     }
 
-    // Zeigt die Einstellungsmöglichkeiten
-    private void showSettings(){
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(new Color(0,0,0,0.5f));
-        shapeRenderer.rect(stage.getWidth()/2-125,stage.getHeight()/2-125,250,250);
-        shapeRenderer.end();
-    }
-
     // Setup der Buttons im Screen.
     private void setupButton() {
 
@@ -224,10 +197,6 @@ public class LobbyScreen extends ScreenAdapter {
         leaveButton.setRotation(90);
         stage.addActor(leaveButton);
 
-        optionButton.setBounds(70, stage.getHeight() / 2 - 115, 230, 50);
-        optionButton.setTransform(true);
-        optionButton.setRotation(90);
-        stage.addActor(optionButton);
 
         logoutButton.setBounds(70, stage.getHeight() / 3f - 170, 170, 50);
         logoutButton.setTransform(true);
