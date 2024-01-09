@@ -1,15 +1,15 @@
-package Road;
+package Road.Helper;
 
-public class World {
+public class Cam {
     private int x;
     private int y;
     private int z;
 
-    public World(int z,int y){
-        this.z=z;this.y=y;
+
+    public Cam() {
     }
 
-    public int getX() {
+    public float getX() {
         return x;
     }
 
@@ -17,7 +17,7 @@ public class World {
         this.x = x;
     }
 
-    public int getY() {
+    public float getY() {
         return y;
     }
 

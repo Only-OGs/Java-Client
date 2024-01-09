@@ -1,7 +1,8 @@
 package Road;
 
 import Helpers.Util;
-import Rendering.ColorThemes;
+import Rendering.AssetData;
+import Road.Helper.*;
 import Screens.GameScreen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,19 +12,18 @@ import java.util.ArrayList;
 
 public class RoadBuilder {
 
-    private static Texture tCar = new Texture("sprites/car01.png");
     /**
      * erstellt die Strecke
      * @param l die Anzahl der Segmente der Strecke
      * @param segmentLenght die Länge eines Einzelnen Segments
      * @return
      */
-    public static Segment[] resetRoad(int l,int segmentLenght){
+    public static Segment[] resetRoad(int l, int segmentLenght){
         CustomSprite [] arr= createSpriteArr(l);
         ArrayList<Segment> segments= new ArrayList<>();
         segments.add(buildStart(segmentLenght));
         int index=1;
-        index += addRoad(segments,segmentLenght,index,50,Curve.HARDLeft.getValue(),60);
+        index += addRoad(segments,segmentLenght,index,50, Curve.HARDLeft.getValue(),60);
         index += addRoad(segments,segmentLenght,index,50,Curve.EASYRIGHT.getValue(),-20);
         index += addRoad(segments,segmentLenght,index,50,Curve.MEDIUMRIGHT.getValue(),-40);
 
@@ -53,9 +53,9 @@ public class RoadBuilder {
      */
     private static Color[] getColorTheme(int i) {
         if (Math.floor((i%6)/3) == 0) {
-            return ColorThemes.getLight();
+            return AssetData.getLight();
         } else {
-            return ColorThemes.getDark();
+            return AssetData.getDark();
         }
     }
 
@@ -68,7 +68,7 @@ public class RoadBuilder {
         P p1 = new P(new World(0*Segmentlenght,0),new Cam(),new Screen());
         P p2 = new P(new World((1)*Segmentlenght,0),new Cam(),new Screen());
 
-        Segment s = new Segment(0,p1,p2,ColorThemes.getStart(),0);
+        Segment s = new Segment(0,p1,p2, AssetData.getStart(),0);
         return s;
     }
 
@@ -82,7 +82,7 @@ public class RoadBuilder {
         P p1 = new P(new World(index*Segmentlenght,0),new Cam(),new Screen());
         P p2 = new P(new World((index+1)*Segmentlenght,0),new Cam(),new Screen());
 
-        Segment s = new Segment(index,p1,p2,ColorThemes.getFinish(),0);
+        Segment s = new Segment(index,p1,p2, AssetData.getFinish(),0);
         return s;
     }
 
@@ -148,7 +148,8 @@ public class RoadBuilder {
     private static CustomSprite[] createSpriteArr(int l){
         CustomSprite[] cs= new CustomSprite[l/4];
         for(int i=0;i<l/4;i++){
-            CustomSprite s = new CustomSprite("22",i%4==0?-2:2,i*4*1000);
+            int number = (int) (Math.random()*3+21);
+            CustomSprite s = new CustomSprite(String.valueOf(number),i%4==0?-1:1,i*4*400);
             cs[i]=s;
         }
         return cs;
@@ -156,14 +157,14 @@ public class RoadBuilder {
     public static Car[] createCarArr(int l){
         CustomSprite[] cs= new CustomSprite[l/40];
         for(int i=0;i<l/40;i++){
-            CustomSprite s = new CustomSprite(tCar,i%4==0?-0.5f:0.5f,i*40*500);
+            CustomSprite s = new CustomSprite(i%4==0?-0.5f:0.5f,i*40*500);
             cs[i]=s;
         }
         Car[] cars = new Car[l/40];
         for(int i = 0;i<l/40;i++){
             Car temp = new Car();
             temp.setCs(cs[i]);
-            temp.setSpeed(Util.randomInt(100,200)*60);
+            temp.setSpeed(Util.randomInt(100,150)*60);
             cars[i]= temp;
         }
         return  cars;

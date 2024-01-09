@@ -1,5 +1,6 @@
 package Road;
 
+import Road.Helper.Segment;
 import Screens.GameScreen;
 
 public class Car {

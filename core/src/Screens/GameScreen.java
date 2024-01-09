@@ -4,10 +4,10 @@ import Connection.Client;
 import Helpers.Constants;
 import Helpers.Util;
 import OGRacerGame.OGRacerGame;
-import Rendering.CarRenderer;
-import Rendering.RenderSegment;
-import Rendering.SpritesRenderer;
+import Rendering.*;
 import Road.*;
+import Road.Helper.Multiplayerfunktions;
+import Road.Helper.Segment;
 import Root.StyleGuide;
 import Screens.Menu.MenuArea.MainMenu;
 import com.badlogic.gdx.Gdx;
@@ -35,10 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GameScreen extends ScreenAdapter implements IInputHandler {
-
-    private float skyOffset = 0;
-    private float hillOffset = 0;
-    private float treeOffset = 0;
     private final boolean multiplayer;
     private String userID = "";
     public static ArrayList<RoadPart> roadBuilders = new ArrayList<>();
@@ -48,10 +44,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     private final SpriteBatch batch;
 
     private final ShapeRenderer renderer;
-    private final Texture txtSky = new Texture("background/sky.png");
-    private final Texture txtHills = new Texture("background/hills.png");
-    private final Texture txtTrees = new Texture("background/trees.png");
-
+    private final Render fullRenderer;
+    private final Multiplayerfunktions multiplayerfunktions;
     private static Segment[] segments;
 
     Label timeLabel = new Label("", Constants.buttonSkin);
@@ -73,46 +67,32 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
     //TEST Variables
 
-    private int roadWidth = 2000;
 
     private static int segmentLenght = 200;
 
-    private int lanes = 3;
-
-    private int segmentsCount = 600;
-
-    private int trackLength;
+    private static int trackLength;
 
     private int FOV = 100;
 
-    private int cameraHeight = 1000;
+    private static int cameraHeight = 1000;
 
     private float cameraDepth = (float) (1 / Math.tan((FOV / 2) * Math.PI / 180));
 
-    private int drawDistance = 200;
 
     private float playerX = 0;
-
-    private float playerY = 0;
-
     private float playerZ = cameraHeight * cameraDepth;
 
-    private float playerSpeed = 0;
+    private static float playerSpeed = 0;
     private final float playerMaxSpeed = segmentLenght * 60;
     private final float accel = playerMaxSpeed / 5;
     private final float offRoadDecel = -playerMaxSpeed / 2;
     private final float offRoadLimit = playerMaxSpeed / 4;
-    private float centrifugal = 0.3f;
-    private float speedPercent = playerSpeed / playerMaxSpeed;
-    private float dx = 0;
-    private double cameraPosition = 0;
-    private double lastCameraPosition = 0;
-    private float resolution = Gdx.graphics.getHeight() / 480;
-    private float sunOffset = 0;
-    private double fogDensity = drawDistance / 20;
+    private static final float centrifugal = 0.3f;
+    private float dx ;
+    private static double cameraPosition = 0;
+    private static double lastCameraPosition = 0;
     private boolean newCarsToPlace = false;
     private Car[] newCars;
-
     private float timer = 0;
     private float lastLapTime = 0;
     private float fastestLapTime = 0;
@@ -140,13 +120,14 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         stage = new Stage(viewport);
         batch = new SpriteBatch();
         renderer = new ShapeRenderer();
-        segments = RoadBuilder.resetRoad(segmentsCount, segmentLenght);
+        segments = RoadBuilder.resetRoad(600, segmentLenght);
         trackLength = segments.length * segmentLenght;
-        setNewCars(RoadBuilder.createCarArr(segmentsCount));
+        setNewCars(RoadBuilder.createCarArr(600));
         setupTimerLabel();
         leaderboard = new Leaderboard(stage);
         setupHUD(stage);
-        renderSegments(renderer);
+        fullRenderer= new Render(segments,batch,renderer,this);
+        multiplayerfunktions=new Multiplayerfunktions(this);
     }
 
     public GameScreen(String userID) {
@@ -162,6 +143,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         leaderboard = new Leaderboard(stage);
         setupTimerLabel();
         setupHUD(stage);
+        fullRenderer= new Render(segments,batch,renderer,this);
+        multiplayerfunktions=new Multiplayerfunktions(this);
     }
 
 
@@ -170,14 +153,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         ScreenUtils.clear(0, 0, 0, 1);
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.begin();
-        renderBackground(batch, txtSky, skyOffset, (int) (playerY * 0.001f * resolution));
-        renderBackground(batch, txtHills, hillOffset, (int) (playerY * 0.002f * resolution));
-        renderBackground(batch, txtTrees, treeOffset, (int) (playerY * 0.003f * resolution));
-        batch.end();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        renderSegments(renderer);
+
+        fullRenderer.render();
+
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
         if (Client.showLeaderboard) leaderboard.show();
@@ -197,8 +175,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
         if (Client.startGame) {
             Client.startGame = false;
-            startPosition();
-            placeSprites();
+            multiplayerfunktions.startPosition();
+            multiplayerfunktions.placeSprites();
         }
         updateHUD();
         updatePosition(delta);
@@ -229,7 +207,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         if (multiplayer) {
             if (camaeraPositionOld != cameraPosition) {
                 try {
-                    Client.ingamePos(playerX, cameraPosition);
+                    Client.ingamePos(playerX, cameraPosition+playerZ);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -239,9 +217,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
 
             if (Client.updatePos) {
                 Client.updatePos = false;
-                updateCars();
+                multiplayerfunktions.updateCars(newCars);
             }
-        } else for (Car c : newCars) CarsKi.kiMoveBot(c);
+        } else CarController.kiMoveBot(newCars);
     }
 
     private void startTimer(float delta) {
@@ -252,17 +230,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         } else timerStartLabel.setText((int) timerToStart);
     }
 
-    private void renderBackground(SpriteBatch sB, Texture txt, float offset, int lift) {
-        int sourceX = (int) Math.floor(txt.getWidth() * offset);
-        int sourceW = Math.min(txt.getWidth(), txt.getWidth() - sourceX);
-
-        int destW = (int) Math.floor(Gdx.graphics.getWidth() * (sourceW / (txt.getWidth() / 2f)));
-
-        sB.draw(txt, 0, lift, destW, Gdx.graphics.getHeight(), sourceX, 0, sourceW, txt.getHeight(), false, false);
-        if (sourceW < txt.getWidth()) {
-            sB.draw(txt, destW - 1, lift, Gdx.graphics.getWidth() - destW, Gdx.graphics.getHeight(), 0, 0, txt.getWidth() / 2 - sourceW, txt.getHeight(), false, false);
-        }
-    }
 
     @Override
     public void dispose() {
@@ -270,91 +237,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         renderer.dispose();
         stage.dispose();
     }
-
-    public void renderSegments(ShapeRenderer r) {
-        Segment baseSegment = findSegment(cameraPosition);
-        Segment playerSegment = findSegment(cameraPosition + playerZ);
-        int maxy = Gdx.graphics.getHeight();
-        float basePercent = (float) Util.percentRemaining((float) cameraPosition, segmentLenght);
-        float playerPercent = (float) Util.percentRemaining((float) cameraPosition + playerZ, segmentLenght);
-        int playerY = (int) Util.interpolate(playerSegment.getP1().getWorld().getY(), playerSegment.getP2().getWorld().getY(), playerPercent);
-        float x = 0; //Akkumulierter seitlicher versatz der Segmente
-        float dx = 0f - (baseSegment.getCurve() * basePercent); // hilft die Versätzung zu speichern und berechnen
-        sunOffset += dx * speedPercent;
-
-        Segment segment;
-        int segmentLoopedValue;
-
-        for (int i = 0; i < drawDistance; i++) {
-            segment = segments[(baseSegment.getIndex() + i) % segments.length];
-            segment.setLooped(segment.getIndex() < baseSegment.getIndex());
-            segment.setFog(1 - Util.exponentialFog(Float.parseFloat(String.valueOf(i)) / drawDistance, fogDensity));
-            segment.setClip(maxy);
-
-            if (segment.isLooped()) {
-                segmentLoopedValue = trackLength;
-            } else {
-                segmentLoopedValue = 0;
-            }
-
-            Util.project(segment.getP1(), (int) (((int) (playerX * roadWidth)) - x), playerY + cameraHeight, (int) cameraPosition - segmentLoopedValue, cameraDepth, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), roadWidth);
-            Util.project(segment.getP2(), (int) (((int) (playerX * roadWidth)) - x - dx), playerY + cameraHeight, (int) cameraPosition - segmentLoopedValue, cameraDepth, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), roadWidth);
-
-            x += dx;   //nach jeden segment steigt oder singt die Versätzung der Segmente abhängig von der Stärke der Kurve
-            dx += segment.getCurve();
-
-            if ((segment.getP1().getCamera().getZ() <= cameraDepth) ||
-                    (segment.getP2().getScreen().getY() >= maxy) ||
-                    (segment.getP2().getScreen().getY() >= segment.getP1().getScreen().getY())) {
-                continue;
-            }
-            RenderSegment.render(r, Gdx.graphics.getWidth(), lanes,
-                    segment.getP1().getScreen().getX(),
-                    segment.getP1().getScreen().getY(),
-                    segment.getP1().getScreen().getW(),
-                    segment.getP2().getScreen().getX(),
-                    segment.getP2().getScreen().getY(),
-                    segment.getP2().getScreen().getW(),
-                    segment.getFog(),
-                    segment.getColor(),
-                    segment
-            );
-            maxy = segment.getP1().getScreen().getY();
-        }
-        //SunShade.sun(r, batch, sunOffset, maxy);
-        Segment s;
-        for (int n = (drawDistance - 1); n > 0; n--) {
-            s = segments[((baseSegment.getIndex() + n) % segments.length)];
-            //cars
-            if (s.getCars() != null) {
-                for (int q = 0; q < s.getCars().size(); q++) {
-                    Car car = s.getCars().get(q);
-                    double spriteScale = Util.interpolate(s.getP1().getScreen().getScale(), s.getP2().getScreen().getScale(), 0.5f);
-                    float spriteX = (float) (Util.interpolate(s.getP1().getScreen().getX(), s.getP2().getScreen().getX(), 0.5f) + (spriteScale * car.getCs().getOffset() * roadWidth * Gdx.graphics.getWidth() / 2));
-                    float spriteY = (float) (Util.interpolate(s.getP1().getScreen().getY(), s.getP2().getScreen().getY(), 0.5f));
-                    SpritesRenderer.render(batch, resolution, roadWidth, car.getCs().getT(), spriteScale, spriteX, spriteY, -0.5f, -1f, s.getClip());
-                }
-            }
-            if (s.getSprites() != null) {
-                for (int q = 0; q < s.getSprites().length; q++) {
-                    CustomSprite cs = s.getSprites()[q];
-                    double spriteScale = s.getP1().getScreen().getScale();
-                    float spriteX = (float) (s.getP1().getScreen().getX() + (spriteScale * cs.getOffset() * roadWidth * Gdx.graphics.getWidth() / 2));
-                    float spriteY = s.getP1().getScreen().getY();
-                    SpritesRenderer.render(batch, resolution, roadWidth, cs.getT(), spriteScale, spriteX, spriteY, cs.getOffset(), -1f, s.getClip());
-                }
-            }
-            if (s == playerSegment) {
-                CarRenderer.renderPlayerCar(batch, playerSegment, resolution, roadWidth, playerSpeed / playerMaxSpeed, cameraDepth / playerZ, Gdx.graphics.getWidth() / 2,
-                        (int) ((Gdx.graphics.getHeight() / 2) - (cameraDepth / playerZ * Util.interpolate((int) playerSegment.getP1().getCamera().getY(), (int) playerSegment.getP2().getCamera().getY(), playerPercent)) * Gdx.graphics.getHeight() / 2));
-
-            }
-        }
-        skyOffset = (float) Util.increase(skyOffset, (0.001f * playerSegment.getCurve() * (cameraPosition - lastCameraPosition) / segmentLenght), 1);
-        hillOffset = (float) Util.increase(skyOffset, (0.002f * playerSegment.getCurve() * (cameraPosition - lastCameraPosition) / segmentLenght), 1);
-        treeOffset = (float) Util.increase(skyOffset, (0.003f * playerSegment.getCurve() * (cameraPosition - lastCameraPosition) / segmentLenght), 1);
-    }
-
 
     private void setupTimerLabel() {
 
@@ -499,13 +381,12 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         }
     }
 
-    private Segment findSegment(double p) {
+    public static Segment findSegment(double p) {
         return segments[(int) (Math.floor(p / segmentLenght) % segments.length)];
     }
 
     private void updatePosition(float delta) {
         Segment playerSegment = findSegment(cameraPosition + playerZ);
-        speedPercent = playerSpeed / playerMaxSpeed;
         dx = delta * 2 * (playerSpeed / playerMaxSpeed);
 
         // Langsamer auf Offroad
@@ -518,7 +399,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         }
 
         double scale = playerSegment.getP1().getScreen().getScale();
-        double playerW = CarRenderer.tS.getWidth() * scale;
+        double playerW = AssetData.getplayer(0).getWidth() * scale;
 
         if (playerSegment.getCars() != null) {
             for (int i = 0; i < playerSegment.getCars().size(); i++) {
@@ -548,7 +429,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             double spriteX = sprite.getOffset() < 0 ? sprite.getOffset() : sprite.getOffset() + 0.25;
             double spriteW = (sprite.getT().getWidth() * scale) * 2;
             double _playerX = playerX - 0.5;
-            double playerW = (CarRenderer.tS.getWidth() * scale);
+            double playerW = (AssetData.getplayer(0).getWidth() * scale);
 
             if ((sprite.getOffset() >= 0 && Util.overlap(_playerX, playerW, spriteX + 0.125f, spriteW - 0.125f, 0.5f)) ||
                     (sprite.getOffset() < 0 && Util.overlap(playerX, playerW, spriteX - spriteW - 0.25, spriteW, 0.5f))) {
@@ -701,9 +582,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         newCarsToPlace = true;
     }
 
-    public static Segment[] getSegments() {
-        return segments;
-    }
+    public static Segment[] getSegments() {return segments;}
 
     public static int getSegmentLenght() {
         return segmentLenght;
@@ -721,8 +600,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         return cameraPosition;
     }
 
-    public void setCameraPosition(double cameraPosition) {
-        this.cameraPosition = cameraPosition;
+    public void setCameraPosition(double cP) {
+        cameraPosition = cP;
     }
 
     public float getPlayerX() {
@@ -732,4 +611,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     public void setPlayerX(float playerX) {
         this.playerX = playerX;
     }
+    public int getTrackLength() {return trackLength;}
+
+    public float getPlayerSpeed() {return playerSpeed;}
+
+    public double getLastCameraPosition() {return lastCameraPosition;}
 }

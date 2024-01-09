@@ -1,5 +1,7 @@
-package Road;
+package Road.Helper;
 
+import Road.Car;
+import Road.CustomSprite;
 import com.badlogic.gdx.graphics.Color;
 
 import java.util.ArrayList;

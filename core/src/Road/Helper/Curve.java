@@ -1,4 +1,4 @@
-package Road;
+package Road.Helper;
 
 public enum Curve {
     NONE(0),
