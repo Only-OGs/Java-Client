@@ -4,15 +4,19 @@ package Rendering;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 
+/**
+ * Klasse die alle Ingame Assets verwaltet, um sicherzugehen, dass man jede textur nur einmal lädt und
+ * nicht unnötig speicher verschwendet.
+ */
 public class AssetData {
-    public static Texture[] txtCars = { new Texture("sprites/car01.png"),
+    public static final Texture[] txtCars = { new Texture("sprites/car01.png"),
                                         new Texture("sprites/car02.png"),
                                         new Texture("sprites/car03.png"),
                                         new Texture("sprites/car04.png"),
                                          new Texture("sprites/truck.png"),
                                         new Texture("sprites/semi.png")
     };
-    public static Texture[] txtSprites = {new Texture("sprites/billboard01.png"),
+    public static final Texture[] txtSprites = {new Texture("sprites/billboard01.png"),
             new Texture("sprites/billboard02.png"),
             new Texture("sprites/billboard03.png"),
             new Texture("sprites/billboard04.png"),
@@ -37,17 +41,18 @@ public class AssetData {
             new Texture("sprites/tree1.png"),
             new Texture("sprites/tree2.png")
     };
-    public static Texture[] txtBackground = {new Texture("background/sky.png"),
+    public static final Texture[] txtBackground = {new Texture("background/sky.png"),
             new Texture("background/hills.png"),
             new Texture("background/trees.png")
     };
-    public static Texture[] txtPlayer = {new Texture("sprites/player_straight.png"),
+    public static final Texture[] txtPlayer = {new Texture("sprites/player_straight.png"),
             new Texture("sprites/player_uphill_straight.png"),
             new Texture("sprites/player_left.png"),
             new Texture("sprites/player_uphill_left.png"),
             new Texture("sprites/player_right.png"),
             new Texture("sprites/player_uphill_right.png")
     };
+
     public static Color[] getLight(){
         Color rumble = Color.valueOf("555555");
         Color grass = Color.valueOf("10aa10");
@@ -65,19 +70,15 @@ public class AssetData {
         return c;
     }
     public static Color[] getStart(){
-        Color rumble = Color.WHITE;
-        Color grass = Color.WHITE;
-        Color road = Color.WHITE;
-        Color lane = Color.WHITE;
-        Color[] c = new Color []{road,rumble,grass,lane};
+        Color color = Color.WHITE;
+        Color grass = Color.valueOf("10aa10");
+        Color[] c = new Color []{color,color,grass,color};
         return c;
     }
     public static Color[] getFinish(){
-        Color rumble = Color.BLACK;
-        Color grass = Color.BLACK;
-        Color road = Color.BLACK;
-        Color lane = Color.BLACK;
-        Color[] c = new Color []{road,rumble,grass,lane};
+        Color color = Color.BLACK;
+        Color grass = Color.valueOf("10aa10");
+        Color[] c = new Color []{color,color,grass,color};
         return c;
     }
     public static Texture getCarSprite(int number){

@@ -3,21 +3,25 @@ package Road;
 import Rendering.AssetData;
 import com.badlogic.gdx.graphics.Texture;
 
+/**
+ * Diese Klasse verbindet ein/e Sprite/Textur mit Koordinaten in der Welt. Simuliert also ein Objekt in der Welt
+ */
 public class CustomSprite {
     Texture t;
     float offset;
     double z;
 
-    public CustomSprite(Texture t, float offset, double z) {
-        this.t = t;
-        this.offset = offset;
-        this.z = z;
-    }
+    /**
+     * Beim Erstellen eines Spriteobjekts wird diesen eine Textur zugewiesen welche in AssetData gespeichert ist und z und x Koordinaten
+     * @param offset
+     * @param z
+     */
     public CustomSprite(float offset, double z) {
         this.t = AssetData.getCarSprite(0);
         this.offset = offset;
         this.z = z;
     }
+
     public CustomSprite(String texturepath,float offset,double z){
         switch (texturepath){
             case "car01.png" -> this.t = AssetData.getCarSprite(0);

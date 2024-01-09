@@ -10,6 +10,13 @@ public class RenderHelpers {
     public static float laneMarkerWidth(float RoadWidth,int lanes){
         return RoadWidth/Math.max(32,8*lanes);
     }
+
+    /**
+     * Ein Polygon besteht aus 2 dreiecken
+     * @param r
+     * @param cords
+     * @param c
+     */
     public static void renderPolygon(ShapeRenderer r, float[]cords, Color c){
         r.begin(ShapeRenderer.ShapeType.Filled);
         r.setColor(c);

@@ -3,6 +3,10 @@ package Road;
 import Road.Helper.Segment;
 import Screens.GameScreen;
 
+/**
+ * Diese Klasse stellt Autos dar welche eine Geschwindigkeit,id, CustomSprite (Zum Speichern von aussehen und momentaner position),
+ * und das Segment in den sich das Auto befindet.
+ */
 public class Car {
 
     private String id;
@@ -32,21 +36,26 @@ public class Car {
     }
 
     public void setCs(CustomSprite cs) {this.customSprite = cs;}
+
+    /**
+     * fügt das Auto zu dem passenden Segment hinzu so, dass dieses weiß das, dass Auto gerade dort steht
+     */
     public void place(){
         if(customSprite!=null){
-            this.segment = findSegment(customSprite.getZ(),GameScreen.getSegments(),GameScreen.getSegmentLenght());
+            this.segment = GameScreen.findSegment(customSprite.getZ());
             this.segment.addCar(this);
         }
     }
+
+    /**
+     * wenn ein Auto sich vorwärts bewegt muss es sich bei dem alten Segment sozusagen abmelden
+     */
     public void remove(){
         if(this.segment!= null){
             this.segment.removeCar(this);
         }
     }
 
-    private Segment findSegment(double p,Segment[] segments,int segmentLength) {
-        return segments[(int) (Math.floor(p / segmentLength) % segments.length)];
-    }
     public void setZ(double z){
         remove();
         customSprite.setZ(z);

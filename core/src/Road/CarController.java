@@ -7,6 +7,10 @@ import com.badlogic.gdx.Gdx;
 
 
 public class CarController {
+    /**
+     * Klasse zum Steuern der KI Autos im SinglePlayer
+     * @param newCars
+     */
     public static void kiMoveBot(Car[] newCars){
         int fps = Gdx.graphics.getFramesPerSecond();
         for(Car c: newCars){

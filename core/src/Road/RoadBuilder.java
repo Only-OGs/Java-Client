@@ -13,13 +13,12 @@ import java.util.ArrayList;
 public class RoadBuilder {
 
     /**
-     * erstellt die Strecke
+     * Enthält verschiedene Funktionen um eine Stracke zu Laden und mit sprites zu befüllen
      * @param l die Anzahl der Segmente der Strecke
-     * @param segmentLenght die Länge eines Einzelnen Segments
+     * @param segmentLenght die Länge eines einzelnen Segments
      * @return
      */
     public static Segment[] resetRoad(int l, int segmentLenght){
-        CustomSprite [] arr= createSpriteArr(l);
         ArrayList<Segment> segments= new ArrayList<>();
         segments.add(buildStart(segmentLenght));
         int index=1;
@@ -32,9 +31,18 @@ public class RoadBuilder {
         }
         segments.add(buildfinsih(segmentLenght,l-1));
         Segment[] s = segments.toArray(Segment[]::new);
-        addSprites(s,arr);
         return (s);
     }
+    public static void fillSprites(){
+        CustomSprite [] arr= createSpriteArr(GameScreen.getSegments().length);
+        addSprites(GameScreen.getSegments(),arr);
+    }
+
+    /**
+     * Erstellt eine Strecke mithilfe der gesendeten Daten die in RoadPart abgespeichert wurden
+     * @param road
+     * @return
+     */
     public static Segment[] resetRoad(RoadPart[] road){
         int segmentLenght = GameScreen.getSegmentLenght();
         ArrayList<Segment> segments= new ArrayList<>();
@@ -102,7 +110,7 @@ public class RoadBuilder {
     }
 
     /**
-     * Fügt ein Straßenabschnitt hinzu welcher eine Kurve oder Gerade Sein kann
+     * Fügt ein Straßenabschnitt hinzu, welcher eine Kurve oder Gerade Sein kann
      * @param road
      * @param segmentLenght
      * @param index
@@ -136,15 +144,24 @@ public class RoadBuilder {
             return road.get(index-1).getP2().getWorld().getY();
         }
     }
+
+    /**
+     * fügt der Strecke die CustomSprite Objekte hinzu
+     * @param segments
+     * @param cs
+     */
     public static void addSprites(Segment[] segments,CustomSprite [] cs){
         for (CustomSprite c: cs) {
-            Segment s = findSegment(segments,c.getZ(),GameScreen.getSegmentLenght());
+            Segment s = GameScreen.findSegment(c.getZ());
             s.addSprite(c);
         }
     }
-    private static Segment findSegment(Segment[] s, double p,int segmentLenght) {
-        return s[(int) (Math.floor(p / segmentLenght) % s.length)];
-    }
+
+    /**
+     * erstellt ein Array von Sprites für den Singleplayer
+     * @param l
+     * @return
+     */
     private static CustomSprite[] createSpriteArr(int l){
         CustomSprite[] cs= new CustomSprite[l/4];
         for(int i=0;i<l/4;i++){
@@ -154,6 +171,12 @@ public class RoadBuilder {
         }
         return cs;
     }
+
+    /**
+     * erst ein Array von Bot autos für den Singleplayer
+     * @param l
+     * @return
+     */
     public static Car[] createCarArr(int l){
         CustomSprite[] cs= new CustomSprite[l/40];
         for(int i=0;i<l/40;i++){

@@ -10,6 +10,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+/**
+ * Diese Klasse ist für das Zeichnen der Spielinhalte zuständig und benutzt die verschiedenen Rendererklassen dafür.
+ * Weiterhin werden Informationen die Hauptsächlich fürs Rendern wichtig sind hier gespeichert.
+ */
 public class Render {
     private final int drawDistance = 200;
     private final float fogDensity = drawDistance/20f;
@@ -37,6 +41,11 @@ public class Render {
         this.gameScreen = gameScreen;
     }
 
+    /**
+     * Hauptmethode holt sich noch fehlende Werte von der GameScreen Klasse und nutzt diese dann, zuerst der Hintergrund,
+     * dann die Segmente, nachdem ein Segment gemalt wurde, werden, falls vorhanden Autos und Hindernisse gezeichnet.
+     * soll das Segment dem playerSegment entsprechen wird dieser auch gezeichnet
+     * */
     public void render(){
 
         double cameraPosition = gameScreen.getCameraPosition();
@@ -77,6 +86,7 @@ public class Render {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
+        //Render der Segmente//
         for (int i = 0; i < drawDistance; i++) {
             segment = segments[(baseSegment.getIndex() + i) % segments.length];
             segment.setLooped(segment.getIndex() < baseSegment.getIndex());
@@ -131,7 +141,7 @@ public class Render {
         Segment s;
         for (int n = (drawDistance - 1); n > 0; n--) {
             s = segments[((baseSegment.getIndex() + n) % segments.length)];
-            //cars
+            // Rendern der Autos
             if (s.getCars() != null) {
                 for (int q = 0; q < s.getCars().size(); q++) {
                     Car car = s.getCars().get(q);
@@ -141,6 +151,7 @@ public class Render {
                     SpritesRenderer.render(batch, resolution, roadWidth, car.getCs().getT(), spriteScale, spriteX, spriteY, -0.5f, -1f, s.getClip());
                 }
             }
+            //Rendern der Sprites
             if (s.getSprites() != null) {
                 for (int q = 0; q < s.getSprites().length; q++) {
                     CustomSprite cs = s.getSprites()[q];
@@ -150,6 +161,7 @@ public class Render {
                     SpritesRenderer.render(batch, resolution, roadWidth, cs.getT(), spriteScale, spriteX, spriteY, cs.getOffset(), -1f, s.getClip());
                 }
             }
+            //Rendern des Spielers
             if (s == playerSegment) {
                 CarRenderer.renderPlayerCar(batch, playerSegment, resolution, roadWidth, playerSpeed / playerMaxSpeed, cameraDepth / playerZ, Gdx.graphics.getWidth() / 2,
                         (int) ((Gdx.graphics.getHeight() / 2) - (cameraDepth / playerZ * Util.interpolate((int) playerSegment.getP1().getCamera().getY(), (int) playerSegment.getP2().getCamera().getY(), playerPercent)) * Gdx.graphics.getHeight() / 2));

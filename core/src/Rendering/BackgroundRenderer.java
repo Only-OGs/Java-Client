@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+/**
+ * Rendert die 3 Hintergrund Layer wird von der Render Klasse aufgerufen.
+ */
 public class BackgroundRenderer {
     public static void renderBackground(SpriteBatch batch,float skyOffset,float hillOffset,float treeOffset, int playerY,float resolution){
         batch.begin();

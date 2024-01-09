@@ -1,4 +1,4 @@
-package Road.Helper;
+package Road;
 
 import Connection.Client;
 import Helpers.Util;
@@ -57,9 +57,14 @@ public class Multiplayerfunktions {
             e.printStackTrace();
         }
     }
+
+
+    /**
+     *
+     * @param newCars
+     */
     public void updateCars(Car [] newCars) {
         ArrayList<Car> cars = new ArrayList<>();
-
         try {
             // Iteriere durch jedes JSON-Objekt im Array
             for (int i = 0; i < Client.jsonArrayUpdatePos.length(); i++) {

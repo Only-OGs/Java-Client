@@ -1,5 +1,8 @@
 package Road;
 
+/**
+ * Speichert die gesendeten Strecken Daten zwischen, damit man sie dann vom Roadbuilder aus aufrufen kann.
+ */
 public class RoadPart {
 
     public RoadPart(String lenght, String curve, String hill) {
@@ -22,18 +25,6 @@ public class RoadPart {
 
     public int getHill() {
         return hill;
-    }
-
-    public void setLenght(int lenght) {
-        this.lenght = lenght;
-    }
-
-    public void setCurve(int curve) {
-        this.curve = curve;
-    }
-
-    public void setHill(int hill) {
-        this.hill = hill;
     }
 }
 
