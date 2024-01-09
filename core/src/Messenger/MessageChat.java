@@ -1,8 +1,8 @@
 package Messenger;
 
 import Connection.Client;
-import Root.StyleGuide;
 import Helpers.Constants;
+import Root.StyleGuide;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -126,10 +126,14 @@ public class MessageChat {
                     }
                 }
 
+
                 chatWindow.add(playerColor).left().row();
-                chatWindow.add(convertMessage(Client.playerAndMessage[1]) + "\n").left().row();
+                if (Client.playerAndMessage.length > 1)
+                    chatWindow.add(convertMessage(Client.playerAndMessage[1]) + "\n").left().row();
+                else chatWindow.add("\n").left().row();
                 Client.playerAndMessage = null;
                 Constants.messageReceived.play(0.05f);
+
             }
         }
     }
