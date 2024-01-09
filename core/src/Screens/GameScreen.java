@@ -67,7 +67,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     //TEST Variables
 
 
-    private static int segmentLenght = 200;
+    private static int segmentLength = 200;
 
     private static int trackLength;
 
@@ -81,14 +81,14 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     private float playerX = 0;
     private float playerZ = cameraHeight * cameraDepth;
 
-    private static float playerSpeed = 0;
-    private final float playerMaxSpeed = segmentLenght * 60;
+    private float playerSpeed = 0;
+    private final float playerMaxSpeed = segmentLength * 60;
     private final float accel = playerMaxSpeed / 5;
     private final float offRoadDecel = -playerMaxSpeed / 2;
     private final float offRoadLimit = playerMaxSpeed / 4;
     private static final float centrifugal = 0.3f;
     private float dx ;
-    private static double cameraPosition = 0;
+    private double cameraPosition;
     private static double lastCameraPosition = 0;
     private boolean newCarsToPlace = false;
     private Car[] newCars;
@@ -119,9 +119,9 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         stage = new Stage(viewport);
         batch = new SpriteBatch();
         renderer = new ShapeRenderer();
-        segments = RoadBuilder.resetRoad(600, segmentLenght);
+        segments = RoadBuilder.resetRoad(600, segmentLength);
         RoadBuilder.fillSprites();
-        trackLength = segments.length * segmentLenght;
+        trackLength = segments.length * segmentLength;
         setNewCars(RoadBuilder.createCarArr(600));
         setupTimerLabel();
         leaderboard = new Leaderboard(stage);
@@ -139,7 +139,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
         batch = new SpriteBatch();
         renderer = new ShapeRenderer();
         segments = RoadBuilder.resetRoad(roadBuilders.toArray(RoadPart[]::new));
-        trackLength = segments.length * segmentLenght;
+        trackLength = segments.length * segmentLength;
         leaderboard = new Leaderboard(stage);
         setupTimerLabel();
         setupHUD(stage);
@@ -356,7 +356,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
             timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
             lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
             fastestTimeLabel.setText("Schnellste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
-            speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed));
+            speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed)+" km/h");
             lapLabel.setText("Runde:\n" + lap);
 
         } else if (Client.jsonArrayUpdatePos != null) {
@@ -372,7 +372,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
                             OGRacerGame.getInstance().isRunning = false;
                         lapLabel.setText("Runde:\n" + jsonObj.getString("lap") + "/3");
                     }
-                    speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed));
+                    speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed)+" km/h");
 
                 }
             } catch (JSONException e) {
@@ -382,7 +382,7 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     }
 
     public static Segment findSegment(double p) {
-        return segments[(int) (Math.floor(p / segmentLenght) % segments.length)];
+        return segments[(int) (Math.floor(p / segmentLength) % segments.length)];
     }
 
     private void updatePosition(float delta) {
@@ -502,8 +502,8 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     }
     public static Segment[] getSegments() {return segments;}
 
-    public static int getSegmentLenght() {
-        return segmentLenght;
+    public static int getSegmentLength() {
+        return segmentLength;
     }
 
     public String getUserID() {

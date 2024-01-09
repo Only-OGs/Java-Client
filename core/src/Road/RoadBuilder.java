@@ -5,7 +5,6 @@ import Rendering.AssetData;
 import Road.Helper.*;
 import Screens.GameScreen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 
 import java.util.ArrayList;
 
@@ -44,7 +43,7 @@ public class RoadBuilder {
      * @return
      */
     public static Segment[] resetRoad(RoadPart[] road){
-        int segmentLenght = GameScreen.getSegmentLenght();
+        int segmentLenght = GameScreen.getSegmentLength();
         ArrayList<Segment> segments= new ArrayList<>();
         segments.add(buildStart(segmentLenght));
         int index=1;

@@ -15,8 +15,8 @@ public class CarController {
         int fps = Gdx.graphics.getFramesPerSecond();
         for(Car c: newCars){
             c.setOffset(c.getCs().getOffset()+updateOffset(c));
-            c.setZ(Util.increase((int) c.getCs().getZ(), (int) (1f/fps*c.getSpeed()), GameScreen.getSegmentLenght()*GameScreen.getSegments().length));
-            c.setPercent((float) Util.percentRemaining((float) c.getCs().getZ(),GameScreen.getSegmentLenght()));
+            c.setZ(Util.increase((int) c.getCs().getZ(), (int) (1f/fps*c.getSpeed()), GameScreen.getSegmentLength()*GameScreen.getSegments().length));
+            c.setPercent((float) Util.percentRemaining((float) c.getCs().getZ(),GameScreen.getSegmentLength()));
         }
     }
     //todo
