@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+/**
+ * klasse zum Zeichnen einzelner Sprites
+ */
 public class SpritesRenderer {
     public static void render(SpriteBatch batch, float resolution, int roadwidth, Texture t,double scale, float destX,float destY,float offsetX,float offsetY,float clipY){
         float spriteScale = 0.3f*(1f/80f);
@@ -22,8 +25,6 @@ public class SpritesRenderer {
         }
         if(clipH < destH){
             batch.begin();
-            //batch.draw(t,0,0,t.getWidth(),t.getHeight()-(t.getHeight()*clipH/destH),destX,libgdxDestY,destW,destH-clipH);
-            //batch.draw(t,destX,destY, (float) destW,destH-clipH);
             batch.draw(t,destX,Gdx.graphics.getHeight()-destY,destW,-(destH-clipH),0,0,t.getWidth(), (int)(t.getHeight()-(t.getHeight()*clipH/destH)),false,true);
             batch.end();
         }

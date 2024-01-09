@@ -1,4 +1,4 @@
-package Road;
+package Road.Helper;
 
 public class Screen {
     private int x;

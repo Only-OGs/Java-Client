@@ -1,11 +1,26 @@
 package Rendering;
 
-import Road.Segment;
+import Road.Helper.Segment;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class RenderSegment {
+    /**
+     * Zeichnet ein Segment (Straße, Graß, Nebel)
+     * @param shape
+     * @param width
+     * @param lanes
+     * @param x1
+     * @param y1
+     * @param w1
+     * @param x2
+     * @param y2
+     * @param w2
+     * @param fog
+     * @param color
+     * @param segment
+     */
     public static void render(ShapeRenderer shape, int width, int lanes, float x1, float y1, float w1, float x2, float y2, float w2, double fog, Color[] color, Segment segment){
         float r1 = RenderHelpers.rumbleWidth(w1,lanes);
         float r2 = RenderHelpers.rumbleWidth(w2,lanes);
@@ -22,12 +37,12 @@ public class RenderSegment {
         shape.end();
 
 
-        //Rendert die Straße und den Rand
+        //Koordinaten für das Rendern der Straße und den Rand
         float[]cords1 = {x1-w1-r1,libgdxY1,x1-w1,libgdxY1,x2-w2,libgdxY2,x2-w2-r2,libgdxY2};
 
-        float[]cords2 = new float[]{x1+w1+r1,libgdxY1,x1+w1,libgdxY1,x2+w2,libgdxY2,x2+w2+r2,libgdxY2};
+        float[]cords2 = {x1+w1+r1,libgdxY1,x1+w1,libgdxY1,x2+w2,libgdxY2,x2+w2+r2,libgdxY2};
 
-        float[] cords3 = new float[]{x1-w1,libgdxY1,x1+w1,libgdxY1,x2+w2,libgdxY2,x2-w2,libgdxY2};
+        float[] cords3 = {x1-w1,libgdxY1,x1+w1,libgdxY1,x2+w2,libgdxY2,x2-w2,libgdxY2};
 
 
         //Rendert die Straße
@@ -45,6 +60,7 @@ public class RenderSegment {
                 lanex2+=lanew2;
             }
         }
+        //Rendert den Nebel
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setColor(new Color( 0f/255f, 81f/255f, 8f/255f, (float) fog));
         shape.rect(0, libgdxY1, Gdx.graphics.getWidth(),libgdxY2-libgdxY1);
