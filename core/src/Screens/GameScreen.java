@@ -23,59 +23,44 @@ import java.util.ArrayList;
 
 public class GameScreen extends ScreenAdapter {
     private final boolean multiplayer;
-    private String userID = "";
-    public static ArrayList<RoadPart> roadBuilders = new ArrayList<>();
     private final Viewport viewport;
-
-    protected Stage stage;
     private final SpriteBatch batch;
-
     private final ShapeRenderer renderer;
     private final Render fullRenderer;
     private final Multiplayerfunktions multiplayerFunctions;
-    private static Segment[] segments;
-
-
-    //TEST Variables
-
-
-    private static int segmentLength = 200;
-
-    private static int trackLength;
-
-    private int FOV = 100;
-
-    private static int cameraHeight = 1000;
-
-    private float cameraDepth = (float) (1 / Math.tan((FOV / 2) * Math.PI / 180));
-
-
-    private float playerX = 0;
-    private float playerZ = cameraHeight * cameraDepth;
-
-    private float playerSpeed = 0;
+    private final Hud HUD;
     private final float playerMaxSpeed = segmentLength * 60;
     private final float accel = playerMaxSpeed / 5;
     private final float offRoadDecel = -playerMaxSpeed / 2;
     private final float offRoadLimit = playerMaxSpeed / 4;
-    private static final float centrifugal = 0.3f;
+    private final float centrifugal = 0.3f;
+
+    private String userID = "";
+    private int FOV = 100;
+    private float cameraDepth = (float) (1 / Math.tan((FOV / 2) * Math.PI / 180));
+    private float playerX = 0;
+    private float playerZ = cameraHeight * cameraDepth;
+    private float playerSpeed = 0;
     private float dx;
-    private double cameraPosition;
-    private static double lastCameraPosition = 0;
     private boolean newCarsToPlace = false;
     private Car[] newCars;
     private float timer = 0;
-
+    private Leaderboard leaderboard;
+    private float timerToStart = 6;
+    private double cameraPosition;
     private double camaeraPositionOld = 0;
 
-    private Leaderboard leaderboard;
+    private static double lastCameraPosition = 0;
+    public static ArrayList<RoadPart> roadBuilders = new ArrayList<>();
+    private static Segment[] segments;
+    private static int segmentLength = 200;
+    private static int trackLength;
+    private static int cameraHeight = 1000;
 
-    private float timerToStart = 6;
+    protected Stage stage;
 
     public static boolean runSingleplayer;
     public static boolean runMultiplayer;
-
-    private final Hud HUD;
 
     public GameScreen() {
         OGRacerGame.getInstance().isRunning = false;
@@ -99,7 +84,7 @@ public class GameScreen extends ScreenAdapter {
     public GameScreen(String userID) {
         OGRacerGame.getInstance().isRunning = false;
         this.userID = userID;
-        this.multiplayer = true;
+        multiplayer = true;
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
         batch = new SpriteBatch();
