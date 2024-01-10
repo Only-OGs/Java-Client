@@ -186,7 +186,7 @@ public class RoadBuilder {
         for(int i = 0;i<l/40;i++){
             Car temp = new Car();
             temp.setCs(cs[i]);
-            temp.setSpeed(Util.randomInt(100,150)*60);
+            temp.setSpeed((int) ((Math.random()*100+50)*60));
             cars[i]= temp;
         }
         return  cars;

@@ -2,6 +2,7 @@ package Road;
 
 
 import Helpers.Util;
+import Rendering.AssetData;
 import Road.Helper.Segment;
 import Screens.GameScreen;
 import com.badlogic.gdx.Gdx;
@@ -19,9 +20,9 @@ public class CarController {
     public static void kiMoveBot(Car[] newCars){
         int fps = Gdx.graphics.getFramesPerSecond();
         for(Car c: newCars){
-            c.setOffset(c.getCs().getOffset()+updateOffset(c));
             c.setZ(Util.increase((int) c.getCs().getZ(), (int) (1f/fps*c.getSpeed()), GameScreen.getSegmentLength()*GameScreen.getSegments().length));
             c.setPercent((float) Util.percentRemaining((float) c.getCs().getZ(),GameScreen.getSegmentLength()));
+            c.setOffset(c.getCs().getOffset()+updateOffset(c));
         }
     }
 
@@ -29,10 +30,11 @@ public class CarController {
      * Berechnet wie Stark die Botautos ausweichen also ihren offset ändern sollen abhängig vom Spieler oder anderen Autos,
      * die vor ihnen sind. Sollte ein Auto die Straße verlassen haben, wird dieses wieder zurückgeführt.
      * @param c
-     * @return
+     * @return Wie stark und in welche Richtung ausgewichen wird
      */
     private static float updateOffset(Car c){
         float carW=c.getCs().getT().getWidth()*gameScreen.getSpriteScale();
+        float playerW= AssetData.getplayer(0).getWidth()*gameScreen.getSpriteScale();
         float dir;
         float playerX=gameScreen.getPlayerX();
         Segment temp;
@@ -44,7 +46,8 @@ public class CarController {
         }
         for(int i=1; i<20;i++){
             temp = segments[(carSegment.getIndex()+i) % segments.length];
-            if((temp==playerSegment)&&c.getSpeed()>gameScreen.getPlayerSpeed()){
+            if((temp==playerSegment)&&(c.getSpeed()>gameScreen.getPlayerSpeed())&&
+                    (Util.overlap(playerX+0.1f,playerW,c.getCs().getOffset(),carW,1.2))){
                 if(playerX>0.5f){
                     dir=-1f;
                 } else if (playerX<-0.5f) {
@@ -52,7 +55,7 @@ public class CarController {
                 }else{
                     dir=(c.getCs().getOffset()>playerX)? 1f:-1f;
                 }
-                return dir*1f/i*(c.getSpeed()-gameScreen.getPlayerSpeed())/gameScreen.getPlayerMaxSpeed();
+                return dir/i*(c.getSpeed()-gameScreen.getPlayerSpeed())/gameScreen.getPlayerMaxSpeed();
             }
             if(temp.getCars()!=null){
                 for(Car car: temp.getCars()){
@@ -65,7 +68,7 @@ public class CarController {
                         }else{
                             dir=(c.getCs().getOffset()>car.getCs().getOffset()?1f:-1f);
                         }
-                        return dir*1f/i*(c.getSpeed()-gameScreen.getPlayerSpeed())/gameScreen.getPlayerMaxSpeed();
+                        return dir/i*(c.getSpeed()-car.getSpeed())/gameScreen.getPlayerMaxSpeed();
                     }
                 }
             }
