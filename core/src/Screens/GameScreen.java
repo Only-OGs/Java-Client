@@ -189,6 +189,7 @@ public class GameScreen extends ScreenAdapter {
         } else CarController.kiMoveBot(newCars);
     }
 
+    /**Startet den Timer zu Beginn des Rennens*/
     private void startTimer(float delta) {
         timerToStart -= delta;
         if (timerToStart < 1) {
@@ -212,29 +213,29 @@ public class GameScreen extends ScreenAdapter {
         Segment playerSegment = findSegment(cameraPosition + playerZ);
         dx = delta * 2 * (playerSpeed / playerMaxSpeed);
 
-        // Langsamer auf Offroad
         if (((playerX < -1) || (playerX > 1))) {
+            // Langsamer auf Offroad
             if ((playerSpeed > offRoadLimit)) {
                 playerSpeed = playerSpeed + (offRoadDecel * delta);
                 playerSpeed = (int) Util.limit(playerSpeed, 0, playerMaxSpeed);
             }
+            //Kollision mit Sprites am Straßenrand überprüfen
             checkSpriteCollision(playerSegment);
         }
 
         double scale = playerSegment.getP1().getScreen().getScale();
         double playerW = AssetData.getplayer(0).getWidth() * scale;
 
+        //Kollision mit anderen Autos überprüfen
         if (playerSegment.getCars() != null) {
             for (int i = 0; i < playerSegment.getCars().size(); i++) {
                 Car car = playerSegment.getCars().get(i);
                 double carW = car.getCs().getT().getWidth() * scale;
-                //if (speed > car.speed) {
                 if (Util.overlap(playerX, playerW, car.getCs().getOffset() - carW * 2, carW * 3.5, 0.8)) {
-                    playerSpeed = playerMaxSpeed / 5;//car.speed * (car.speed/speed);
+                    playerSpeed = playerMaxSpeed / 5;
                     cameraPosition = Util.increase((int) car.getCs().getZ(), (int) -playerZ, trackLength);
                     break;
                 }
-                //}
             }
         }
         //Beschleunigen | Bremsen | Nach Links | Nach Rechts
@@ -312,7 +313,7 @@ public class GameScreen extends ScreenAdapter {
             playerX = Util.limit(playerX, -2, 2);
         }
 
-        //Centrifugal Kraft
+        //Zentrifugal Kraft anwenden
         playerX = playerX - (dx * playerSpeed / playerMaxSpeed * findSegment(cameraPosition + playerZ).getCurve() * centrifugal);
         playerX = Util.limit(playerX, -2, 2);
     }

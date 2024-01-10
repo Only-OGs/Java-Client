@@ -182,12 +182,10 @@ public class Hud {
             renderer.setColor(0, 0, 0, 1f - i);
             renderer.rect(0, stage.getHeight() - i * 100, stage.getWidth(), 2);
         }
-
         renderer.end();
         Gdx.input.setInputProcessor(stage);
 
         if (!multiplayer) {
-
             timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
             lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
             fastestTimeLabel.setText("Schnellste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
