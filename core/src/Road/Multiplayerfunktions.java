@@ -36,7 +36,7 @@ public class Multiplayerfunktions {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        RoadBuilder.addSprites(GameScreen.getSegments(), sprites.toArray(sprites.toArray(CustomSprite[]::new)));
+        RoadBuilder.addSprites(sprites.toArray(sprites.toArray(CustomSprite[]::new)));
     }
     public void startPosition() {
         try {
@@ -74,6 +74,7 @@ public class Multiplayerfunktions {
                 float offset = Float.parseFloat(jsonObj.getString("offset"));
                 double pos = Double.parseDouble(jsonObj.getString("pos"));
                 String id = jsonObj.getString("id");
+                int speed = jsonObj.getInt("speed");
                 if (newCars==null) {
                     CustomSprite sprite = switch (jsonObj.getString("asset")) {
                         case "1" -> new CustomSprite("car01.png", offset, pos);
@@ -95,6 +96,7 @@ public class Multiplayerfunktions {
                                 c.setZ(pos);
                                 c.setOffset(offset);
                                 c.setPercent((float) Util.percentRemaining((float) (pos % 200), 200f));
+                                c.setSpeed(speed);
                             }
                         });
                     }

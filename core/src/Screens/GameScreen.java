@@ -234,7 +234,7 @@ public class GameScreen extends ScreenAdapter {
             for (int i = 0; i < playerSegment.getCars().size(); i++) {
                 Car car = playerSegment.getCars().get(i);
                 double carW = car.getCs().getT().getWidth() * scale;
-                if (Util.overlap(playerX, playerW, car.getCs().getOffset() - carW * 2, carW * 3.5, 0.8)) {
+                if (Util.overlap(playerX, playerW, car.getCs().getOffset() - carW * 2, carW * 3.5, 0.8)&&car.getSpeed()<playerSpeed) {
                     playerSpeed = playerMaxSpeed / 5;
                     cameraPosition = Util.increase((int) car.getCs().getZ(), (int) -playerZ, trackLength);
                     break;

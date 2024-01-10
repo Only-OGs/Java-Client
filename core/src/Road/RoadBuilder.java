@@ -34,7 +34,7 @@ public class RoadBuilder {
     }
     public static void fillSprites(){
         CustomSprite [] arr= createSpriteArr(GameScreen.getSegments().length);
-        addSprites(GameScreen.getSegments(),arr);
+        addSprites(arr);
     }
 
     /**
@@ -146,10 +146,9 @@ public class RoadBuilder {
 
     /**
      * fügt der Strecke die CustomSprite Objekte hinzu
-     * @param segments
      * @param cs
      */
-    public static void addSprites(Segment[] segments,CustomSprite [] cs){
+    public static void addSprites(CustomSprite [] cs){
         for (CustomSprite c: cs) {
             Segment s = GameScreen.findSegment(c.getZ());
             s.addSprite(c);
@@ -165,7 +164,7 @@ public class RoadBuilder {
         CustomSprite[] cs= new CustomSprite[l/4];
         for(int i=0;i<l/4;i++){
             int number = (int) (Math.random()*3+21);
-            CustomSprite s = new CustomSprite(String.valueOf(number),i%4==0?-1:1,i*4*400);
+            CustomSprite s = new CustomSprite(String.valueOf(number),i%4==0?-1.2f:1,i*4*200+number);
             cs[i]=s;
         }
         return cs;
