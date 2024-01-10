@@ -1,35 +1,23 @@
 package Screens;
 
 import Connection.Client;
-import Helpers.Constants;
 import Helpers.Util;
 import OGRacerGame.OGRacerGame;
 import Rendering.AssetData;
 import Rendering.Render;
 import Road.*;
 import Road.Helper.Segment;
-import Root.StyleGuide;
-import Screens.Menu.MenuArea.MainMenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -46,22 +34,6 @@ public class GameScreen extends ScreenAdapter {
     private final Render fullRenderer;
     private final Multiplayerfunktions multiplayerFunctions;
     private static Segment[] segments;
-
-    private Label timeLabel = new Label("", Constants.buttonSkin);
-    private Label lastLapTimeLabel = new Label("", Constants.buttonSkin);
-    private Label fastestTimeLabel = new Label("", Constants.buttonSkin);
-    private Label speedLabel = new Label("", Constants.buttonSkin);
-
-    private Label lapLabel = new Label("", Constants.buttonSkin);
-
-    private Label serverStatus = new Label("", Constants.buttonSkin, "title");
-
-
-    private Label timerStartLabel = new Label("", Constants.buttonSkin, "title");
-
-    private Image exitBackground = new Image(new Texture("sprites/exitBackground.png"));
-    private TextButton exitResume = new TextButton("WEITER", Constants.buttonSkin);
-    private TextButton exitLeave = new TextButton("VERLASSEN", Constants.buttonSkin);
 
 
     //TEST Variables
@@ -93,8 +65,6 @@ public class GameScreen extends ScreenAdapter {
     private boolean newCarsToPlace = false;
     private Car[] newCars;
     private float timer = 0;
-    private float lastLapTime = 0;
-    private float fastestLapTime = 0;
 
     private double camaeraPositionOld = 0;
 
@@ -102,13 +72,10 @@ public class GameScreen extends ScreenAdapter {
 
     private float timerToStart = 6;
 
-    private boolean runSingleplayer;
-    private boolean runMultiplayer;
+    public static boolean runSingleplayer;
+    public static boolean runMultiplayer;
 
-    private int lap = 1;
-
-    private boolean menuOpen = false;
-
+    private final Hud HUD;
 
     public GameScreen() {
         OGRacerGame.getInstance().isRunning = false;
@@ -123,11 +90,10 @@ public class GameScreen extends ScreenAdapter {
         RoadBuilder.fillSprites();
         trackLength = segments.length * segmentLength;
         setNewCars(RoadBuilder.createCarArr(600));
-        setupTimerLabel();
         leaderboard = new Leaderboard(stage);
-        setupHUD(stage);
         fullRenderer = new Render(segments, batch, renderer, this);
         multiplayerFunctions = new Multiplayerfunktions(this);
+        HUD = new Hud(stage, false);
     }
 
     public GameScreen(String userID) {
@@ -141,10 +107,9 @@ public class GameScreen extends ScreenAdapter {
         segments = RoadBuilder.resetRoad(roadBuilders.toArray(RoadPart[]::new));
         trackLength = segments.length * segmentLength;
         leaderboard = new Leaderboard(stage);
-        setupTimerLabel();
-        setupHUD(stage);
         fullRenderer = new Render(segments, batch, renderer, this);
         multiplayerFunctions = new Multiplayerfunktions(this);
+        HUD = new Hud(stage, true);
     }
 
 
@@ -156,17 +121,17 @@ public class GameScreen extends ScreenAdapter {
         // Sorgt dafür das man erst fahren kann, wenn der Timer abgelaufen ist im Multiplayer
         if (Client.start && multiplayer && !runMultiplayer) {
             runMultiplayer = true;
-            timerStartLabel.setText("");
-            if (!menuOpen) OGRacerGame.getInstance().isRunning = true;
+            HUD.timerStartLabel.setText("");
+            if (HUD.isMenuClosed()) OGRacerGame.getInstance().isRunning = true;
 
-        } else if (!runMultiplayer && multiplayer) timerStartLabel.setText(Client.timerToStart);
+        } else if (!runMultiplayer && multiplayer) HUD.timerStartLabel.setText(Client.timerToStart);
         if (runMultiplayer && multiplayer) timer += delta;
 
         // Sorgt dafür das man erst fahren kann, wenn der Timer abgelaufen ist im Einzelspieler
         if (timerToStart <= 0 && !multiplayer && !runSingleplayer) {
             runSingleplayer = true;
-            timerStartLabel.setText("");
-            if (!menuOpen) OGRacerGame.getInstance().isRunning = true;
+            HUD.timerStartLabel.setText("");
+            if (HUD.isMenuClosed()) OGRacerGame.getInstance().isRunning = true;
 
         } else if (!runSingleplayer && !multiplayer) startTimer(delta);
         if (runSingleplayer && !multiplayer) timer += delta;
@@ -204,10 +169,16 @@ public class GameScreen extends ScreenAdapter {
         lastCameraPosition = cameraPosition;
         cameraPosition = result;
 
-        if (!Client.connect && multiplayer) serverStatus.setText("Verbindung zum Server\n\nverloren");
+        if (!Client.connect && multiplayer) HUD.serverStatus.setText("Verbindung zum Server\n\nverloren");
 
         setupPositionData();
-        updateHUD();
+        if(HUD.updateHUD(
+                cameraPosition < lastCameraPosition,
+                timer,
+                renderer,
+                userID,
+                Util.formatSpeed(playerSpeed / 100, playerMaxSpeed))
+        ) timer = 0;
         updatePosition(delta);
         startRace(delta);
 
@@ -236,9 +207,9 @@ public class GameScreen extends ScreenAdapter {
     private void startTimer(float delta) {
         timerToStart -= delta;
         if (timerToStart < 1) {
-            timerStartLabel.setColor(0.3f, 1f, 0.5f, 1f);
-            timerStartLabel.setText("GO");
-        } else timerStartLabel.setText((int) timerToStart);
+            HUD.timerStartLabel.setColor(0.3f, 1f, 0.5f, 1f);
+            HUD.timerStartLabel.setText("GO");
+        } else HUD.timerStartLabel.setText((int) timerToStart);
     }
 
     @Override
@@ -246,149 +217,6 @@ public class GameScreen extends ScreenAdapter {
         batch.dispose();
         renderer.dispose();
         stage.dispose();
-    }
-
-    private void setupTimerLabel() {
-
-        timerStartLabel.setBounds(0, stage.getHeight() / 2.5f, Gdx.graphics.getWidth(), 100);
-        timerStartLabel.setAlignment(Align.center);
-        timerStartLabel.setFontScale(2.0f);
-        stage.addActor(timerStartLabel);
-    }
-
-    private void setupHUD(Stage stage) {
-        int spacing = Gdx.graphics.getWidth() / 5;
-
-        timeLabel.setBounds(25 + 0 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
-        timeLabel.setColor(StyleGuide.purpleLight);
-        stage.addActor(timeLabel);
-
-        lastLapTimeLabel.setBounds(1 * spacing - 25, Gdx.graphics.getHeight() - 25, 0, 0);
-        lastLapTimeLabel.setColor(StyleGuide.purpleLight);
-        stage.addActor(lastLapTimeLabel);
-
-        fastestTimeLabel.setBounds(55 + 2 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
-        fastestTimeLabel.setColor(StyleGuide.purpleLight);
-        stage.addActor(fastestTimeLabel);
-
-        speedLabel.setBounds(165 + 3 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
-        speedLabel.setColor(StyleGuide.purpleLight);
-        stage.addActor(speedLabel);
-
-        lapLabel.setBounds(170 + 4 * spacing, Gdx.graphics.getHeight() - 25, 0, 0);
-        lapLabel.setColor(StyleGuide.purpleLight);
-        stage.addActor(lapLabel);
-
-        serverStatus.setColor(Color.RED);
-        serverStatus.setBounds(0, stage.getHeight() / 2.5f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() - 30);
-        serverStatus.setAlignment(Align.center);
-        serverStatus.setFontScale(0.9f);
-        stage.addActor(serverStatus);
-
-
-        //Exit Screen
-        exitBackground.setSize(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 1.5f);
-        exitBackground.setPosition(Gdx.graphics.getWidth() / 2f - exitBackground.getWidth() / 2,
-                Gdx.graphics.getHeight() / 2f - exitBackground.getHeight() / 2);
-
-
-        exitBackground.setVisible(false);
-        stage.addActor(exitBackground);
-
-        exitResume.setSize(exitBackground.getWidth() / 2f, exitBackground.getHeight() / 10);
-        exitResume.setPosition(Gdx.graphics.getWidth() / 2f - exitResume.getWidth() / 2,
-                Gdx.graphics.getHeight() / 2f + exitResume.getHeight());
-        exitResume.setVisible(false);
-        exitResume.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                menuOpen = false;
-                if (!runMultiplayer && runSingleplayer) OGRacerGame.getInstance().isRunning = true;
-                if (runMultiplayer && Client.start) OGRacerGame.getInstance().isRunning = true;
-
-                exitBackground.setVisible(false);
-                exitResume.setVisible(false);
-                exitLeave.setVisible(false);
-            }
-        });
-        stage.addActor(exitResume);
-
-        exitLeave.setSize(exitBackground.getWidth() / 2f, exitBackground.getHeight() / 10);
-        exitLeave.setPosition(Gdx.graphics.getWidth() / 2f - exitLeave.getWidth() / 2,
-                Gdx.graphics.getHeight() / 2f - exitLeave.getHeight() * 2);
-        exitLeave.setVisible(false);
-        exitLeave.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Constants.clickButton.play(0.2f);
-                menuOpen = false;
-
-                if (multiplayer) {
-                    Client.showLeaderboard = false;
-                    Client.timerToStart = "";
-                    OGRacerGame.getInstance().isRunning = false;
-                    Client.start = false;
-                    Client.leaveGame();
-                }
-                exitBackground.setVisible(false);
-                exitResume.setVisible(false);
-                exitLeave.setVisible(false);
-                if (Client.socket != null) Client.socket.disconnect();
-                OGRacerGame.getInstance().setGameScreen(null);
-                OGRacerGame.getInstance().setScreen(new MainMenu());
-            }
-        });
-        stage.addActor(exitLeave);
-    }
-
-    private void updateHUD() {
-        if (cameraPosition < lastCameraPosition) {
-            lap++;
-            fastestLapTime = lastLapTime > 0 ? Math.min(fastestLapTime, timer) : timer;
-            lastLapTime = timer;
-            timer = 0;
-        }
-
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        renderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        // Gradient
-        for (float i = 0; i < 1f; i += 0.02f) {
-            renderer.setColor(0, 0, 0, 1f - i);
-            renderer.rect(0, stage.getHeight() - i * 100, stage.getWidth(), 2);
-        }
-
-        renderer.end();
-        Gdx.input.setInputProcessor(stage);
-
-        if (!multiplayer) {
-
-            timeLabel.setText("Zeit:\n" + Util.formatTimer(timer));
-            lastLapTimeLabel.setText("Letzte Runde:\n" + (lastLapTime > 0 ? Util.formatTimer(lastLapTime) : ""));
-            fastestTimeLabel.setText("Schnellste Runde:\n" + (fastestLapTime > 0 ? Util.formatTimer(fastestLapTime) : ""));
-            speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed) + " km/h");
-            lapLabel.setText("Runde:\n" + lap);
-
-        } else if (Client.jsonArrayUpdatePos != null) {
-            try {
-                for (int i = 0; i < Client.jsonArrayUpdatePos.length(); i++) {
-                    JSONObject jsonObj = Client.jsonArrayUpdatePos.getJSONObject(i);
-
-                    if (userID.equals(jsonObj.getString("id"))) {
-                        timeLabel.setText("Zeit:\n" + jsonObj.getString("current_time").replaceAll(";", ":"));
-                        lastLapTimeLabel.setText("Letzte Runde:\n" + jsonObj.getString("lap_time").replaceAll(";", ":"));
-                        fastestTimeLabel.setText("Schnellste Runde:\n" + jsonObj.getString("best_time").replaceAll(";", ":"));
-                        if (Boolean.parseBoolean(jsonObj.getString("race_finished")))
-                            OGRacerGame.getInstance().isRunning = false;
-                        lapLabel.setText("Runde:\n" + jsonObj.getString("lap") + "/3");
-                    }
-                    speedLabel.setText("Geschwindigkeit:\n" + Util.formatSpeed(playerSpeed / 100, playerMaxSpeed) + " km/h");
-
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public static Segment findSegment(double p) {
@@ -454,12 +282,12 @@ public class GameScreen extends ScreenAdapter {
     public void checkInput(OGRacerGame game, float dt) {
         // Pausieren/Fortfahren des Spiels
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            menuOpen = true;
+            HUD.setMenuOpen(true);
             game.isRunning = false;
             //Menü anzeigen
-            exitBackground.setVisible(true);
-            exitResume.setVisible(true);
-            exitLeave.setVisible(true);
+            HUD.exitBackground.setVisible(true);
+            HUD.exitResume.setVisible(true);
+            HUD.exitLeave.setVisible(true);
         }
         // Wenn das Spiel pausiert ist, sollen keine Eingaben zum Steuern des Autos abgefragt werden
         if (!game.isRunning) {
