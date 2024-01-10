@@ -33,7 +33,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class GameScreen extends ScreenAdapter implements IInputHandler {
+public class GameScreen extends ScreenAdapter {
     private final boolean multiplayer;
     private String userID = "";
     public static ArrayList<RoadPart> roadBuilders = new ArrayList<>();
@@ -451,7 +451,6 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     }
 
 
-    @Override
     public void checkInput(OGRacerGame game, float dt) {
         // Pausieren/Fortfahren des Spiels
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
