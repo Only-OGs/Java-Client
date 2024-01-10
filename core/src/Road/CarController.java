@@ -23,5 +23,4 @@ public class CarController {
     static float updateOffset(Car c){
         return 0;
     }
-
 }
