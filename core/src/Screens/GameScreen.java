@@ -49,6 +49,7 @@ public class GameScreen extends ScreenAdapter {
     private float timerToStart = 6;
     private double cameraPosition;
     private double camaeraPositionOld = 0;
+    private float spriteScale= (float) (0.3f*(1f/AssetData.getplayer(0).getWidth()));
 
     private static double lastCameraPosition = 0;
     public static ArrayList<RoadPart> roadBuilders = new ArrayList<>();
@@ -78,6 +79,7 @@ public class GameScreen extends ScreenAdapter {
         leaderboard = new Leaderboard(stage);
         fullRenderer = new Render(segments, batch, renderer, this);
         multiplayerFunctions = new Multiplayerfunktions(this);
+        CarController.setup(this);
         HUD = new Hud(stage, false);
     }
 
@@ -94,6 +96,7 @@ public class GameScreen extends ScreenAdapter {
         leaderboard = new Leaderboard(stage);
         fullRenderer = new Render(segments, batch, renderer, this);
         multiplayerFunctions = new Multiplayerfunktions(this);
+        CarController.setup(this);
         HUD = new Hud(stage, true);
     }
 
@@ -365,5 +368,16 @@ public class GameScreen extends ScreenAdapter {
 
     public double getLastCameraPosition() {
         return lastCameraPosition;
+    }
+    public Render getFullRenderer(){
+        return fullRenderer;
+    }
+
+    public float getPlayerMaxSpeed() {
+        return playerMaxSpeed;
+    }
+
+    public float getSpriteScale() {
+        return spriteScale;
     }
 }
