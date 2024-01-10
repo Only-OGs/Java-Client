@@ -47,21 +47,21 @@ public class GameScreen extends ScreenAdapter implements IInputHandler {
     private final Multiplayerfunktions multiplayerFunctions;
     private static Segment[] segments;
 
-    Label timeLabel = new Label("", Constants.buttonSkin);
-    Label lastLapTimeLabel = new Label("", Constants.buttonSkin);
-    Label fastestTimeLabel = new Label("", Constants.buttonSkin);
-    Label speedLabel = new Label("", Constants.buttonSkin);
+    private Label timeLabel = new Label("", Constants.buttonSkin);
+    private Label lastLapTimeLabel = new Label("", Constants.buttonSkin);
+    private Label fastestTimeLabel = new Label("", Constants.buttonSkin);
+    private Label speedLabel = new Label("", Constants.buttonSkin);
 
-    Label lapLabel = new Label("", Constants.buttonSkin);
+    private Label lapLabel = new Label("", Constants.buttonSkin);
 
-    Label serverStatus = new Label("", Constants.buttonSkin, "title");
+    private Label serverStatus = new Label("", Constants.buttonSkin, "title");
 
 
-    Label timerStartLabel = new Label("", Constants.buttonSkin, "title");
+    private Label timerStartLabel = new Label("", Constants.buttonSkin, "title");
 
-    Image exitBackground = new Image(new Texture("sprites/exitBackground.png"));
-    TextButton exitResume = new TextButton("WEITER", Constants.buttonSkin);
-    TextButton exitLeave = new TextButton("VERLASSEN", Constants.buttonSkin);
+    private Image exitBackground = new Image(new Texture("sprites/exitBackground.png"));
+    private TextButton exitResume = new TextButton("WEITER", Constants.buttonSkin);
+    private TextButton exitLeave = new TextButton("VERLASSEN", Constants.buttonSkin);
 
 
     //TEST Variables
