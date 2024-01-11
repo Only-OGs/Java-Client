@@ -87,6 +87,8 @@ public class GameScreen extends ScreenAdapter {
         OGRacerGame.getInstance().isRunning = false;
         this.userID = userID;
         multiplayer = true;
+        runSingleplayer = false;
+        runMultiplayer = false;
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(viewport);
         batch = new SpriteBatch();
