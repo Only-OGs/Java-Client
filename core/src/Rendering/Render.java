@@ -169,4 +169,7 @@ public class Render {
             }
         }
     }
+    public int getDrawDistance(){
+        return  drawDistance;
+    }
 }
