@@ -17,7 +17,8 @@ public class CustomSprite {
      * @param z
      */
     public CustomSprite(float offset, double z) {
-        this.t = AssetData.getCarSprite(0);
+        int random = (int) (Math.random() * 6);
+        this.t = AssetData.getCarSprite(random);
         this.offset = offset;
         this.z = z;
     }
