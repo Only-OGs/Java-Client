@@ -145,7 +145,7 @@ public class RoadBuilder {
     }
 
     /**
-     * fügt der Strecke die CustomSprite Objekte hinzu
+     * Fügt der Strecke die CustomSprite Objekte hinzu
      * @param cs
      */
     public static void addSprites(CustomSprite [] cs){
@@ -161,17 +161,18 @@ public class RoadBuilder {
      * @return
      */
     private static CustomSprite[] createSpriteArr(int l){
-        CustomSprite[] cs= new CustomSprite[l/4];
-        for(int i=0;i<l/4;i++){
-            int number = (int) (Math.random()*3+21);
-            CustomSprite s = new CustomSprite(String.valueOf(number),i%4==0?-1.2f:1,i*4*200+number);
+        CustomSprite[] cs= new CustomSprite[l/9];
+        for(int i=0;i<l/9;i++){
+            int number = (int) (Math.random() * 24);
+            if(number == 15 || number == 16) number = 14;
+            CustomSprite s = new CustomSprite(String.valueOf(number),i%4==0?-1.2f:1.3f,i*9*200+number);
             cs[i]=s;
         }
         return cs;
     }
 
     /**
-     * erst ein Array von Bot autos für den Singleplayer
+     * erstellt ein Array von Bot Autos für den Singleplayer
      * @param l
      * @return
      */
