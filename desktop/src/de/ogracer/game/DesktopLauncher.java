@@ -6,10 +6,13 @@ import OGRacerGame.OGRacerGame;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
+
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setForegroundFPS(60);
+		config.useVsync(true);
 		config.setTitle("OG Racer");
-		new Lwjgl3Application(new OGRacerGame(), config);
+		config.setWindowedMode(1329,886);
+		config.setResizable(false);
+		new Lwjgl3Application(OGRacerGame.getInstance(), config);
 	}
 }
